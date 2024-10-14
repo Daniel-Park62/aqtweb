@@ -1,0 +1,23 @@
+{
+  "name": "aqt-web",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5972",
+    "build": "vite build --outDir ./public",
+    "start": "nodemon --watch servers/ servers/server.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "svelte": "^4.2.18",
+    "vite": "^5.4.1"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "mariadb": "^3.3.2",
+    "oracledb": "^6.6.0"
+  }
+}
