@@ -8,11 +8,15 @@ const pool = mariadb.createPool({
       password: config.password,
       database: config.database,
       connectionLimit: 3,
-      dateStrings : 'date' ,
+      dateStrings : true ,
       bigIntAsNumber: true,
       insertIdAsNumber : true,
       decimalAsNumber : true,
-      multipleStatements:true
+      multipleStatements:true,
+      validationQuery : 'select 1',
+      testWhileIdle : true,
+      timeBetweenEvictionRunsMillis: 1800000
+    
 }) ;
 
 module.exports = pool ;

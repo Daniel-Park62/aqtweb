@@ -22,6 +22,7 @@ const tuser = require('./controllers/tuser') ;
 const trequest = require('./controllers/trequest') ;
 const tresult = require('./controllers/tresult') ;
 const basicSetup = require('./controllers/basicSetup') ;
+const tloadDate = require('./controllers/tloadData') ;
 
 app.use(cors());
 
@@ -45,6 +46,7 @@ app.use('/tuser', tuser) ;
 app.use('/trequest', trequest) ;
 app.use('/tresult', tresult) ;
 app.use('/aqtSetup', basicSetup) ;
+app.use('/tloaddata', tloadDate) ;
 
 app.listen(port,'0.0.0.0', () => {
    console.log(`Server is up at port ${port}`);

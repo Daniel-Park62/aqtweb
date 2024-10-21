@@ -176,7 +176,7 @@
   </div>
   <hr />
   <div class="itemx texecList">
-    <table>
+    <table style='width: 100%;'>
       <thead>
         <tr>
           {#each columns as column}
@@ -212,7 +212,7 @@
                 <td class="resultstat">{statusnm[row.resultstat]}</td>
                 <td class="startDt">{row.startDt === null ? "" :row.startDt}</td>
                 <td class="endDt">{row.endDt === null ? "" : row.endDt }</td>
-                <td class="msg" style="width:150px">{row.msg ? row.msg.split("\n")[0] : ""}</td>
+                <td class="msg" style="width:15%">{row.msg ? row.msg.split("\n")[0] : ""}</td>
                 {#if (curRow === row)}
                 <td>◀</td>
                 {/if}
@@ -378,7 +378,7 @@
     overflow: auto;
   }
   .texecList {
-    max-height: 50vh;
+    max-height: 45vh;
     overflow: auto;
   }
 
@@ -397,6 +397,7 @@
     align-content: start;
     /* align-items: center; */
     margin: 10px;
+    height: 40vh;
   }
 
   .item {

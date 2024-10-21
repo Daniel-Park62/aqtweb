@@ -12,6 +12,8 @@
   import RegService from "./components/RegService.svelte";
   import RegUser from "./components/RegUser.svelte";
   import RegConfig from "./components/RegConfig.svelte";
+  import TloadData from "./components/Tloaddata.svelte";
+    import Tloaddata from "./components/Tloaddata.svelte";
 	// onMount(async () => {
 	// 	const res = await fetch("/dashboard/testPassword");
 	// 	const row = await res.json();
@@ -35,6 +37,7 @@
 		{ nm: "▷ 서비스 등록", url: "regService", cnm: RegService },
 		{ nm: "▷ 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
 		{ nm: "▷ 테스트 실행", url: "texecjob", cnm: TexecJob },
+		{ nm: "▷ 원본현황", url: "tloaddata", cnm: Tloaddata },
 	];
 	$: chklabel = boxChecked ? "▶" : "◀";
 	let boxChecked = false;

@@ -7,14 +7,14 @@ const tloaddata = {
       return [];
     }
 
-    await aqtdb.query("select tenv from tmaster where code = ? limit 1",[args.tcode])
-    .then(rows => {
-      if ( rows[0]?.tenv == 'euc-kr') args.enc = ' charset euckr' 
-      else args.enc ='' ;
-    }) ;
+    await aqtdb.query("select tenv from tmaster where code = ? limit 1", [args.tcode])
+      .then(rows => {
+        if (rows[0]?.tenv == 'euc-kr') args.enc = ' charset euckr'
+        else args.enc = '';
+      });
     let etcond = '';
-    if (args.rcode) etcond = 'and (rcode = ' + args.rcode + ') ' ;
-    if (args.cond) etcond += ' and (' + args.cond + ') ' ;
+    if (args.rcode) etcond = 'and (rcode = ' + args.rcode + ') ';
+    if (args.cond) etcond += ' and (' + args.cond + ') ';
 
     aqtdb.query({
       dateStrings: true,
@@ -25,7 +25,7 @@ const tloaddata = {
                FROM tloaddata t  where tcode  = ? and t.uri rlike ? " + etcond + " order by o_stime limit ?, ?  "
     }
       , [args.tcode, args.uri, args.page * args.psize, +(args.psize)])
-      .then(rows )
+      .then(rows)
       .catch((e) => { throw e.sqlMessage });
   },
   findById: async (id) => {
@@ -39,13 +39,23 @@ const tloaddata = {
       date_format(cdate,'%Y-%m-%d %T') cdate \
       FROM tloaddata t left join tmaster m on (t.tcodew = m.code) where pkey  = ? limit 1"  }
       , [id])
-      .then(row  )
+      .then(row)
       .catch((e) => { throw e.sqlMessage });
   },
+  summary: async () => {
+    try {
+      const rows = await aqtdb.query("	SELECT tcode, date_format(min(o_stime),'%Y/%m/%d') stimef,date_format(max(o_stime),'%Y/%m/%d') stimet "
+        + " ,format(count(1),0) cnt, format(count(distinct(uri)),0) scnt, max(cdate) cdate FROM tloaddata GROUP BY tcode ");
+      return (rows);
+    } catch (e) {
+      throw e ;
+    }      // .then(rows => { return (rows) })
+    // .catch( e => { console.error(e); return next(e) });
+  },
   getTcodes: async () => {
-    aqtdb.query("	SELECT tcode, date_format(o_stime,'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ")
-    .then( rows  )
-    .catch((e) => { return next(e) });
+    aqtdb.query("	SELECT tcode, date_format(min(o_stime),'%Y/%m/%d') stime  FROM tloaddata GROUP BY tcode ")
+      .then(rows => { return (rows) })
+      .catch(e => { return next(e) });
   }
 }
 

@@ -132,23 +132,22 @@
   <span class="number-in">
     Page :<input
       type="number"
-      min="1"
+      min="1" style="text-align:center;"
       bind:value={pg}
       on:change={() => {
         conds.page = pg - 1;
       }}
     />
-    Page크기 :<input type="number" min="1" bind:value={conds.psize} />
+    Page크기 :<input type="number" min="1" style="text-align:center;" bind:value={conds.psize} />
   </span>
 
-  {#if rdata.length > conds.page}<button
+   <button
       on:click={() => {
         conds.page++ ;
       }}
     >
       Next &gt;</button
     >
-  {/if}
   {#if pg > 1}
     <button
       on:click={() => {
@@ -163,7 +162,7 @@
 <div class="fitem tbl" >
   <table style="overflow:scroll">
     <thead>
-      <tr widh="95%">
+      <tr width="95%">
         {#each columns as column}
           <th>
             <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
@@ -186,11 +185,11 @@
           >
             <td class="cmpid"><strong><em>{row.id}</em></strong></td>
             <td class="stime">{row.송신시간}</td>
-            <td class="elapsed">{Math.round(row.소요시간 * 1000) / 1000}</td>
+            <td style="text-align:right" class="elapsed">{row.소요시간 }</td>
             <td class="method">{row.method === null ? '': row.method}</td>
             <td class="uri">{row.uri}</td>
             <td class="rcode">{row.status}</td>
-            <td class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
+            <td style="text-align:right" class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
             <td class="rhead">{row.수신데이터 === null ? '':row.수신데이터}</td>
             <td class="dstport">{row.dstport}</td>
             <td class="appid">{row.appid}</td>
@@ -239,7 +238,7 @@
   }
   .number-in input {
     max-width: 60px;
-    text-align: right;
+    text-align: center;
   }
 
   .tbl {

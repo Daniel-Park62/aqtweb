@@ -21,9 +21,26 @@ import Trtable from "./Trtable.svelte";
 
   let tcodelist = [];
   let selected ;
+  let tcnt = '';
 
   async function getTRlistm() {
+
     conds.tcode = selected.code ;
+    const res = await fetch("/trlist/tcnt", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(conds),
+    });
+    if (res.ok) {
+      const rdata = await res.json();
+      tcnt = rdata[0].tcnt ;
+      console.log("trlist tcnt", rdata) ;
+    } else {
+      // rdata = Promise.resolve([]);
+      throw new Error(res);
+    }
   }
 
   async function getDownLoad() {
@@ -85,7 +102,7 @@ import Trtable from "./Trtable.svelte";
     <span class="number-in">응답코드 : <input  type="number" bind:value={conds.rcode} /></span>
     <span>기타 : <input type="text" bind:value={conds.cond} /></span>
     <button on:click={getTRlistm}>조회</button>
-    <!-- <button on:click={getDownLoad}>CSV</button> -->
+    <span>{tcnt}</span>
 
   </div>
   <div class="fitem">

@@ -84,12 +84,12 @@
             <tr on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
-              <td>{row.cumcnt.toLocaleString("ko-KR")}</td>
-              <td>{row.tcnt.toLocaleString("ko-KR")}</td>
-              <td>{row.avgt}</td>
-              <td>{row.scnt.toLocaleString("ko-KR")}</td>
-              <td>{row.fcnt.toLocaleString("ko-KR")}</td>
-              <td>{row.tcode}</td>
+              <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>
+              <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
+              <td align="right">{row.avgt}</td>
+              <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
+              <td align="right">{row.fcnt.toLocaleString("ko-KR")}</td>
+              <td align="right">{row.tcode}</td>
             </tr>
           {/each}
         {:catch error}

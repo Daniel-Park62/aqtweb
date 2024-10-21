@@ -5,6 +5,7 @@ const connection = {
   host: config.host,
   port: config.port,
   user: config.user,
+  dateStrings : true ,
   password: config.password,
   database: config.database
 } ;
