@@ -178,60 +178,11 @@ const res = await fetch("/tservice/part", {
     max-height: 80vh;
     overflow: auto;
   }
-  table {
-    height: auto;
-    border-collapse: collapse;
-    overflow: auto;
-  }
 
-  td,
-  th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  td {
-    overflow: hidden;
-    white-space: wrap;
-    text-overflow: clip;
-    font-size: 0.9rem;
-  }
-
-  th {
-    background-color: var(--th_bgcolor);
-    color: var(--th_color);
-  }
   #btns * {
     margin: 2px 8px;
     height: 1.7em;
   }  
-  /* tbody tr:nth-child(odd) td {
-	background-color: #fafbff;
-} */
-
-  thead th:first-child {
-    border-top-left-radius: 5px;
-  }
-
-  thead th:last-child {
-    border-top-right-radius: 5px;
-  }
-  .tList th {
-    text-align: center;
-    position: sticky;
-    top: 0;
-  }
-  tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-
-  tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-
-  tbody tr:hover {
-    background-color: #ddd;
-  }
 
   .svcid, .svckor, .svceng {
     word-break:break-all;

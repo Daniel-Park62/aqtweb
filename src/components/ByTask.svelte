@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import { getLvlnm } from "./Common.svelte";
   import TaskList from "./TaskList.svelte";
   import Trtable from "./Trtable.svelte";
@@ -60,7 +62,7 @@
     <TaskList bind:task bind:lvl bind:ischg />
   </div>
   <div class="sub-tit">
-    서비스별 현황({task != '' ? task + ' : ' :''} {getLvlnm(lvl)})
+    서비스별 현황({task != '' ? task + ':' :''} {getLvlnm(lvl)})
   </div>
   <div class="bottom">
     <table class="tbl-svc">
@@ -73,7 +75,7 @@
           <th on:click={sort("avgt")}>평균시간</th>
           <th on:click={sort("scnt")}>성공건수</th>
           <th on:click={sort("fcnt")}>실패건수</th>
-          <th on:click={sort("tcode")}>테스트ID</th>
+          <th >테스트ID</th>
         </tr>
       </thead>
       <tbody>
@@ -126,6 +128,7 @@
     flex: 1 1 0;
     overflow: auto;
   }
+/*
   .tbl-svc {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
@@ -156,4 +159,5 @@
   .tbl-svc tr:hover {
     background-color: #ddd;
   }
+    */
 </style>

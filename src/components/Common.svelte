@@ -3,6 +3,14 @@
   const typenm = { 0: "", 1: "배치", 2: "실시간" };
   const proArr = {0:"tcp",1:"http",2:"udp",3:"tmax"};
   const appids = [];
+  const appHist = {};
+  export function setHist(a,b) {
+    appHist[a] = b ;
+  }
+  export function getHist(a) {
+    return appHist[a] ;
+  }
+
   export function getLvlnm(l) {
     return lvlnm[l];
   }
@@ -29,7 +37,7 @@
     const res = await fetch("/regapp");
     if (res.status <= 300) {
       const rdata = await res.json();
-      rdata.forEach(r => {
+      rdata.forEach((/** @type {any[]} */ r) => {
         if ( appids.findIndex((a) => a.value == r[0]) == -1)
         appids.push( {value:r[0], name:r[0]} );
       });

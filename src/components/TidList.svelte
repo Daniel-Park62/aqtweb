@@ -91,7 +91,7 @@
     width: 100%;
     overflow-y: auto;
   }
-
+/*
   .tcode-status td,
   .tcode-status th {
     border: 1px solid rgb(214, 214, 230);
@@ -104,11 +104,8 @@
     top: 0;
   }
 
-  /* .tcode-status tr:nth-child(even) {
-    background-color: #f2f2f2;
-  } */
-
   .tcode-status tr:hover {
     background-color: #ddd;
   }
+    */
 </style>

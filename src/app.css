@@ -137,6 +137,8 @@ button:hover {
  table {
 	border-collapse: collapse;
 	overflow: auto;
+  overflow-x: scroll;
+  width: 100%;
 }
 
 td, th {
@@ -151,9 +153,11 @@ td {
 	font-size: 0.9rem;
 }
 
-th {
+thead {
 	background-color: var(--th_bgcolor);
 	color: var(--th_color);
+  position: sticky;
+  top: 0;
 }
 
 tbody tr:nth-child(odd) td {
@@ -176,9 +180,9 @@ tbody tr:last-child td:last-child {
 	border-bottom-right-radius: 5px;
 }
 
-tbody tr:hover td{
+/* tbody tr:hover td{
 	background-color: #ddd;
-}
+} */
 
 @media (prefers-color-scheme: light) {
   :root {

@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
 
-  let rdata = Promise.resolve([]);
+  let rdata = [];
   let curRow = {};
   let cols = [true,0, "User","Host", "사용자명",false,"",(new Date()).toLocaleDateString()];
   let newRow = [...cols];
@@ -97,10 +97,8 @@
       </tr>
     </thead>
     <tbody>
-      {#await rdata}
-        <p>...waiting</p>
-      {:then rows}
-        {#each rows as row }
+
+        {#each rdata as row }
           <tr on:click={() => (curRow = row)} >
             <td><input type="checkbox" bind:checked={row[0]} /></td>
             {#if row[1] === 0}
@@ -118,9 +116,6 @@
             {/if}
           </tr>
         {/each}
-      {:catch err}
-        <p style="color: red">{err.message}</p>
-      {/await}
     </tbody>
   </table>
 </div>
@@ -130,59 +125,7 @@
     max-height: 80vh;
     overflow: auto;
   }
-  table {
-    height: auto;
-    border-collapse: collapse;
-    overflow: auto;
-  }
-
-  td,
-  th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  td {
-    overflow: hidden;
-    white-space: wrap;
-    text-overflow: clip;
-    font-size: 0.9rem;
-  }
-
-  th {
-    background-color: var(--th_bgcolor);
-    color: var(--th_color);
-  }
-
-  /* tbody tr:nth-child(odd) td {
-	background-color: #fafbff;
-} */
-
-  thead th:first-child {
-    border-top-left-radius: 5px;
-  }
-
-  thead th:last-child {
-    border-top-right-radius: 5px;
-  }
-  .tList th {
-    text-align: center;
-    position: sticky;
-    top: 0;
-  }
-  tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-
-  tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-
-  tbody tr:hover {
-    background-color: #ddd;
-  }
-
-  .usrdesc {
+    .usrdesc {
     word-break:break-all;
   }
 </style>

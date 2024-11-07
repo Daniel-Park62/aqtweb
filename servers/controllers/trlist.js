@@ -76,7 +76,7 @@ router.post('/', async function (req, res, next) {
 
   aqtdb.query({
     dateStrings: true,
-    sql: "	SELECT t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
+    sql: "	SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
                   if(tport=0,dstport,tport) dstport, t.appid , tenv,if(sflag='2',errinfo,\
                    case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end ) `수신데이터`,  \
                   rlen `수신크기`," + (col1 ? "col1," : "") + (col2 ? "col2," : "") + " date_format(cdate,'%Y-%m-%d %T') cdate \

@@ -135,8 +135,8 @@
         throw err;
       });
   }
-  async function getdata() {
-    const res = await fetch("/texecjob");
+  async function getdata(a='1') {
+    const res = await fetch("/texecjob?"+a);
     if (res.status === 200) {
       rdata = await res.json();
     } else {

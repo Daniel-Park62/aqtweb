@@ -63,13 +63,13 @@
     <table class="tbl-svc">
       <thead>
         <tr >
-          <th on:click={sort("svcid")}>서비스ID</th>
-          <th on:click={sort("svckor")}>서비스명</th>
-          <th on:click={sort("cumcnt")}>누적건수</th>
-          <th on:click={sort("tcnt")}>패킷건수</th>
-          <th on:click={sort("avgt")}>평균시간</th>
-          <th on:click={sort("scnt")}>성공건수</th>
-          <th on:click={sort("fcnt")}>실패건수</th>
+          <th on:click={() => sort("svcid")}>서비스ID</th>
+          <th on:click={() => sort("svckor")}>서비스명</th>
+          <th on:click={() => sort("cumcnt")}>누적건수</th>
+          <th on:click={() => sort("tcnt")}>패킷건수</th>
+          <th on:click={() => sort("avgt")}>평균시간</th>
+          <th on:click={() => sort("scnt")}>성공건수</th>
+          <th on:click={() => sort("fcnt")}>실패건수</th>
         </tr>
       </thead>
       <tbody>
@@ -79,7 +79,7 @@
           {#each rows as row}
             <tr on:dblclick={()=> { conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
-              <td align="right">{row.svckor}</td>
+              <td>{row.svckor}</td>
               <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.avgt}</td>
@@ -121,13 +121,14 @@
     flex: 1 1 0;
     overflow: auto;
   }
+  /*
   .tbl-svc {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
     height: auto;
   }
-
+  
   .tbl-svc td,
   .tbl-svc th {
     border: 1px solid rgb(214, 214, 230);
@@ -151,4 +152,5 @@
   .tbl-svc tr:hover {
     background-color: #ddd;
   }
+    */
 </style>

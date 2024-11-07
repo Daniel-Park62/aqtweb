@@ -4,7 +4,7 @@
   
   let tick = 0 ;
   setInterval(() => {
-    tick += 1
+    tick += 1;
   }, 5000);
 
   $: getdata(tick) ;
@@ -13,7 +13,7 @@
   let svccnt = 999;
   let promi = Promise.resolve( {svccnt:0, rows:[{lvl:'1',svc_cnt:0 },{lvl:'2',svc_cnt:0}]});
   
-  async function getdata() {
+  async function getdata(x = 0) {
 //    try { 
      const res = await fetch("/dashboard/summary" ) ;
 

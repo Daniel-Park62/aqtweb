@@ -256,9 +256,9 @@
     background-color: #f2f2f2;
   } */
 
-  tr:hover {
+  /* tr:hover {
     background-color: #ddd;
-  }
+  } */
 
   tr td:focus {
     background: #eee;

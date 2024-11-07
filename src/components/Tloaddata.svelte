@@ -1,17 +1,19 @@
 <script>
   import { onMount } from "svelte";
+  import Tloadtable from "./Tloadtable.svelte";
 
-  let rdata = Promise.resolve([]);
-  let tcode = '';
+  let rdata = [];
+  let tcode = "";
 
   const columns = [
-    "테스트ID",
+    "TID",
     "From Date ",
     "To Date",
-    "데이터건수",
-    "서비스 수",
+    "건수",
+    "URI수",
     "등록일",
   ];
+  let sv_row;
 
   async function getdata() {
     try {
@@ -19,70 +21,74 @@
       if (res.ok) {
         rdata = await res.json();
       } else {
-        if (res.status === 404) throw new Error('404, Not found');
-        if (res.status === 500) throw new Error('500, internal server error');
-        throw new Error(res.status + ', unknown');
+        if (res.status === 404) throw new Error("404, Not found");
+        if (res.status === 500) throw new Error("500, internal server error");
+        throw new Error(res.status + ", unknown");
       }
     } catch (err) {
       throw new Error(err);
     }
   }
 
-  //  onMount(getdata);
+  onMount(getdata);
 </script>
 
-<div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button style="margin-left: auto" on:click={getdata}>조회</button>
-</div>
-<hr />
 <div class="tList">
-  <table>
-    <thead>
-      <tr>
-        {#each columns as column}
-          <th>
-            {column}
-          </th>
-        {/each}
-      </tr>
-    </thead>
-    <tbody>
-      {#await rdata}
-        <p>...waiting</p>
-      {:then rows}
-        {#each rows as row}
-        <tr
+  <div class="item">
+    <table>
+      <thead>
+        <tr>
+          {#each columns as column}
+            <th>
+              {column}
+            </th>
+          {/each}
+        </tr>
+      </thead>
+      <tbody>
+        {#each rdata as row}
+          <tr
             class={row.sflag}
-            on:dblclick={() => {
+            on:click={(event) => {
               tcode = row.tcode;
+              if (sv_row) sv_row.classList.remove("row-selected");
+              sv_row = event.target.parentElement.cells[0];
+              sv_row.classList.toggle("row-selected");
             }}
           >
-        <td class="tcode">{row.tcode}</td>
-        <td class="stimef">{row.stimef}</td>
-        <td class="stimet">{row.stimet}</td>
-        <td class="cnt" align="right">{row.cnt}</td>
-        <td class="scnt"  align="right">{row.scnt}</td>
-        <td class="cdate">{row.cdate}</td>
-      </tr>
+            <td class="tcode">{row.tcode}</td>
+            <td class="stimef">{row.stimef}</td>
+            <td class="stimet">{row.stimet}</td>
+            <td class="cnt" align="right">{row.cnt}</td>
+            <td class="scnt" align="right">{row.scnt}</td>
+            <td class="cdate">{row.cdate}</td>
+          </tr>
         {/each}
-      {:catch err}
-        <p style="color: red">{err.message}</p>
-      {/await}
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
+  <div class="item">
+    <Tloadtable bind:tcode />
+  </div>
 </div>
 
 <style>
   .tList {
-    max-height: 80vh;
-    overflow: auto;
+    /* max-height: 85vh; */
+    /* overflow: auto; */
+    display: flex;
   }
-  table {
-    height: auto;
+  .item {
+    max-height: 85vh;
     border-collapse: collapse;
     overflow: auto;
   }
-
+  .item:nth-child(1) {
+    flex: 0 0 550px;
+  }
+  table {
+    width : 96%;
+  }
   td,
   th {
     border: 1px solid rgb(214, 214, 230);
@@ -100,36 +106,11 @@
     background-color: var(--th_bgcolor);
     color: var(--th_color);
   }
-  #btns * {
-    margin: 2px 8px;
-    height: 1.7em;
-  }
   /* tbody tr:nth-child(odd) td {
 	background-color: #fafbff;
 } */
 
-  thead th:first-child {
-    border-top-left-radius: 5px;
+  .row-selected {
+    background-color: #f8c;
   }
-
-  thead th:last-child {
-    border-top-right-radius: 5px;
-  }
-  .tList th {
-    text-align: center;
-    position: sticky;
-    top: 0;
-  }
-  tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-
-  tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-
-  tbody tr:hover {
-    background-color: #ddd;
-  }
-
 </style>

@@ -4,6 +4,7 @@ const tloaddata = require('../db/tloaddata');
 router.get('/summary', async function (req, res, next) {
   try {
     const rdata = await tloaddata.summary();
+    
     res.json(rdata);
   } catch (err) {
     console.error(err);

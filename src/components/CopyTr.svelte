@@ -39,8 +39,9 @@
           //  console.log("createTR end", rdata) ;
     } else {
       rdata = Promise.resolve([]);
-      rmsg = res ;
-      throw new Error(res);
+      const err = await res.json() ;
+      rmsg = err.message ;
+      throw new Error(err);
     }
 
   }
