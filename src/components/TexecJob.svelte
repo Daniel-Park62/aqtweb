@@ -21,7 +21,7 @@
   };
   const statusnm = { 0: "미실행", 1: "실행중", 2: "작업완료", 3: "수행오류" };
 
-  let rdata = Promise.resolve([]);
+  let rdata = [] ; // Promise.resolve([]);
   let jobsts = 0;
   let copytr = "copytr";
   let edited = false;
@@ -150,7 +150,20 @@
     getdata();
     const res = await fetch("/tmaster/tsellist/"+$userid );
     tcodelist =   await res.json();
-  });
+
+    
+	  const el = document.querySelector("#processing");
+    el.animate([
+          { left: "0%", transform: "rotate(0deg)" },
+          { left: "50%", transform: "rotate(360deg)" }
+      ], {
+          duration: 2000,
+          fill: "forwards",
+          iterations : Infinity
+      });         
+    
+});
+  
 </script>
 
 <div class="main">
@@ -187,10 +200,7 @@
         </tr>
       </thead>
       <tbody>
-        {#await rdata}
-          <p>...waiting</p>
-        {:then rows}
-          {#each rows as row (row.pkey)}
+          {#each rdata as row (row.pkey)}
             {#if qselected == 4 || qselected == row.resultstat}
               <tr
                 class={"s"+row.resultstat}
@@ -212,16 +222,21 @@
                 <td class="resultstat">{statusnm[row.resultstat]}</td>
                 <td class="startDt">{row.startDt === null ? "" :row.startDt}</td>
                 <td class="endDt">{row.endDt === null ? "" : row.endDt }</td>
-                <td class="msg" style="width:15%">{row.msg ? row.msg.split("\n")[0] : ""}</td>
+                {#if (row.resultstat === 1)}
+                  <td style="width:20%; "
+                  >미수행{(row.tcnt - row.ccnt).toLocaleString('ko-KR')}건 <img height="20" src="./images/hg5m.gif"/>&nbsp;{(row.ccnt).toLocaleString('ko-KR')}건 처리</td>
+                {:else}
+                  <td class="msg" style="max-width:20%">{row.msg ? row.msg.split("\n")[0] : ""}</td>
+                {/if}
                 {#if (curRow === row)}
-                <td>◀</td>
+                  <td>◀</td>
                 {/if}
               </tr>
             {/if}
           {/each}
-        {:catch err}
+        <!-- {:catch err}
           <p style="color: red">{err.message}</p>
-        {/await}
+        {/await} -->
       </tbody>
     </table>
   </div>
@@ -429,20 +444,6 @@
     padding: 5px;
   }
 
-  td {
-    overflow: hidden;
-    white-space: wrap;
-    text-overflow: clip;
-    font-size: 0.9rem;
-  }
-
-  th {
-    background-color: var(--th_bgcolor);
-    color: var(--th_color);
-    position: sticky;
-    top: 0;
-  }
-
   .s0 {
     color :blue ;
   }
@@ -450,27 +451,5 @@
     color :red ;
     font-weight: bold;
   }
-  /* tbody tr:nth-child(odd) td {
-    background-color: #fafbff;
-  } */
 
-  thead th:first-child {
-    border-top-left-radius: 5px;
-  }
-
-  thead th:last-child {
-    border-top-right-radius: 5px;
-  }
-
-  tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-
-  tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-
-  /* table tr:hover {
-    background-color: #ddd;
-  } */
 </style>

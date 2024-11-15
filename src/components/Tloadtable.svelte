@@ -7,47 +7,39 @@
     {
       key: "id",
       title: "ID",
-      value: (v) => v.pkey,
-      headerClass: "text-left",
     },
     {
       key: "stime",
       title: "송신시간",
-      value: (v) => v.stime,
     },
     {
       key: "elapsed",
-      title: "소요시간",
-      value: (v) => v.elapsed,
+      title: "시간",
     },
     {
       key: "method",
       title: "Method",
-      value: (v) => v.method,
     },
     {
       key: "uri",
       title: "URI",
-      value: (v) => v.uri,
     },
     {
       key: "rlen",
-      title: "수신크기",
-      value: (v) => v.rlen,
+      title: "Len",
     },
     {
       key: "rdata",
       title: "수신데이터",
-      value: (v) => v.rdata,
     },
     {
       key: "port",
       title: "Port",
-      value: (v) => v.dstport,
     },
   ];
   let vid = "none";
   let pid;
+  let origin = 'org';
   export let tcode = "";
   let conds = {
     tcode: "",
@@ -132,6 +124,50 @@
 </script>
 
 <div>
+
+  <div class="fitem tbl">
+    <table>
+      <thead>
+        <tr>
+          {#each columns as column}
+            <th>
+              <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
+              {column.title}
+            </th>
+          {/each}
+        </tr>
+      </thead>
+      <tbody>
+        <!-- {#await rdata}
+          <p>...waiting</p>
+        {:then rows} -->
+        {#each rdata as row (row.pkey)}
+          <tr
+            class={row.sflag}
+            on:dblclick={() => {
+              pid = row.pkey;
+              vid = "block";
+            }}
+          >
+            <td class="id"><strong><em>{row.pkey}</em></strong></td>
+            <td class="stime">{row.stime}</td>
+            <td style="text-align:right" class="elapsed">{row.elapsed}</td>
+            <td class="method">{row.method === null ? "" : row.method}</td>
+            <td class="uri">{row.uri}</td>
+            <td style="text-align:right" class="rlen"
+              >{row.rlen.toLocaleString("ko-KR")}</td
+            >
+            <td class="rdata">{row.수신데이터 === null ? "" : row.rdata}</td>
+            <td class="dstport">{row.dstport}</td>
+
+          </tr>
+        {/each}
+        <!-- {:catch err}
+          <p style="color: red">{err.message}</p>
+        {/await} -->
+      </tbody>
+    </table>
+  </div>
   <div class="fitem pgset">
     <span class="number-in">
       Page :<input
@@ -169,16 +205,8 @@
     {/if}
   </div>
 
-  <div class="fitem tbl">
-    <SvelteTable
-      {columns}
-      rows={rdata}
-      rowKey="pkey"
-      on:clickRow={handleRowClick}
-    ></SvelteTable>
-  </div>
 </div>
-<DetailTR bind:vid bind:pid />
+<DetailTR bind:vid bind:pid bind:origin/>
 
 <style>
   .pgset {
@@ -203,11 +231,12 @@
   }
 
   .tbl {
-    overflow: scroll;
+    overflow: auto;
     max-height: 80vh;
+    width: auto ;
   }
-  :global(table) {
-    width:70% ;
+  thead {
+    background-color: rgb(209, 165, 69);
   }
   :global(.row-selected) {
     background-color: #f8c;

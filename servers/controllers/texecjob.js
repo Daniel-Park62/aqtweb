@@ -4,7 +4,9 @@ const aqtdb = require('../db/dbconn') ;
  
 router.get('/', function(req, res, next) {
   const cond = req.body.cond ? "where " + req.body.cond : "";
-  aqtdb.query("	SELECT a.* from texecjob a " + cond + " order by if(resultstat=3,1.5,resultstat) , startdt desc")
+  aqtdb.query("	SELECT a.pkey, jobkind, tcode, tdesc, tnum, dbskip, etc, in_file, limits, outlogdir, tuser, tdir, tenv, thost, tport, reqstartDt, exectype, resultstat, reqnum, repnum,  startDt, endDt, msg , b.tcnt,b.ccnt,b.ecnt " 
+          + " from texecjob a left join texecing b on(a.pkey = b.pkey) " 
+          + cond + " order by if(resultstat=3,1.5,resultstat) , startdt desc")
     .then( rows => res.json(rows) ) 
     .catch((e) => { return next(e) });
 });

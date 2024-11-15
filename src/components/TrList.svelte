@@ -8,6 +8,11 @@ import Trtable from "./Trtable.svelte";
 
   let vid = 'none';
   let pid ;
+  let mycond = {
+    rcode: '',
+    cond: "",
+    uri: ""
+  };
   
   let conds = {
     tcode: "",
@@ -24,7 +29,7 @@ import Trtable from "./Trtable.svelte";
   let tcnt = '';
 
   async function getTRlistm() {
-
+    [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
     conds.tcode = selected.code ;
     const res = await fetch("/trlist/tcnt", {
       method: "POST",
@@ -48,7 +53,7 @@ import Trtable from "./Trtable.svelte";
     tcodelist = await res.json(); 
     tcodelist.push({code:'%',name:'ALL'});
     selected = tcodelist[0];
-    conds.tcode = selected.code ;
+//    conds.tcode = selected.code ;
     // promise = Promise.resolve(tcodelist) ;
   });
   
@@ -57,7 +62,7 @@ import Trtable from "./Trtable.svelte";
 <div class="main" on:mouseenter={() => vid = 'none' }>
   <div class="cond fitem">
     <p>* 테스트ID : </p> 
-    <select bind:value={selected} >
+    <select bind:value={selected} on:change={()=> {conds.tcode = ''; conds.page=0}} >
         
       {#each tcodelist as tc}
       <option value={tc}>
@@ -65,9 +70,9 @@ import Trtable from "./Trtable.svelte";
       </option>
       {/each}
     </select>
-    <span>URI : <input type="text" bind:value={conds.uri} /></span>
-    <span class="number-in">응답코드 : <input  type="number" bind:value={conds.rcode} /></span>
-    <span>기타 : <input type="text" bind:value={conds.cond} /></span>
+    <span>URI : <input type="text" bind:value={mycond.uri} /></span>
+    <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
+    <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} /></span>
     <button on:click={getTRlistm}>조회</button>
     <span>{tcnt}</span>
 

@@ -2,6 +2,7 @@
  import { isLogged, userid } from "../aqtstore.js";
   export let vid = "none";
   export let pid = 0;
+  export let origin ='';
 
   let modal;
   let cdata;
@@ -39,7 +40,10 @@
     const array = new Uint32Array(1);
     // console.log("isLogged:", $isLogged);
     const nnn = window.crypto.getRandomValues(array)[0] ;
-    const res = await fetch("/trlist/" + pid + `?v=${nnn}`);
+    let urlv="/trlist/" + pid + `?v=${nnn}`; 
+    if (origin) urlv="/tloaddata/" + pid  + `?v=${nnn}`
+    
+    const res = await fetch(urlv);
     return await res.json();
   }
 
@@ -172,15 +176,17 @@
         <div class="ny1">
           <span class="title">{" 전문ID : " + rows[0].cmpid} </span>
           <nav>
-            <button on:click={async () => reSend(rows[0])}>재전송</button>
+            {#if !origin} <button on:click={async () => reSend(rows[0])}>재전송</button> {/if}
             <button on:click={async () => { cdata = getDetail(rows[0].pkey)}}>새로고침</button>
             <button on:click={async () => getNext(rows[0].pkey)}>다음</button>
             <button on:click={async () => getPrev(rows[0].pkey)}>이전</button>
+            {#if !origin} 
             <button
               on:click={async () => {
                 viewOrig(rows[0]);
               }}>원본보기</button
             >
+            {/if}
             <button on:click={closedtl}>Close</button>
           </nav>
         </div>
@@ -322,10 +328,10 @@
   }
   #odata {
     display: none;
+    border-left: 2px solid darkblue;
   }
   .cdata, #odata {
     flex: 1 1 0;
-    border-left: 2px solid darkblue;
   }
   /* .modal-content > div  {
     width : 95%;

@@ -151,6 +151,7 @@ td {
 	white-space : wrap;
 	text-overflow: clip;
 	font-size: 0.9rem;
+  vertical-align: top;
 }
 
 thead {

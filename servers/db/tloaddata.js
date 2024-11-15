@@ -17,7 +17,7 @@ const tloaddata = {
     if (args.cond) etcond += ' and (' + args.cond + ') ';
 
     try {
-      const rows = aqtdb.query({
+      const rows = await aqtdb.query({
         dateStrings: true,
         sql: "	SELECT pkey,  tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  \
                  '' appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, \
@@ -31,19 +31,22 @@ const tloaddata = {
       throw e.sqlMessage
     };
   },
-  findById: async (id) => {
-
-    aqtdb.query({
+  findById : async (id) => {
+    
+    try {
+    const rows = await aqtdb.query({
       dateStrings: true,
-      sql: "	SELECT pkey,  tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  \
+      sql: "	SELECT pkey, pkey cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  \
       '' appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, \
           case tenv when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,\
           case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,\
       date_format(cdate,'%Y-%m-%d %T') cdate \
-      FROM tloaddata t left join tmaster m on (t.tcodew = m.code) where pkey  = ? limit 1"  }
-      , [id])
-      .then(row)
-      .catch((e) => { throw e.sqlMessage });
+      FROM tloaddata t left join tmaster m on (t.tcode = m.code) where pkey  = ? limit 1"  }
+      , [id]) ;
+      return (rows);
+    } catch (e) {
+      throw e.sqlMessage
+    };
   },
   summary: async () => {
     try {

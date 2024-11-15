@@ -32,5 +32,16 @@ router.post('/', async function (req, res, next) {
   }
 });
 
+router.get('/:id', async function (req, res, next) {
+  
+  try {
+    const rdata = await tloaddata.findById(req.params.id);
+    res.send(rdata);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 
 module.exports = router;
