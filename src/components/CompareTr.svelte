@@ -20,8 +20,6 @@
   ];
   let vid = "none";
   let pid;
-  let parr ;
-  let pidx = 0;
   export let conds = {
     tcode: "",
     rcode: "",
@@ -186,7 +184,7 @@
   <table>
     <thead>
       <tr>
-        {#each columns as column }
+        {#each columns as column}
           <th>
             <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
             {column}
@@ -198,14 +196,12 @@
       <!-- {#await rdata}
         <p>...waiting</p>
       {:then rows} -->
-      {#each rdata as row , i (row.pkey)}
+      {#each rdata as row (row.pkey)}
         <tr
           class={row.sflag}
           on:dblclick={() => {
             pid = row.pkey;
             vid = "block";
-            pidx = i ;
-            parr = rdata.map( k => k.pkey ) ;
           }}
         >
           <td><input type="checkbox" bind:checked={row.chk} /></td>
@@ -230,7 +226,7 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid bind:pid bind:parr />
+<DetailTR bind:vid bind:pid />
 
 <style>
   .elapsed,

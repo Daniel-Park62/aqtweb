@@ -52,7 +52,7 @@
   //   tlist = await res.json(); 
   //   }
   //  conds.dstcode =  tlist[0].code ;
-    const reso = await fetch( "/tmaster/torglist" ) ;
+    const reso = await fetch( "tloaddata/getcodes" ) ;
     tlist_org = await reso.json(); 
     tlist_org.push({tcode:'%',sdate:'ALL'});
     conds.srccode = tlist_org[0].tcode;

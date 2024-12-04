@@ -58,12 +58,7 @@ const tloaddata = {
     }
   },
   getTcodes: async () => {
-    try {
-      const rows = await aqtdb.query("	SELECT tcode, date_format(min(o_stime),'%Y/%m/%d') stime FROM tloaddata GROUP BY tcode ");
-      return (rows);
-    } catch (e) {
-      throw e;
-    }
+    return await aqtdb.query("	SELECT tcode, date_format(min(o_stime),'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ");
   }
 }
 module.exports = tloaddata;

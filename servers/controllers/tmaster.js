@@ -12,14 +12,6 @@ router.get('/tsellist/:uid', function(req, res, next) {
   
 });
 
-router.get('/torglist', function(req, res, next) {
-
-  aqtdb.query("	SELECT tcode, date_format(o_stime,'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ")
-    .then( rows => res.json(rows) )
-    .catch((e) => { return next(e) });
-  
-});
-
 router.get('/', function(req, res, next) {
   const cond = req.body.cond ? "where " + req.body.cond : "";
   aqtdb.query("	SELECT a.*, a.desc1 name, 0 as chk from tmaster a " + cond)
@@ -72,7 +64,7 @@ router.post('/',async function(req, res, next) {
   ] ;
   const qstr = 'INSERT INTO tmaster ' +
 	             ' (code, appid, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv,pro) ' +
-               'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ,?) ' ;
+               'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ,?) ; commit ;' ;
   aqtdb.query(qstr, parms)
   .then(r => res.status(201).send({message: `${req.body.code}` + " 등록되었습니다."}) )
   .catch(e => { next( new Error(e.message) ) } ) ;           
@@ -97,7 +89,7 @@ router.put('/',function(req, res, next) {
   ] ;
   const qstr = 'UPDATE tmaster SET ' +
 	             ' `appid`=?, lvl=?, desc1=?, cmpCode=?, tdate=?, endDate=?, tdir=?, tuser=?, thost=?, tport=?, tenv=?,pro=? ' +
-               ' WHERE CODE = ?';
+               ' WHERE CODE = ? ; commit;';
   aqtdb.query(qstr, parms)
   .then(r => res.status(201).send({message: `${req.body.code}` + " 수정되었습니다."}) )
   .catch(e => { next( new Error(e.message) ) } ) ;           

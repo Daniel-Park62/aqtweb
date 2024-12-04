@@ -11,7 +11,7 @@ aqtdb.query("select encval, col1, col2 from tconfig limit 1")
     if (rows[0].col1) col1 = true;
     if (rows[0].col2) col2 = true;
   });
-
+aqtdb.query("SET character_set_connection = 'euckr';");
 router.get('/config', async function (req, res, next) {
   aqtdb.query("select encval, col1, col2 from tconfig limit 1")
     .then(rows => {
@@ -26,15 +26,22 @@ router.get('/config', async function (req, res, next) {
 });
 
 router.put('/change', async function (req, res, next) {
-
-  await aqtdb.query("update ttcppacket set sdata = ? where pkey = ?", [req.body.sdata, req.body.pkey])
+  let qstr = "update ttcppacket set sdata = ? where pkey = ? ; commit ;" ;
+/*   aqtdb.query("select tenv  from vtcppacket where pkey = ? limit 1", [req.body.pkey])
+  .then(rows => {
+    if (rows[0].tenv == 'euc-kr') qstr = "update ttcppacket set sdata = convert( ? using euckr)  where pkey = ? ; commit ;";
+  })
+  .catch() ;
+  console.log(qstr) ;
+ */
+  await aqtdb.query(qstr, [req.body.sdata, req.body.pkey])
     .then(r => res.status(201).send({ message: `${req.body.pkey}` + " 등록되었습니다." }))
     .catch(e => { next(new Error(e.message)) });
 });
 
 router.put('/redo', async function (req, res, next) {
 
-  await aqtdb.query("update ttcppacket t, tloaddata o  SET t.sdata = o.sdata WHERE t.pkey = ? AND t.cmpid = o.pkey",
+  await aqtdb.query("update ttcppacket t, tloaddata o  SET t.sdata = o.sdata WHERE t.pkey = ? AND t.cmpid = o.pkey ; commit ;",
     [req.body.pkey])
     .then(r => res.status(201).send({ message: `${req.body.pkey}` + " 등록되었습니다." }))
     .catch(e => { next(new Error(e.message)) });
@@ -76,11 +83,11 @@ router.post('/', async function (req, res, next) {
 
   aqtdb.query({
     dateStrings: true,
-    sql: "	SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
+    sql: "	SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, svctime `소요시간`, method, uri, sflag, rcode status, \
                   if(tport=0,dstport,tport) dstport, t.appid , tenv,if(sflag='2',errinfo,\
                    case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end ) `수신데이터`,  \
                   rlen `수신크기`," + (col1 ? "col1," : "") + (col2 ? "col2," : "") + " date_format(cdate,'%Y-%m-%d %T') cdate \
-                  FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where tcode = ? and t.uri rlike ? " + etcond + " order by o_stime limit ?, ? "
+                  FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where t.tcode = ? and t.uri rlike ? " + etcond + " order by o_stime limit ?, ? "
   }, [req.body.tcode, req.body.uri, req.body.page * req.body.psize, +(req.body.psize)])
     .then(rows => { return res.json(rows) })
     .catch((e) => { return next(e) });

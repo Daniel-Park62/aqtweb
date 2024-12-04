@@ -2,6 +2,8 @@
  import { isLogged, userid } from "../aqtstore.js";
   export let vid = "none";
   export let pid = 0;
+  export let parr = [] ;
+  export let pidx = 0;
   export let origin ='';
 
   let modal;
@@ -37,35 +39,49 @@
   }
 
   async function getDetail(pid) {
-    const array = new Uint32Array(1);
+//    const array = new Uint32Array(1);
     // console.log("isLogged:", $isLogged);
-    const nnn = window.crypto.getRandomValues(array)[0] ;
-    let urlv="/trlist/" + pid + `?v=${nnn}`; 
-    if (origin) urlv="/tloaddata/" + pid  + `?v=${nnn}`
+//    const nnn = window.crypto.getRandomValues(array)[0] ;
+    let urlv="/trlist/" + pid ; //+ `?v=${nnn}`; 
+    if (origin) urlv="/tloaddata/" + pid  ; // + `?v=${nnn}`
     
     const res = await fetch(urlv);
     return await res.json();
   }
 
-  async function getNext(pid) {
-    const res = await fetch("/trlist/next/" + pid);
+  async function getNext(pkey) {
+    if (pidx >= parr.length -1) {
+      window.alert('다음자료가 없습니다.');
+      return ;
+    }
+    cdata = await getDetail(parr[++pidx]);
+/* 
+    const res = await fetch("/trlist/" + parr[++pidx]);
     if (res.ok) cdata = await res.json();
     else {
       const err = await res.json();
       window.alert(err.message);
     }
+    */    
     odata.ok = false;
     if (document.getElementById("odata").style.display == "block")
       getOrig(cdata[0]);
   }
 
-  async function getPrev(pid) {
-    const res = await fetch("/trlist/prev/" + pid);
+  async function getPrev(pkey) {
+    if (pidx < 1) {
+      window.alert('이전자료가 없습니다.');
+      return ;
+    }
+    cdata = await getDetail(parr[--pidx]);
+
+/*     const res = await fetch("/trlist/" + parr[--pidx]);
     if (res.ok) cdata = await res.json();
     else {
       const err = await res.json();
       window.alert(err.message);
     }
+ */
     odata.ok = false;
     if (document.getElementById("odata").style.display == "block")
       getOrig(cdata[0]);

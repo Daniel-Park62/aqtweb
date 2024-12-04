@@ -39,6 +39,8 @@
   ];
   let vid = "none";
   let pid;
+  let parr = [];
+  let pidx = 0;
   let origin = 'org';
   export let tcode = "";
   let conds = {
@@ -141,11 +143,13 @@
         <!-- {#await rdata}
           <p>...waiting</p>
         {:then rows} -->
-        {#each rdata as row (row.pkey)}
+        {#each rdata as row, i (row.pkey)}
           <tr
             class={row.sflag}
             on:dblclick={() => {
               pid = row.pkey;
+              parr = rdata.map(e => e.pkey) ;
+              pidx = i ;
               vid = "block";
             }}
           >
@@ -206,7 +210,7 @@
   </div>
 
 </div>
-<DetailTR bind:vid bind:pid bind:origin/>
+<DetailTR bind:vid bind:pid bind:parr bind:pidx bind:origin />
 
 <style>
   .pgset {
