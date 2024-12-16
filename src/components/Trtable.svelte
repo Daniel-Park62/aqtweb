@@ -4,7 +4,6 @@
   import { onMount } from "svelte";
 
   const columns = [
-    "",
     "ID",
     "송신시간",
     "소요시간",
@@ -67,12 +66,15 @@
       });
   }
 
-  onMount(async () => {
-    const res = await fetch("/trlist/config");
-    const r = await res.json();
-    if (r.col1) columns[10] = r.col1;
-    if (r.col2) columns[11] = r.col2;
-    console.log(r, columns);
+  onMount( () => {
+    fetch("/trlist/config")
+    .then( res =>  res.json())
+    .then( r => {
+      if (r.col1) columns[10] = r.col1;
+      if (r.col2) columns[11] = r.col2;
+      // console.log(r, columns);
+    }) 
+    .catch( err => console.error(err)) ;
     // promise = Promise.resolve(tcodelist) ;
   });
   async function getTRlist() {
@@ -186,6 +188,9 @@
   <table>
     <thead>
       <tr>
+        <th  on:click={() => {
+//          rdata.forEach(r => r.chk = !r.chk ) ;
+        }}>c</th>
         {#each columns as column }
           <th>
             <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
@@ -208,7 +213,9 @@
             parr = rdata.map( k => k.pkey ) ;
           }}
         >
+
           <td><input type="checkbox" bind:checked={row.chk} /></td>
+
           <td class="cmpid"><strong><em>{row.id}</em></strong></td>
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>

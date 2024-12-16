@@ -4,22 +4,21 @@
   import { onMount } from "svelte";
 
   const columns = [
-    "",
     "ID",
     "송신시간",
     "소요시간",
-    "Method",
-    "URI",
-    "Status",
     "수신크기",
     "수신데이터",
-    "Port",
-    "APID",
-    "",
-    "",
+    "소요시간(원)",
+    "수신데이터(원)",
+    "증감",
+    "URI",
+    "Status",
   ];
   let vid = "none";
   let pid;
+  let parr ;
+  let pidx = 0;
   export let conds = {
     tcode: "",
     rcode: "",
@@ -65,20 +64,12 @@
       });
   }
 
-  onMount(async () => {
-    const res = await fetch("/trlist/config");
-    const r = await res.json();
-    if (r.col1) columns[10] = r.col1;
-    if (r.col2) columns[11] = r.col2;
-    console.log(r, columns);
-    // promise = Promise.resolve(tcodelist) ;
-  });
   async function getTRlist() {
     // console.log("entr ...", conds) ;
     if (conds.tcode == undefined) return Promise.resolve([]);
     pg = conds.page + 1;
     conds.apps = $authApps;
-    const res = await fetch("/trlist", {
+    const res = await fetch("/tloaddata/compareData", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -123,21 +114,6 @@
     }
   }
 
-  function sortBy(column) {
-    const sameColumn = column === sortColumn;
-    const currentlyAscending = sortDirection === "ASC";
-    const unsetSort = sameColumn && !currentlyAscending;
-
-    sortColumn = unsetSort ? null : column;
-    sortDirection = unsetSort
-      ? null
-      : sameColumn && currentlyAscending
-        ? "DESC"
-        : "ASC";
-  }
-
-  //  $: display = sortColumn && sortDirection ? sortData() : [...data];
-  //  $: conds.page = pg - 1 ;
 </script>
 
 <div class="fitem pgset">
@@ -184,7 +160,10 @@
   <table>
     <thead>
       <tr>
-        {#each columns as column}
+        <th  on:click={() => {
+//          rdata.forEach(r => r.chk = !r.chk ) ;
+        }}>c</th>
+        {#each columns as column }
           <th>
             <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
             {column}
@@ -196,28 +175,29 @@
       <!-- {#await rdata}
         <p>...waiting</p>
       {:then rows} -->
-      {#each rdata as row (row.pkey)}
+      {#each rdata as row , i (row.pkey)}
         <tr
           class={row.sflag}
           on:dblclick={() => {
             pid = row.pkey;
             vid = "block";
+            pidx = i ;
+            parr = rdata.map( k => k.pkey ) ;
           }}
         >
+
           <td><input type="checkbox" bind:checked={row.chk} /></td>
+
           <td class="cmpid"><strong><em>{row.id}</em></strong></td>
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
-          <td class="method">{row.method === null ? "" : row.method}</td>
+          <td style="text-align:right" class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
+          <td class="rhead">{row.수신 === null ? "" : row.수신  }</td>
+          <td style="text-align:right" class="elapsed">{row.원소요시간}</td>
+          <td class="rhead">{row.원수신 === null ? "" : row.원수신 }</td>
+          <td class={row.소요시간 < row.원소요시간 ? "redt" : "bluet"}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
           <td class="uri">{row.uri}</td>
-          <td class="rcode">{row.status}</td>
-          <td style="text-align:right" class="rlen"
-            >{row.수신크기.toLocaleString("ko-KR")}</td
-          >
-          <td class="rhead">{row.수신데이터 === null ? "" : row.수신데이터}</td>
-          <td class="dstport">{row.dstport}</td>
-          <td class="appid">{row.appid}</td>
-          {#if row.col1}<td class="col1">{row.col1}</td>{/if}
+          <td class="rcode">{row.rcode}</td>
         </tr>
       {/each}
       <!-- {:catch err}
@@ -226,9 +206,16 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid bind:pid />
+<DetailTR bind:vid bind:pid bind:parr />
 
 <style>
+  .redt {
+    color: red;
+  }
+
+  .bluet {
+    color: blue;
+  }
   .elapsed,
   .rlen,
   .rcode,

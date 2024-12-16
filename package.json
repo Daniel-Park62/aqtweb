@@ -1,6 +1,6 @@
 {
   "name": "aqt-web",
-  "version": "0.0.0",
+  "version": "1.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port 5972",
@@ -10,16 +10,16 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
-    "svelte": "^4.2.18",
-    "vite": "^5.4.1"
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "svelte": "^4.2.19",
+    "vite": "^5.4.11"
   },
   "dependencies": {
     "buffer": "^6.0.3",
     "cors": "^2.8.5",
-    "express": "^4.21.0",
-    "mariadb": "^3.3.2",
-    "oracledb": "^6.6.0",
+    "express": "^4.21.1",
+    "mariadb": "^3.4.0",
+    "oracledb": "^6.7.0",
     "svelte-table": "^0.6.3"
   }
 }

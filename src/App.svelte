@@ -12,7 +12,7 @@
   import RegService from "./components/RegService.svelte";
   import RegUser from "./components/RegUser.svelte";
   import RegConfig from "./components/RegConfig.svelte";
-  import TloadData from "./components/Tloaddata.svelte";
+  import CompareList from "./components/CompareList.svelte";
     import Tloaddata from "./components/Tloaddata.svelte";
 	// onMount(async () => {
 	// 	const res = await fetch("/dashboard/testPassword");
@@ -25,7 +25,7 @@
 		{ nm: "테스트별 수행현황", url: "bytcode", cnm: ByTcode },
 		{ nm: "업무별 수행현황", url: "bytask", cnm: ByTask },
 		// { nm: "상세수행현황", url: "detail", cnm: DashBoard },
-		// { nm: "수행결과비교", url: "comp", cnm: DashBoard },
+		{ nm: "수행결과비교", url: "compare", cnm: CompareList },
 		// { nm: "전문처리현황", url: "view", cnm: DashBoard },
 		{ nm: "전문상세검색", url: "TrList", cnm: TrList },
 	];
