@@ -41,7 +41,6 @@ import Trtable from "./Trtable.svelte";
     if (res.ok) {
       const rdata = await res.json();
       tcnt = rdata[0].tcnt ;
-      console.log("trlist tcnt", rdata) ;
     } else {
       // rdata = Promise.resolve([]);
       throw new Error(res.statusText);

@@ -1,68 +1,62 @@
 <script>
-	import { onMount } from "svelte";
-	import ByTcode from "./components/ByTcode.svelte";
-	import DashBoard from "./components/DashBoard.svelte";
-	import ByTask from "./components/ByTask.svelte";
-	import RegApp from "./components/RegApp.svelte";
-	import RegTcode from "./components/RegTcode.svelte";
-	import TrList from "./components/TrList.svelte";
-	import TexecJob from "./components/TexecJob.svelte";
-	import LoginComp from "./components/LoginComp.svelte";
-	import { isLogged, userid } from "./aqtstore";
-  import RegService from "./components/RegService.svelte";
-  import RegUser from "./components/RegUser.svelte";
-  import RegConfig from "./components/RegConfig.svelte";
-  import CompareList from "./components/CompareList.svelte";
-    import Tloaddata from "./components/Tloaddata.svelte";
-	// onMount(async () => {
-	// 	const res = await fetch("/dashboard/testPassword");
-	// 	const row = await res.json();
-	// 	if (res.ok) setCheckPass(row[0].pass1);
-	// });
+import "./app.css";
+import { onMount } from "svelte";
+import ByTcode from "./components/ByTcode.svelte";
+import DashBoard from "./components/DashBoard.svelte";
+import ByTask from "./components/ByTask.svelte";
+import RegApp from "./components/RegApp.svelte";
+import RegTcode from "./components/RegTcode.svelte";
+import TrList from "./components/TrList.svelte";
+import TexecJob from "./components/TexecJob.svelte";
+import LoginComp from "./components/LoginComp.svelte";
+import { isLogged, userid } from "./aqtstore";
+import RegService from "./components/RegService.svelte";
+import RegUser from "./components/RegUser.svelte";
+import RegConfig from "./components/RegConfig.svelte";
+import CompareList from "./components/CompareList.svelte";
+import Tloaddata from "./components/Tloaddata.svelte";
+// onMount(async () => {
+// 	const res = await fetch("/dashboard/testPassword");
+// 	const row = await res.json();
+// 	if (res.ok) setCheckPass(row[0].pass1);
+// });
 
-	let mitems = [
-		{ nm: "총괄 현황", url: "dashboard", cnm: DashBoard },
-		{ nm: "테스트별 수행현황", url: "bytcode", cnm: ByTcode },
-		{ nm: "업무별 수행현황", url: "bytask", cnm: ByTask },
-		// { nm: "상세수행현황", url: "detail", cnm: DashBoard },
-		{ nm: "수행결과비교", url: "compare", cnm: CompareList },
-		// { nm: "전문처리현황", url: "view", cnm: DashBoard },
-		{ nm: "전문상세검색", url: "TrList", cnm: TrList },
-	];
+let mitems = [
+    { nm: "총괄 현황", url: "dashboard", cnm: DashBoard },
+    { nm: "테스트별 수행현황", url: "bytcode", cnm: ByTcode },
+    { nm: "업무별 수행현황", url: "bytask", cnm: ByTask },
+    // { nm: "상세수행현황", url: "detail", cnm: DashBoard },
+    { nm: "수행결과비교", url: "compare", cnm: CompareList },
+    // { nm: "전문처리현황", url: "view", cnm: DashBoard },
+    { nm: "전문상세검색", url: "TrList", cnm: TrList },
+];
 
-	let mitems2 = [
-		{ nm: "▷ 기초정보", url: "regConfig", cnm: RegConfig },
-		{ nm: "▷ App 등록", url: "regapp", cnm: RegApp },
-		{ nm: "▷ 사용자 등록", url: "regUser", cnm: RegUser },
-		{ nm: "▷ 서비스 등록", url: "regService", cnm: RegService },
-		{ nm: "▷ 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
-		{ nm: "▷ 테스트 실행", url: "texecjob", cnm: TexecJob },
-		{ nm: "▷ 원본현황", url: "tloaddata", cnm: Tloaddata },
-	];
-	$: chklabel = boxChecked ? "▶" : "◀";
-	let boxChecked = false;
-	let selected = mitems[0];
-	function select_item(item) {
-		selected = item;
-		// console.log(selected) ;
-	}
-</script>
+let mitems2 = [
+    { nm: "▷ 기초정보", url: "regConfig", cnm: RegConfig },
+    { nm: "▷ App 등록", url: "regapp", cnm: RegApp },
+    { nm: "▷ 사용자 등록", url: "regUser", cnm: RegUser },
+    { nm: "▷ 서비스 등록", url: "regService", cnm: RegService },
+    { nm: "▷ 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
+    { nm: "▷ 테스트 실행", url: "texecjob", cnm: TexecJob },
+    { nm: "▷ 원본현황", url: "tloaddata", cnm: Tloaddata },
+];
+$: chklabel = boxChecked ? "▶" : "◀";
+let boxChecked = false;
+let selected = mitems[0];
+function select_item(item) {
+    selected = item;
+    // console.log(selected) ;
+}</script>
 
 {#if !$isLogged}
-	<LoginComp />
+	<LoginComp></LoginComp>
 {:else}
 	<main class="container">
-		<input
-			class="column"
-			type="checkbox"
-			name=""
-			id="checkbtn"
-			bind:checked={boxChecked}
-		/>
+		<input class="column" type="checkbox" name id="checkbtn" bind:checked="{boxChecked}" />
 		<label for="checkbtn" style="color:blue">{chklabel}</label>
 		<div class="column menu">
 			<img src="/images/Logo.png" alt="" />
-			<p />
+			<p></p>
 			<img src="/images/result.png" alt="" />
 			<ul>
 				{#each mitems as item}
@@ -84,10 +78,11 @@
 
 		<div class="column right">
 			<div class="job_name">{selected.nm}</div>
-			<div class="main-scr"><svelte:component this={selected.cnm} /></div>
+			<div class="main-scr"><svelte:component this="{selected.cnm}"></svelte:component></div>
 		</div>
 	</main>
 {/if}
+
 
 <style>
 	main {

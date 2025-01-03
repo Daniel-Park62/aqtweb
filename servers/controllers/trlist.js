@@ -89,8 +89,8 @@ router.post('/', async function (req, res, next) {
                   rlen `수신크기`," + (col1 ? "col1," : "") + (col2 ? "col2," : "") + " date_format(cdate,'%Y-%m-%d %T') cdate \
                   FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where t.tcode = ? and t.uri rlike ? " + etcond + " order by o_stime limit ?, ? "
   }, [req.body.tcode, req.body.uri, req.body.page * req.body.psize, +(req.body.psize)])
-    .then(rows => { return res.json(rows) })
-    .catch((e) => { return next(e) });
+  .then(rows => { return res.json(rows) })
+  .catch((e) => { return next(e) });
 
   // const rows = await conn.query({dateStrings:true, sql: 'select * from vtrxlist '})  ;
   // const scnt = await conn.query('select count(1) as scnt from tservice') ;

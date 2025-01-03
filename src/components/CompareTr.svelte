@@ -7,11 +7,11 @@
     "ID",
     "송신시간",
     "소요시간",
+    "소요시간(원)",
+    "증감",
     "수신크기",
     "수신데이터",
-    "소요시간(원)",
     "수신데이터(원)",
-    "증감",
     "URI",
     "Status",
   ];
@@ -26,7 +26,8 @@
     psize: 20,
     cond: "",
     uri: "",
-    task: "",
+    valchk: false,
+    valiance: 0,
     apps: "",
   };
 
@@ -45,7 +46,7 @@
     const datas = rdata
       .filter((r) => r.chk)
       .map((r) => {
-        return [r.pkey, r.id, r.tid, $userid];
+        return [r.pkey, r.id, conds.tcode, $userid];
       });
     // console.log(datas) ;
     fetch("/trequest", {
@@ -151,6 +152,16 @@
       &lt; Prev
     </button>
   {/if}
+  &nbsp;&nbsp;
+    * 소요시간증감값 조건 :<input
+      type="checkbox" style="height: 1em;width: 1em; position: relative; "
+      bind:checked={conds.valchk}
+    />
+    <input class="number-in"
+      type="number"
+      style="text-align:center;"
+      bind:value={conds.valiance}
+    />이상
   <div style="margin-left: auto">
     <button on:click={reSend}>재전송</button>
     <button on:click={getDownLoad}>CSV</button>
@@ -191,11 +202,11 @@
           <td class="cmpid"><strong><em>{row.id}</em></strong></td>
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
+          <td style="text-align:right" class="elapsed">{row.원소요시간}</td>
+          <td class={row.소요시간 < row.원소요시간 ? "redt" : "bluet"}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
           <td style="text-align:right" class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
           <td class="rhead">{row.수신 === null ? "" : row.수신  }</td>
-          <td style="text-align:right" class="elapsed">{row.원소요시간}</td>
           <td class="rhead">{row.원수신 === null ? "" : row.원수신 }</td>
-          <td class={row.소요시간 < row.원소요시간 ? "redt" : "bluet"}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
           <td class="uri">{row.uri}</td>
           <td class="rcode">{row.rcode}</td>
         </tr>

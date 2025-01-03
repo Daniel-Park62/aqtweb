@@ -31,7 +31,7 @@ import CompareTr from "./CompareTr.svelte";
   async function getTRlistm() {
     [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
     conds.tcode = selected.code ;
-    const res = await fetch("/trlist/tcnt", {
+    const res = await fetch("/tloaddata/compareTcnt", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,8 +40,8 @@ import CompareTr from "./CompareTr.svelte";
     });
     if (res.ok) {
       const rdata = await res.json();
-      tcnt = rdata[0].tcnt ;
-      console.log("trlist tcnt", rdata) ;
+      tcnt = rdata.tcnt ;
+      // console.log("trlist tcnt", rdata) ;
     } else {
       // rdata = Promise.resolve([]);
       throw new Error(res.statusText);
@@ -72,7 +72,7 @@ import CompareTr from "./CompareTr.svelte";
     </select>
     <span>URI : <input type="text" bind:value={mycond.uri} /></span>
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
-    <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} /></span>
+    <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} placeholder=" tobe:a.* , 원본:b.*"/></span>
     <button on:click={getTRlistm}>조회</button>
     <span>{tcnt}</span>
 

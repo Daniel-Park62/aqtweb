@@ -32,6 +32,15 @@ router.post('/', async function (req, res, next) {
   }
 });
 
+router.post('/compareTcnt', async function (req, res, next) {
+  try {
+    const rdata = await tloaddata.compareTcnt(req.body);
+    res.send(rdata[0]);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
 router.post('/compareData', async function (req, res, next) {
   try {
     const rdata = await tloaddata.compareData(req.body);

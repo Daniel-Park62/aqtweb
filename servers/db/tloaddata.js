@@ -1,4 +1,14 @@
 const aqtdb = require('./dbconn');
+function makeCond(pcond) {
+  if (!pcond.psize) {
+    return "" ;
+  }
+  let etcond = '';
+  if (pcond.rcode) etcond = 'and (a.rcode = ' + pcond.rcode + ') ';
+  if (pcond.cond) etcond += ' and (' + pcond.cond + ') ';
+  if (pcond.valchk && pcond.valiance) etcond += ` and (a.svctime - b.svctime) > ${pcond.valiance} ` ;
+  return etcond ;
+}
 
 const tloaddata = {
   find: async (args) => {
@@ -60,26 +70,41 @@ const tloaddata = {
   getTcodes: async () => {
     return await aqtdb.query("	SELECT tcode, date_format(min(o_stime),'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ");
   },
-  compareData: async (pcond) => {
-    if (!pcond.psize) {
-      return;
-    }
-    let etcond = '';
-    if (pcond.rcode) etcond = 'and (t.rcode = ' + pcond.rcode + ') ';
-    if (pcond.cond) etcond += ' and (' + pcond.cond + ') ';
-    if (pcond.apps) etcond += ' and (t.appid rlike \'' + pcond.apps + '\')';
+  compareTcnt: async (pcond) => {
+
+    let etcond = makeCond(pcond) ;
 
     try {
       const rows = await aqtdb.query({
         dateStrings: true,
-        sql: "SELECT '' chk, t.pkey, t.cmpid id, t.uri , t.stime `송신시간`, t.rtime `수신시간`, t.svctime `소요시간`, t.rcode , \
-          case tenv when 'euc-kr' then CAST( t.sdata AS CHAR CHARSET euckr) else cast(t.sdata as char) end 송신,   \
-          case tenv when 'euc-kr' then CAST( t.rdata AS CHAR CHARSET euckr) else cast(t.rdata as char) end 수신,   \
-          t.rlen `수신크기`, b.svctime `원소요시간` , \
+        sql: "SELECT concat(format(count(1),0) ,'건') tcnt  \
+          FROM vtcppacket a JOIN tloaddata B ON (a.cmpid = B.pkey)  \
+          LEFT JOIN tservice s ON (a.appid = s.appid AND a.uri = s.svcid ) \
+          WHERE a.tcode = ? and a.appid rlike ? " + etcond 
+      }, [pcond.tcode, pcond.apps]);
+      return (rows);
+    } catch (e) {
+      console.error(e); throw (e)
+    };
+  },
+
+  compareData: async (pcond) => {
+    if (!pcond.psize) {
+      return;
+    }
+    let etcond = makeCond(pcond) ;
+    // console.log(etcond, pcond);
+    try {
+      const rows = await aqtdb.query({
+        dateStrings: true,
+        sql: "SELECT '' chk, a.pkey, a.cmpid id, a.uri , a.stime `송신시간`, a.rtime `수신시간`, a.svctime `소요시간`, a.rcode , \
+          case tenv when 'euc-kr' then CAST( a.sdata AS CHAR CHARSET euckr) else cast(a.sdata as char) end 송신,   \
+          case tenv when 'euc-kr' then CAST( a.rdata AS CHAR CHARSET euckr) else cast(a.rdata as char) end 수신,   \
+          a.rlen `수신크기`, b.svctime `원소요시간` , \
           case tenv when 'euc-kr' then CAST( b.rdata AS CHAR CHARSET euckr) else cast(b.rdata as char) end 원수신  \
-          FROM vtcppacket t JOIN tloaddata B ON (t.cmpid = B.pkey)  \
-          LEFT JOIN tservice s ON (t.appid = s.appid AND t.uri = s.svcid ) \
-          WHERE t.tcode = ? and t.appid rlike ? " + etcond + " order by t.o_stime limit ?, ? "
+          FROM vtcppacket a JOIN tloaddata B ON (a.cmpid = B.pkey)  \
+          LEFT JOIN tservice s ON (a.appid = s.appid AND a.uri = s.svcid ) \
+          WHERE a.tcode = ? and a.appid rlike ? " + etcond + " order by a.o_stime limit ?, ? "
       }, [pcond.tcode, pcond.apps, pcond.page * pcond.psize, +(pcond.psize)]);
       return (rows);
     } catch (e) {
