@@ -10,39 +10,59 @@
     Tooltip,
     Legend,
     ArcElement,
-    CategoryScale
+    CategoryScale,
   } from "chart.js";
 
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, ChartDataLabels );
   ChartJS.register({
   id: "doughnutInnerText",
+
   afterDraw: (chart, args, options) => {
-    const width = chart.width,
-      height = chart.height,
-      ctx = chart.ctx;
+    const { ctx, chartArea:{width,height}} = chart ;
+
     ctx.restore();
-    const fontSize = 18 // (height / 160).toFixed(2);
-    ctx.font = "13px Arial";
+    ctx.font = "14px sans-serif";
     ctx.textBaseline = "top";
-    const espnVal = "누적진척율:" 
-              + (data.datasets[0].data[0] * 100 / (data.datasets[0].data[0] + data.datasets[0].data[1])).toFixed(2) + "%"; 
+    ctx.fillStyle = "#6a40ff" ;
+    const ltext = "총 " + ( chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1])
+                                .toLocaleString() + "건" ;
+    let textX = Math.round((width - ctx.measureText(ltext).width) / 2),
+        textY = height + 5;
+
+    ctx.fillText(ltext, textX, textY  );
+      // console.log("espnVal", espnVal, textX, textY) ;
+    const espnVal = 
+                ( chart.data.datasets[0].data[0] * 100 / 
+                ( chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1])).toFixed(2) + "%"; 
     if (espnVal) {
-      const textX = Math.round((width - ctx.measureText(espnVal).width) / 2),
-      textY = height / 1.3;
-      ctx.fillText(espnVal, textX, textY);
+      textX = Math.round((width - ctx.measureText(espnVal).width) / 2) ;
+      ctx.font = "bold 16px sans-serif";
+
+      ctx.fillText(espnVal, textX, textY - 16);
       // console.log("espnVal", espnVal, textX, textY) ;
     }
     ctx.save();
   },
 });
 
+const formatf = (v,ctx) => {
+          const vsum = ctx.chart.data.datasets[0].data[0] + ctx.chart.data.datasets[0].data[1];
+          if (v === 0  || (v * 100 / vsum) < 5 ) return "" ;
+          
+          return ctx.chart.data.labels[ctx.dataIndex].padStart(7,' ') 
+          +  v.toLocaleString().padStart(6,' ')  + " 건" ;
+  };
+
   const options = {
     responsive: false,
+    aspectRatio: 1.8,
+    maintainAspectRatio: false,
+    onResize: function(chart, size) {
+      chart.update();
+    },
     plugins: {
-      doughnutInnerText: {
-            myVal: "88 %",
-            fontSize: 11
-          },
+/*       doughnutInnerText: {
+          }, */
       legend: {
         display: false,
       },
@@ -50,38 +70,52 @@
         enabled:false
       },
       title: {
-        display: false,
-        text: '전체누적진척율',
-        fontSize: 11,
+        display: true,
+        text: '누적진척율',
+        fontSize: 10,
+        padding: {top: 5, left: 0, right: 0, bottom: 0}
       },
       datalabels: {
-        color: 'black',
+        color: 'darkblue',
+        align:"center",
         display: true,
         font: {
-          weight: 'bold',
-          size: 10
+          size: 11,
+          weight: "lighter",
+          family: "Verdana" ,
         },
-        formatter: function(v,ctx) {
-          return ctx.chart.data.labels[ctx.dataIndex] + v + " 건" ;
-        },
+        formatter: formatf ,
       }
     },
-    maintainAspectRatio: false,
     animation: false,
   };
 
   const data = {
+    clabel: "누적진척율",
     labels: ["수행서비스\n", "미수행서비스\n"],
     datasets: [
       {
         data: [300, 50],
-        backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C"],
+        backgroundColor: ["#ed487f", "#46BFBD", "#FDB45C"],
         hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870"],
         circumference: 180, // 도넛 반 자르기
         rotation: 270,
+        cutout : "55%",
+        borderRadius: 5,
       },
     ],
   };
+  const data2 = JSON.parse(JSON.stringify(data)) ;
+  data2.clabel = "테스트성공률" ;
+  data2.labels = ["성공건수\n","실패건수\n"];
+  const data3 = JSON.parse(JSON.stringify(data)) ;
+  const data4 = JSON.parse(JSON.stringify(data)) ;
+  data4.clabel = "테스트성공률" ;
+  data4.labels = ["성공건수\n","실패건수\n"];
+  data2.datasets[0].backgroundColor = data4.datasets[0].backgroundColor = ["#F7464A", "#46BFBD"] ;
+  const options2 = JSON.parse(JSON.stringify(options)) ;
+  options2.plugins.title.text="테스트성공률" ;
+  options2.plugins.datalabels.formatter = formatf ;
 
   let tick = 0;
   setInterval(() => {
@@ -109,6 +143,14 @@
     if (res.ok) {
       data.datasets[0].data[0] = datas.rows[0].svc_cnt * 1;
       data.datasets[0].data[1] = datas.svccnt - datas.rows[0].svc_cnt * 1 ;
+
+      data2.datasets[0].data[0] = datas.rows[0].scnt * 1 ;
+      data2.datasets[0].data[1] = datas.rows[0].data_cnt * 1 - datas.rows[0].scnt * 1 ;
+      data3.datasets[0].data[0] = datas.rows[1].svc_cnt * 1;
+      data3.datasets[0].data[1] = datas.svccnt - datas.rows[1].svc_cnt * 1 ;
+      data4.datasets[0].data[0] = datas.rows[1].scnt * 1 ;
+      data4.datasets[0].data[1] = datas.rows[1].data_cnt * 1 - datas.rows[1].scnt * 1 ;
+
       return datas;
     } else {
       throw new Error(res.statusText);
@@ -133,7 +175,7 @@
       <div class="cap">단위테스트</div>
       <div class="items">
         <div class="item1 item">
-          <Doughnut {data} plugins={[ChartDataLabels]} height={140} {options} />
+          <Doughnut {data} {options} plugins={[ChartDataLabels]} height=120vh  />
           <!-- <div>전체누적진척율</div>
           <div class="per">{(datas.rows[0].svc_cnt * 100 / datas.svccnt).toFixed(2) }%</div>
           <span class="lbl">대상서비스 :</span><span>{datas.svccnt.toLocaleString("ko-KR")}</span><br>
@@ -141,14 +183,15 @@
         </div>
 
         <div class="item2 item">
-          <div>테스트성공률</div>
+          <Doughnut data={data2} options={options2} plugins={[ChartDataLabels]} height=120vh  />
+<!--           <div>테스트성공률</div>
           <div class="per">{datas.rows[0].srate * 1}%</div>
           <span class="lbl">수행건수 :</span><span
             >{(datas.rows[0].data_cnt * 1).toLocaleString("ko-KR")}</span
           ><br />
           <span class="lbl">성공건수 :</span><span
             >{(datas.rows[0].scnt * 1).toLocaleString("ko-KR")}</span
-          >
+          > -->
         </div>
       </div>
     </div>
@@ -156,7 +199,8 @@
       <div class="cap">통합테스트</div>
       <div class="items">
         <div class="item1 item">
-          <div>전체누적진척율</div>
+          <Doughnut data={data3} {options} plugins={[ChartDataLabels]} height=120vh />
+<!--           <div>전체누적진척율</div>
           <div class="per">
             {(((datas.rows[1].svc_cnt ?? 0) * 100) / datas.svccnt).toFixed(2)}%
           </div>
@@ -165,11 +209,12 @@
           ><br />
           <span class="lbl">진행건수 :</span><span
             >{(datas.rows[1].svc_cnt * 1).toLocaleString("ko-KR")}</span
-          >
+          > -->
         </div>
 
         <div class="item2 item">
-          <div>테스트성공률</div>
+          <Doughnut data={data4} options={options2} plugins={[ChartDataLabels]} height=120vh  />
+<!--           <div>테스트성공률</div>
           <div class="per">
             {(
               ((datas.rows[1].scnt || 0) * 100) /
@@ -181,7 +226,7 @@
           ><br />
           <span class="lbl">성공건수 :</span><span
             >{(datas.rows[1].scnt * 1).toLocaleString("ko-KR")}</span
-          >
+          > -->
         </div>
       </div>
     </div>
@@ -212,14 +257,14 @@
   }
 
   .item {
-    border: solid 1px darkblue;
+    border: solid 1px #6868a9;
     box-shadow: 3px 3px 5px #8585a8;
     border-radius: 6px;
     flex: 1 1 0;
     margin: 0 1em;
-    padding: 0.3em 2em;
+    padding: 0.3em 1em;
     font-size: 1.2rem;
-    text-align: center;
+    justify-content: center;
   }
   .item .per {
     font-size: 1.5rem;

@@ -26,7 +26,7 @@ let mitems = [
     { nm: "테스트별 수행현황", url: "bytcode", cnm: ByTcode },
     { nm: "업무별 수행현황", url: "bytask", cnm: ByTask },
     // { nm: "상세수행현황", url: "detail", cnm: DashBoard },
-    { nm: "수행결과비교", url: "compare", cnm: CompareList },
+    { nm: "수행결과원본비교", url: "compare", cnm: CompareList },
     // { nm: "전문처리현황", url: "view", cnm: DashBoard },
     { nm: "전문상세검색", url: "TrList", cnm: TrList },
 ];
@@ -86,7 +86,7 @@ function select_item(item) {
 
 <style>
 	main {
-		font-family: "나눔바른고딕", "Lato", "Nanum Barun Gothic", sans-serif;
+		font-family: "나눔바른고딕", "Lato", "Nanum Barun Gothic", "sans-serif";
 		text-align: center;
 		padding: 0;
 		width: 100%;
