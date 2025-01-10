@@ -241,7 +241,7 @@
     </table>
   </div>
   <hr />
-  <div class="itemx" style="display:flex; justify-content: flex-start; ">
+  <div class="flex py-1 ">
     <button
       on:click={() => {
         jobsts = 1;

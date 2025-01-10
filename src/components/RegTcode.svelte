@@ -222,7 +222,7 @@
   </table>
 </div>
 <Modal>
-  <h2>{jobnm != "등록" ? curRow.code : ""} 테스트코드 {jobnm}</h2>
+  <h2 class="h-10 text-lg text-blue-800 font-bold">{jobnm != "등록" ? curRow.code : ""} 테스트코드 {jobnm}</h2>
   <div class="items">
     <div class="item in_label">테스트코드:</div>
     <div>
@@ -301,10 +301,15 @@
   .item {
     vertical-align: text-bottom;
   }
-
+/*   h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: darkblue;
+  } */
   .in_value {
     border: 1px solid silver;
     border-radius: 5px;
+    font-size: 14px;
   }
   .in_label {
     text-align: end;

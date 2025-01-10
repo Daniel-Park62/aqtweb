@@ -16,7 +16,7 @@
   let tcode = "";
   let dtls = [];
   let promise = Promise.resolve([]);
-
+  
   let sortBy = { col: "svcid", ascending: true };
 
   $: tcode, promise = getDetail(tcode);
@@ -32,14 +32,14 @@
     // Modifier to sorting function for ascending or descending
     let sortModifier = sortBy.ascending ? 1 : -1;
 
-    let sort = (a, b) =>
+    let usort = (a, b) =>
       a[column] < b[column]
         ? -1 * sortModifier
         : a[column] > b[column]
         ? 1 * sortModifier
         : 0;
 
-    dtls = dtls.sort(sort);
+    dtls = dtls.sort(usort);
     promise = Promise.resolve(dtls);
   };
   // onMount(async () => {
@@ -77,7 +77,7 @@
           <p>...waiting</p>
         {:then rows}
           {#each rows as row}
-            <tr on:dblclick={()=> { conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}>
+            <tr on:dblclick={()=> { conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}        >
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>
@@ -95,7 +95,7 @@
   </div>
 </div>
 <Modal>
-	<Trtable bind:conds/>
+	<Trtable bind:conds />
 </Modal>
 
 <style>
@@ -121,6 +121,7 @@
     flex: 1 1 0;
     overflow: auto;
   }
+
   /*
   .tbl-svc {
     font-family: Arial, Helvetica, sans-serif;

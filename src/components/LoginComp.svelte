@@ -1,8 +1,8 @@
 <script>
-	import { authApps, isLogged,userid } from "../aqtstore";
+	import { authApps, isLogged, userid } from "../aqtstore";
 	import ChangePass from "./ChangePass.svelte";
-	
-/* 	import {setContext }  from "svelte";
+
+	/* 	import {setContext }  from "svelte";
 
 	setContext('gettcode', {
 		getTcode: async () => tcodelist 
@@ -34,9 +34,9 @@
 	}
 
 	async function login3() {
-		if (password === 'aqtuser'){
-			showModal = true ;
-      return ;
+		if (password === "aqtuser") {
+			showModal = true;
+			return;
 		}
 		fetch("/logonchk", {
 			method: "POST",
@@ -59,9 +59,9 @@
 				if (data.hg == 0) error = "허가되지않은 IP.";
 				else if (data.chk) {
 					$isLogged = data.admin == "1" ? 2 : 1;
-					$authApps = data.apps ;
-					$userid = usrid ;
-//					getTcodelist() ;
+					$authApps = data.apps;
+					$userid = usrid;
+					//					getTcodelist() ;
 					if (error) error = "";
 				} else {
 					error = "비밀번호가 맞지않습니다.";
@@ -75,8 +75,6 @@
 	async function login2() {
 		$isLogged = 1;
 	}
-
-
 </script>
 
 <div class="login-wrapper">
@@ -131,7 +129,9 @@
 		color: yellow;
 		margin-top: 20px;
 	}
-
+	input {
+		font-size: 18px;
+	}
 	.form-control {
 		width: 100%;
 		height: 48px;

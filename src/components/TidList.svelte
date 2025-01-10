@@ -15,7 +15,7 @@
     uri: "",
     task:""
   };
-
+  let sv_row;
   let promise = Promise.resolve([]);
   async function getdata() {
       const res = await fetch( "/dashboard/list/"+$authApps);
@@ -50,9 +50,15 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={() => tcode=row.code} on:dblclick={()=> { conds.tcode=row.code;conds.page=0; getModal().open()}} >
+          <tr on:click={() => {
+            if (sv_row) sv_row.classList.remove("row-selected");
+            sv_row = event.target.parentElement.cells[0];
+            sv_row.classList.toggle("row-selected");
+            tcode=row.code;
+            }}
+              on:dblclick={()=> { conds.tcode=row.code;conds.page=0; getModal().open()}} >
             <td>{row.code}</td>
-            <td>{row.desc1}</td>
+            <td align="left">{row.desc1}</td>
             <td>{row.tdate}</td>
             <td>{getLvlnm(row.lvl)}</td>
             <td>{row.thost}</td>
@@ -77,21 +83,16 @@
 </Modal>
 
 <style>
-  /* .title {
-    text-align: justify;
-  } */
 
-  /* .container {
-    height: auto;
-    overflow: auto;
-  } */
+
   .tcode-status {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
     overflow-y: auto;
   }
-/*
+
+  /*
   .tcode-status td,
   .tcode-status th {
     border: 1px solid rgb(214, 214, 230);

@@ -245,19 +245,20 @@ const formatf = (v,ctx) => {
 
   .subm {
     flex: 1 1 0;
-    padding: 1em;
+    padding: 0.5em;
     text-align: left;
     color: #3455a3;
   }
   .subm > .cap {
-    padding: 0 2em;
+    padding: 0 1em;
     color: silver;
+    font-family: "맑은 고딕";
     font-weight: bold;
     font-size: 1.4rem;
   }
 
   .item {
-    border: solid 1px #6868a9;
+    border: solid 1px #e4e4ed;
     box-shadow: 3px 3px 5px #8585a8;
     border-radius: 6px;
     flex: 1 1 0;

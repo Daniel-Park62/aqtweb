@@ -1,4 +1,5 @@
 <script>
+    import { query_selector_all } from "svelte/internal";
   import { authApps, userid } from "../aqtstore.js";
   import DetailTR from "./DetailTR.svelte";
   import { onMount } from "svelte";
@@ -34,7 +35,7 @@
 
   //  let rdata = Promise.resolve([]);
   let rdata = [];
-
+  let achk = '□';
   let sortColumn = null;
   let sortDirection = null;
   let pg = conds.page + 1;
@@ -49,6 +50,10 @@
       .map((r) => {
         return [r.pkey, r.id, r.tid, $userid];
       });
+      if (datas.length === 0) {
+        alert("선택된 자료가 없습니다.") ;
+        return ;
+      }
     // console.log(datas) ;
     fetch("/trequest", {
       method: "POST",
@@ -189,8 +194,14 @@
     <thead>
       <tr>
         <th  on:click={() => {
-//          rdata.forEach(r => r.chk = !r.chk ) ;
-        }}>c</th>
+          const clist = document.querySelectorAll(".chkb");
+          const chk = achk === '□' ;
+          for(let i=0; i<clist.length; i++) {
+              clist[i].checked =  chk;
+              rdata[i].chk = chk ;
+          }
+          if (chk) achk = '▣' ; else achk = '□' ;
+        }}>{achk}</th>
         {#each columns as column }
           <th>
             <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
@@ -214,7 +225,7 @@
           }}
         >
 
-          <td><input type="checkbox" bind:checked={row.chk} /></td>
+          <td><input class="chkb" type="checkbox" bind:checked={row.chk} /></td>
 
           <td class="cmpid"><strong><em>{row.id}</em></strong></td>
           <td class="stime">{row.송신시간}</td>

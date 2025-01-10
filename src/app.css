@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "맑은 고딕", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -79,7 +79,7 @@ label {
 
 input, button, select, textarea {
 	font-family: inherit;
-	font-size: inherit;
+	font-size: 18px;
 	-webkit-padding: 0.4em 0;
 	padding: 0.4em;
 	margin: 0 0 0.5em 0;
@@ -120,7 +120,7 @@ button {
 	font-size: 1rem;
 	padding: 3px 0.8rem ;
 	margin: 0 0.3rem ;
-
+  border-radius: 6px;
 }
 
 button:disabled {

@@ -77,7 +77,7 @@ function select_item(item) {
 		</div>
 
 		<div class="column right">
-			<div class="job_name">{selected.nm}</div>
+			<div class="job_name">☞ {selected.nm}</div>
 			<div class="main-scr"><svelte:component this="{selected.cnm}"></svelte:component></div>
 		</div>
 	</main>
@@ -86,7 +86,7 @@ function select_item(item) {
 
 <style>
 	main {
-		font-family: "나눔바른고딕", "Lato", "Nanum Barun Gothic", "sans-serif";
+		font-family: "맑은 고딕", "Lato", "Nanum Barun Gothic", "sans-serif";
 		text-align: center;
 		padding: 0;
 		width: 100%;
@@ -157,9 +157,9 @@ function select_item(item) {
 		color: orangered;
 		text-transform: uppercase;
 		text-shadow: 1px 1px 0px #bdbdbd;
-		font-size: 1.5em;
-		font-weight: 500;
-		padding: 5px;
+		font-size: 1.2em;
+		font-weight: 400;
+		padding: 4px;
 		margin-bottom: 2px;
 		border: 1px solid rgb(245, 239, 239);
 		border-radius: 6px;
