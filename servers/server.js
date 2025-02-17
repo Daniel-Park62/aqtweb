@@ -29,6 +29,10 @@ app.use(cors());
 console.log(__dirname);
 app.use(express.static(path.join(__dirname, "../public")));
 //app.use(express.static('public'));
+app.use((req,res,next) => {
+   console.log(req.originalUrl, req.ip) ;
+   next();
+});
 app.get('/', (req, res) => {
    res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
 });

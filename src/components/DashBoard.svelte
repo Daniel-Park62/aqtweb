@@ -1,7 +1,7 @@
 <script>
   import { onMount, afterUpdate, beforeUpdate } from "svelte";
   import TidList from "./TidList.svelte";
-
+  import {rooturl} from '../aqtstore' ;
   import { Doughnut } from "svelte-chartjs";
   import ChartDataLabels from 'chartjs-plugin-datalabels';
   import {
@@ -61,8 +61,6 @@ const formatf = (v,ctx) => {
       chart.update();
     },
     plugins: {
-/*       doughnutInnerText: {
-          }, */
       legend: {
         display: false,
       },
@@ -136,7 +134,7 @@ const formatf = (v,ctx) => {
 
   async function getdata(x = 0) {
     //    try {
-    const res = await fetch("/dashboard/summary");
+    const res = await fetch($rooturl+ "/dashboard/summary");
 
     datas = await res.json();
 
