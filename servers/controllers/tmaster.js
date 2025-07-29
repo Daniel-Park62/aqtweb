@@ -8,12 +8,12 @@ router.get('/tsellist/:uid', function(req, res, next) {
   aqtdb.query("	SELECT code, desc1 name, cmpcode,enddate  from tmaster m join \
              (select apps from taqtuser where usrid = ?) u where m.appid rlike u.apps",[usrid])
     .then( rows => res.json(rows) ) 
-    .catch((e) => { console.log(e.message);return next(e) });
+    .catch((e) => { console.log(e.message); next(e) });
   
 });
 
 router.get('/', function(req, res, next) {
-  const cond = req.body.cond ? "where " + req.body.cond : "";
+  const cond = req.body?.cond ? "where " + req.body.cond : "";
   aqtdb.query("	SELECT a.*, a.desc1 name, 0 as chk from tmaster a " + cond)
     .then( rows => res.json(rows) ) 
     .catch((e) => { return next(e) });

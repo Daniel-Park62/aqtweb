@@ -40,6 +40,6 @@
   }
 </style>
 
-<button on:click={() => sortBy(column)} data-sort={sort}>
+<button on:click={() => sortBy=column} data-sort={sort}>
   {column}
 </button>

@@ -9,6 +9,7 @@ function errorHandler(err, req, res, next) {
   /* eslint-enable no-unused-vars */
   // const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
   // res.status(statusCode);
+  console.error(err);
   res.status(501) ;
   res.json({
     message: err.message,

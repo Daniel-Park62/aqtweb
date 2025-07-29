@@ -18,15 +18,16 @@ router.get('/summary', async function (req, res, next) {
     svccnt: 0, // 서비스 수
     rows: []
   } ;
+
   try {
     result.rows = await aqtdb.query({ dateStrings: true, 
                 sql: 'select lvl, svc_cnt,data_cnt,scnt, if(data_cnt>0,round(scnt*100/data_cnt,2),0) srate from tlevel ' }) ;
     let row = await aqtdb.query('select count(1) as scnt from tservice') ;
     result.svccnt =  row[0].scnt || 0 ;
 
-    return await res.json(result) ;
+    res.json(result) ;
   } catch (e){
-    
+    console.error("summary:",e);
     return next(e) ;
   } ;
   

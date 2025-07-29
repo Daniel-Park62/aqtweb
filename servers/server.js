@@ -5,6 +5,7 @@ const cors = require('cors');
 app.set('trust proxy', true);
 app.use(express.json()); 
 app.use(express.urlencoded( {extended : false } ));
+app.use(cors());
 
 const path = require('path');
 const { notFound, errorHandler } = require('./middle/errors');
@@ -24,15 +25,14 @@ const tresult = require('./controllers/tresult') ;
 const basicSetup = require('./controllers/basicSetup') ;
 const tloadData = require('./controllers/tloadData') ;
 
-app.use(cors());
-
 console.log(__dirname);
 app.use(express.static(path.join(__dirname, "../public")));
-//app.use(express.static('public'));
-app.use((req,res,next) => {
+
+/* app.use((req,res,next) => {
    console.log(req.originalUrl, req.ip) ;
    next();
 });
+ */
 app.get('/', (req, res) => {
    res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
 });

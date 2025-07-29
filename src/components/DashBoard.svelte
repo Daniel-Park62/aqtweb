@@ -103,7 +103,7 @@ const formatf = (v,ctx) => {
       },
     ],
   };
-  const data2 = JSON.parse(JSON.stringify(data)) ;
+  const data2 = structuredClone(data) ; // JSON.parse(JSON.stringify(data)) ;
   data2.clabel = "테스트성공률" ;
   data2.labels = ["성공건수\n","실패건수\n"];
   const data3 = JSON.parse(JSON.stringify(data)) ;
@@ -133,9 +133,8 @@ const formatf = (v,ctx) => {
   };
 
   async function getdata(x = 0) {
-    //    try {
-    const res = await fetch($rooturl+ "/dashboard/summary");
 
+    const res = await fetch($rooturl+ "/dashboard/summary");
     datas = await res.json();
 
     if (res.ok) {
