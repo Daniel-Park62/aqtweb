@@ -1,4 +1,5 @@
 const express    = require('express');
+
 const app        = express();
 const port = process.argv[2] ?? process.env.AQTWPORT ?? 5972;
 const cors = require('cors');
@@ -53,7 +54,7 @@ app.use('/aqtSetup', basicSetup) ;
 app.use('/tloaddata', tloadData) ;
 
 app.listen(port,'0.0.0.0', () => {
-   console.log(`Server is up at port ${port}`);
+   console.log((new Date()).toLocaleString('lt'), `Server is up at port ${port}`);
 });
 
 app.use(notFound);
