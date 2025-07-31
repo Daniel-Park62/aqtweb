@@ -1,41 +1,38 @@
 const express = require('express');
 const router = express.Router();
 const aqtdb = require('../db/dbconn') ;
- 
+
+const tmasterDao = require('../dao/tmasterDao') ;
+// uid 별 접근가능 app 에 해당하는 tmaster list 
 router.get('/tsellist/:uid', function(req, res, next) {
   let usrid = req.params.uid || '';
-
-  aqtdb.query("	SELECT code, desc1 name, cmpcode,enddate  from tmaster m join \
-             (select apps from taqtuser where usrid = ?) u where m.appid rlike u.apps",[usrid])
+  tmasterDao.listByUid(usrid)
     .then( rows => res.json(rows) ) 
-    .catch((e) => { console.log(e.message); next(e) });
-  
-});
+    .catch((e) => {  next(e) });
 
+});
+// tmaster 전체 목록
 router.get('/', function(req, res, next) {
-  const cond = req.body?.cond ? "where " + req.body.cond : "";
-  aqtdb.query("	SELECT a.*, a.desc1 name, 0 as chk from tmaster a " + cond)
+  // const cond = req.body?.cond ? "where " + req.body.cond : "";
+  tmasterDao.listAll()
     .then( rows => res.json(rows) ) 
-    .catch((e) => { return next(e) });
+    .catch((e) => { next(e) });
 });
-
+// 테스트데이터 원본 -> 작업영역 복제 (tloaddata -> ttcppacket)
 router.post('/copyTr', function(req, res, next) {
-  let parms = [
-    req.body.srccode,
-    req.body.dstcode,
-    (req.body.uri > '' ? "uri rlike '" + req.body.uri + "' and "  : '')  + req.body.cond,
-    req.body.cnt
-  ] ;
+  let parms = {
+    srccode : req.body.srccode,
+    dstcode : req.body.dstcode,
+    cond : (req.body.uri > '' ? "uri rlike '" + req.body.uri + "' and "  : '')  + req.body.cond,
+    cnt : req.body.cnt
+  };
   // console.log(parms) ;
-  const qstr = req.body.cnt > 0 ? 'call sp_loaddata2(?,?,?,?) ' : 'call sp_loaddata(?,?,?) ';
-  aqtdb.query(qstr, parms) 
-    .then(r => {
-      // console.log("ok:",r[0]) ;
-      res.status(201).send(r[0] );
-      aqtdb.query('call sp_summary(?)',[req.body.dstcode]) ;
+  tmasterDao.copyTr(parms)
+    .then( r => {
+      console.log("h:",r)
+      res.status(201).send(r);
     })
     .catch( e => {
-      console.error("error:",e) ;
       next(e);
     }) 
     ;           
@@ -45,7 +42,8 @@ router.post('/copyTr', function(req, res, next) {
 router.post('/',async function(req, res, next) {
   const row = await aqtdb.query("	SELECT count(1) cnt from tmaster where code = ?",[req.body.code]) ;
   if (row[0].cnt > 0 ) {
-    return res.status(406).send('** already exists code') ;
+    next(new Error(`이미 존재하는 코드입니다(${req.body.code})`)) ;
+    return ;
   }
   let parms = [
     req.body.code,
@@ -67,7 +65,7 @@ router.post('/',async function(req, res, next) {
                'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ,?) ; commit ;' ;
   aqtdb.query(qstr, parms)
   .then(r => res.status(201).send({message: `${req.body.code}` + " 등록되었습니다."}) )
-  .catch(e => { next( new Error(e.message) ) } ) ;           
+  .catch(e => { next( e ) } ) ;           
 
 });
 
@@ -92,7 +90,7 @@ router.put('/',function(req, res, next) {
                ' WHERE CODE = ? ; commit;';
   aqtdb.query(qstr, parms)
   .then(r => res.status(201).send({message: `${req.body.code}` + " 수정되었습니다."}) )
-  .catch(e => { next( new Error(e.message) ) } ) ;           
+  .catch(e =>  next( e )  ) ;           
 
 });
 
@@ -102,7 +100,7 @@ router.delete('/',function(req, res, next) {
   const qstr = 'delete from tmaster where code in (?)' ; // + codes;
   aqtdb.query(qstr, [req.body.codes]) 
   .then(r => res.status(201).send(r))
-  .catch(e => next(new Error(e.message))) ;
+  .catch(e => next(e)) ;
 
 });
 router.put('/erasetr',function(req, res, next) {
@@ -111,7 +109,7 @@ router.put('/erasetr',function(req, res, next) {
   const qstr = 'delete from ttcppacket where tcode in (?)' 
   aqtdb.query(qstr, [req.body.codes])
   .then(r => res.status(201).send(r))
-  .catch(e => next(new Error(e.message))) ;
+  .catch(e => next(e)) ;
 
 });
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aqtdb">  
+  <select id="tmaster_ListUid">
+    SELECT code, desc1 name, cmpcode,enddate  from tmaster m join 
+             (select apps from taqtuser where usrid = #{uid}) u 
+      where m.appid rlike u.apps
+  </select>
+  <select id="tmaster_ListAll">
+    SELECT a.*, a.desc1 name, 0 as chk from tmaster a 
+  </select>
+  <select id="yourProcedureCall" statementType="CALLABLE" parameterType="map" resultType="map">
+  {call your_procedure_name(#{param1, mode=IN, jdbcType=VARCHAR}, #{param2, mode=OUT, jdbcType=INTEGER, javaType=java.lang.Integer})}
+</select>
+</mapper>

@@ -1,15 +1,11 @@
 function notFound(req, res, next) {
-  res.status(404);
-  const error = new Error(`🔍 - Not Found - ${req.originalUrl}`);
-  next(error);
+  res.status(404).send(`🔍 - Not Found -> ${req.originalUrl}` );
 }
 
 /* eslint-disable no-unused-vars */
 function errorHandler(err, req, res, next) {
-  /* eslint-enable no-unused-vars */
-  // const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-  // res.status(statusCode);
-  console.error(err);
+  
+  console.error((new Date()).toLocaleString('lt'),`:${req.originalUrl}:`, err.message);
   res.status(501) ;
   res.json({
     message: err.message,

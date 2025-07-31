@@ -12,7 +12,7 @@
     ArcElement,
     CategoryScale,
   } from "chart.js";
-
+ 
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, ChartDataLabels );
   ChartJS.register({
   id: "doughnutInnerText",
