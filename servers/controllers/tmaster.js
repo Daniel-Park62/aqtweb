@@ -9,7 +9,6 @@ router.get('/tsellist/:uid', function(req, res, next) {
   tmasterDao.listByUid(usrid)
     .then( rows => res.json(rows) ) 
     .catch((e) => {  next(e) });
-
 });
 // tmaster 전체 목록
 router.get('/', function(req, res, next) {
