@@ -9,7 +9,34 @@
   <select id="tmaster_ListAll">
     SELECT a.*, a.desc1 name, 0 as chk from tmaster a 
   </select>
-  <select id="yourProcedureCall" statementType="CALLABLE" parameterType="map" resultType="map">
-  {call your_procedure_name(#{param1, mode=IN, jdbcType=VARCHAR}, #{param2, mode=OUT, jdbcType=INTEGER, javaType=java.lang.Integer})}
-</select>
+  <insert id="tmaster_Ins">
+    INSERT INTO tmaster  (code, appid, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv,pro) 
+                VALUES (#{code}, #{appid}, #{lvl}, #{desc1},
+                        #{cmpCode}, #{tdate}, #{endDate}, #{tdir}, 
+                        #{tuser}, #{thost}, #{tport}, #{tenv},#{pro})
+  </insert>
+  <update id="tmaster_Upd">
+    UPDATE tmaster SET 
+	          appid=#{appid}, lvl=#{lvl}, desc1=#{desc1}, cmpCode=#{cmpCode}, tdate=#{tdate}, endDate=#{endDate}, 
+            tdir=#{tdir}, tuser=#{tuser}, thost=#{thost}, tport=#{tport}, tenv=#{tenv},pro=#{pro}
+       WHERE CODE = #{code} 
+  </update>
+  <delete id="tmaster_Del">
+    delete from tmaster 
+    <where>
+      <foreach item="item" collection="list"
+          open="code in (" separator="," close=")" >
+            #{item}
+      </foreach>
+    </where>
+  </delete>
+  <delete id="ttcppacket_Erase">
+    delete from ttcppacket 
+    <where>
+      <foreach item="item" collection="list"
+          open="tcode in (" separator="," close=")" >
+            #{item}
+      </foreach>
+    </where>
+  </delete>
 </mapper>
