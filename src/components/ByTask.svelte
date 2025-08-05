@@ -48,8 +48,14 @@
   //   promise = getDatas() ;
   //  }) ;
   async function getDetail(t,l) {
-    if (t == '') t = 'EMPTY'
-    const res = await fetch("/bytask/" + t + '/' + l);
+    const res = await fetch("/bytask" ,
+      { method : 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body : JSON.stringify({task:t, lvl: l})
+     }
+    );
     if (res.ok)
       return await res.json();
     else

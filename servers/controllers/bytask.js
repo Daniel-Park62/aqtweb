@@ -1,30 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const aqtdb = require('../db/dbconn') ;
+const trDao = require('../dao/trDao');
 
 router.get('/', async function (req, res, next) {
 
-  aqtdb.query({ dateStrings: true, sql: 'select *, if(scnt+fcnt=0,0,round(scnt*100/(scnt+fcnt),2)) srate from TTASKSUM order by TASK,LVL' })
+  trDao.tasksum()
     .then(rows => res.json(rows))
-    .catch((e) => { return next(e) });
+    .catch((e) => next(e));
 
 });
 
 router.get('/:task/:lvl', async function(req, res, next) {
   
-  aqtdb.query({dateStrings:true, sql: 
-            "select t.tcode, t.uri svcid, s.svckor , count(1) tcnt, round(avg(t.svctime),3) avgt, sum(case when t.sflag = '1' then 1 else 0 end) scnt \
-        , sum(case when t.sflag = '2' then 1 else 0 end) fcnt , s.cumcnt \
-        from   vtcppacket t join tservice s on (t.uri = s.svcid and t.appid = s.appid)  \
-        WHERE s.task = ? and lvl = ?  group by t.tcode, t.uri ORDER BY T.URI"
-    }, [ req.params.task == 'EMPTY' ? '':req.params.task, req.params.lvl ])
+  const parms = { 
+    task : req.params.task == 'EMPTY' ? '':req.params.task ,
+    lvl : req.params.lvl
+  }
+  trDao.sumByService(parms)
     .then( rows => res.json(rows) ) 
-    .catch((e) => {  return next(e) });
-  
-  // const rows = await conn.query({dateStrings:true, sql: 'select * from vtrxlist '})  ;
-  // const scnt = await conn.query('select count(1) as scnt from tservice') ;
-  // res.send({ scnt: scnt[0].scnt, data: rows} ) ;
+    .catch((e) => next(e) );
 
 });
- 
+
+router.post('/', async function(req, res, next) {
+  
+  const parms = { 
+    task : req.body.task ,
+    lvl : req.body.lvl
+  }
+  trDao.sumByService(parms)
+    .then( rows => res.json(rows) ) 
+    .catch((e) => next(e) );
+
+});
+
 module.exports = router;
