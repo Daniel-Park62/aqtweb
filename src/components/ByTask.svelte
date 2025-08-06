@@ -48,7 +48,7 @@
   //   promise = getDatas() ;
   //  }) ;
   async function getDetail(t,l) {
-    const res = await fetch("/bytask" ,
+    const res = await fetch("/byservice" ,
       { method : 'POST',
       headers: {
         "Content-Type": "application/json",

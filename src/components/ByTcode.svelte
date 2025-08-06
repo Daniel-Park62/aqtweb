@@ -46,7 +46,16 @@
   //   promise = getDatas() ;
   //  }) ;
   async function getDetail(c) {
-    const res = await fetch("/bytcode?tcode=" + c);
+    // const res = await fetch("/bytcode?tcode=" + c);
+    const res = await fetch("/byservice" ,
+      { method : 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body : JSON.stringify({tcode: c})
+     }
+    );
+
     dtls = await res.json();
     return dtls;
   }

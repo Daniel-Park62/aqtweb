@@ -8,7 +8,7 @@
 
   let promise = Promise.resolve([]);
   onMount(async () => {
-    const res = await fetch( "/bytask");
+    const res = await fetch( "/byservice");
     promise = await res.json();
   });
 

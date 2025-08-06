@@ -10,24 +10,13 @@ router.get('/', async function (req, res, next) {
 
 });
 
-router.get('/:task/:lvl', async function(req, res, next) {
-  
-  const parms = { 
-    task : req.params.task == 'EMPTY' ? '':req.params.task ,
-    lvl : req.params.lvl
-  }
-  trDao.sumByService(parms)
-    .then( rows => res.json(rows) ) 
-    .catch((e) => next(e) );
-
-});
-
 router.post('/', async function(req, res, next) {
   
-  const parms = { 
-    task : req.body.task ,
-    lvl : req.body.lvl
-  }
+  // const parms = { 
+  //   task : req.body.task ,
+  //   lvl : req.body.lvl
+  // }
+  const parms = req.body ;
   trDao.sumByService(parms)
     .then( rows => res.json(rows) ) 
     .catch((e) => next(e) );
