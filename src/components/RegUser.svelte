@@ -3,8 +3,18 @@
 
   let rdata = [];
   let curRow = {};
-  let cols = [true,0, "User","Host", "사용자명",false,"",(new Date()).toLocaleDateString()];
-  let newRow = [...cols];
+  let ncount = 0 ;
+  const cols = {
+    chk: 1,
+    pkey: 0,
+    usrid: "User",
+    host: "Host",
+    usrdesc: "사용자명",
+    admin: 0,
+    apps: "",
+    regdt: new Date().toLocaleDateString(),
+  };
+  let newRow = { ...cols };
   const columns = [
     " ",
     "UserId ",
@@ -16,17 +26,29 @@
   ];
 
   function updService() {
-    const upds = rdata.filter((r) => ( r[0] && r[1] != 0) ).map((r) => [...(r.slice(2,7)),r[1] ]);
-    const inss = rdata.filter((r) => ( r[0] && r[1] == 0) ).map((r) => r.slice(2,7) );
-  console.log(inss)     ;
+    const upds = rdata
+      .filter((r) => r.chk && r.pkey != 0)
+      .map((r) => {
+        delete r.chk;
+        delete r.regdt;
+        return r;
+      });
+    const inss = rdata
+      .filter((r) => r.chk && r.pkey == 0)
+      .map((r) => {
+        delete r.chk;
+        delete r.regdt;
+        return r;
+      });
+    // console.log("upds:", upds);
     fetch("/tuser", {
-      method: "POST" ,
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         upd: upds,
-        ins: inss
+        ins: inss,
       }),
     })
       .then(async (res) => {
@@ -42,7 +64,9 @@
   }
 
   function delService() {
-    const delcodes = rdata.filter((r) => (r[0] && r[1] > 0) ).map((r) => r[1]);
+    const delcodes = rdata
+      .filter((r) => r.chk && r.pkey > 0)
+      .map((r) => r.pkey);
 
     if (delcodes.length == 0) return;
     // console.log("del code:", delcodes) ;
@@ -69,17 +93,39 @@
   async function getdata() {
     const res = await fetch("/tuser");
     if (res.status === 200) {
-      rdata = await res.json();
+      const rows = await res.json();
+      rdata = rows.map((r) => {
+        r.chk = 0;
+        return r;
+      });
     } else {
       throw new Error(res.statusText);
     }
   }
 
+  function editEnable(chk) {
+    console.log(chk);
+    const editables = document.querySelectorAll('.host, .usrdesc, .apps');
+    // console.log("editable:", editables);
+    if (chk) {
+      editables.forEach(e => e.contentEditable = 'true')
+    } else {
+      editables.forEach(e => e.contentEditable = 'false')
+    }
+  }
   onMount(getdata);
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button on:click={() => {rdata = [[...newRow], ...rdata]; newRow = cols; }}>추가</button>
+  <button
+    on:click={() => {
+      newRow = {...cols};
+      newRow.regdt = (new Date()).toLocaleString('lt') ;
+      rdata = [{...newRow} ,...rdata] ;
+      console.log(rdata) ;
+      ncount++;
+    }}>추가</button
+  >
   <button on:click={delService}>선택삭제</button>
   <button on:click={updService}>적용</button>
   <button on:click={getdata}>적용취소</button>
@@ -97,20 +143,38 @@
       </tr>
     </thead>
     <tbody>
-
-        {#each rdata as row }
-          <tr on:click={() => (curRow = row)} >
-            <td><input type="checkbox" bind:checked={row[0]} /></td>
-            {#if row[1] === 0}
-            <td class="usrid" contenteditable="true" style="width:10rem" bind:textContent={row[2]}/>
+        {#each rdata as row}
+          <tr on:click={() => (curRow = row)}> 
+            <td><input type="checkbox" bind:checked={row.chk} /></td>
+            {#if row.pkey === 0 }
+              <td
+                class="usrid"
+                contenteditable="true"
+                style="width:10rem"
+                bind:textContent={row.usrid}
+              />
             {:else}
-            <td class="usrid" style="width:10rem">{row[2]}</td>
+              <td class="usrid" style="width:10rem">{row.usrid}</td>
             {/if}
-            <td class="host" contenteditable="true" style="width:15rem" bind:textContent={row[3]}/>
-            <td contenteditable="true" class="usrdesc" style="width:20%" bind:textContent={row[4]}/>
-            <td><input type="checkbox" bind:checked={row[5]}/></td> 
-            <td contenteditable="true" class="apps" bind:textContent={row[6]}/>
-            <td>{row[7]}</td>
+            <td
+              class="host"
+              contenteditable
+              style="width:15rem"
+              bind:textContent={row.host}
+            />
+            <td
+              contenteditable
+              class="usrdesc"
+              style="width:20%"
+              bind:textContent={row.usrdesc}
+            />
+            <td><input type="checkbox" bind:checked={row.admin} /></td>
+            <td
+              contenteditable="true"
+              class="apps"
+              bind:textContent={row.apps}
+            />
+            <td>{row.regdt}</td>
             {#if curRow === row}
               <td>◀</td>
             {/if}
@@ -125,7 +189,7 @@
     max-height: 80vh;
     overflow: auto;
   }
-    .usrdesc {
-    word-break:break-all;
+  .usrdesc {
+    word-break: break-all;
   }
 </style>

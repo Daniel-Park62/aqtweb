@@ -53,4 +53,51 @@
          <if test="lvl != null"> and lvl = #{lvl} </if> 
          group by t.tcode, t.uri ORDER BY T.URI
   </select>
+  <select id="vtrxlist_sel">
+    SELECT code, type, lvl, desc1, cmpCode, tdate, endDate, 
+        tdir, tuser, thost, tport, tenv, appid, svc_cnt, fsvc_cnt, 
+        data_cnt, scnt, fcnt, spct, tot_svccnt 
+    FROM vtrxlist WHERE appid rlike #{appid} order by tdate desc
+  </select>
+  <select id="tlevel_sel">
+    <![CDATA[ 
+      SELECT lvl, svc_cnt,data_cnt,scnt, if(data_cnt>0,round(scnt*100/data_cnt,2),0) srate FROM tlevel
+    ]]>
+  </select>
+  <select id="taqtuser_All">
+    SELECT  pkey, usrid, host, usrdesc, admin, apps, regdt FROM taqtuser a 
+  </select>
+  <update id="taqtuser_Upd">
+    <foreach item="item" collection="list" separator=";">
+      <![CDATA[ 
+      UPDATE taqtuser 
+      SET usrid=#{item.usrid}, host='${item.host}', 
+          usrdesc=#{item.usrdesc}, admin=#{item.admin}, apps='${item.apps}' 
+      WHERE pkey = ${item.pkey} 
+      ]]>
+     </foreach>
+  </update>
+  <update id="taqtuser_PassUpd">
+     UPDATE taqtuser 
+     SET pass1 = passwd(#{pass}) 
+     WHERE pkey = #{pkey} 
+  </update>
+  <insert id="taqtuser_Ins">
+    INSERT INTO taqtuser 
+         ( usrid, host, usrdesc, admin, apps ) 
+        VALUES 
+        <foreach item="r" collection="list" separator="," >
+          (  #{r.usrid}, #{r.host}, #{r.usrdesc}, #{r.admin}, #{r.apps} )
+      </foreach>
+  </insert>
+  <delete id="taqtuser_Del">
+    delete from taqtuser 
+    <where>
+      <foreach item="item" collection="list"
+          open="pkey in (" separator="," close=")" >
+            #{item}
+      </foreach>
+    </where>
+
+  </delete>
 </mapper>

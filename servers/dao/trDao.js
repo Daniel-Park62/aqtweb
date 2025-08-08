@@ -13,22 +13,25 @@ const trDao = {
     return await aqtdb.query({dateStrings: true,sql:sql});
   },
 
-  listAll: async () => {
-    const sql = mapper.getStatement(NSPACE, 'tmaster_ListAll');
-    // console.log(process.cwd(), sql);
+  listVtrx: async (parms) => {
+    const sql = mapper.getStatement(NSPACE, 'vtrxlist_sel',parms);
     return await aqtdb.query(sql);
   },
-  copyTr: async (parms) => {
-    const qstr = parms.cnt > 0 ? 'call sp_loaddata2(?,?,?,?) ' : 'call sp_loaddata(?,?,?) ';
+  summary: async () => {
+    const result = {
+        svccnt: 0, // 서비스 수
+        rows: []
+      } ;
+
     try {
-      const r = await aqtdb.query(qstr, [parms.srccode, parms.dstcode, parms.cond, parms.cnt]);
-      aqtdb.query('call sp_summary(?)', [parms.dstcode]);
-      console.log("ok2:", r[0]);
-      return r[0];
-    } catch (e) {
-      throw e;
-    }
-    ;
+      const sql = mapper.getStatement(NSPACE, 'tlevel_sel');
+      result.rows = await aqtdb.query(sql) ;
+      let row = await aqtdb.query('select count(1) as scnt from tservice') ;
+      result.svccnt =  row[0].scnt || 0 ;
+      return result ;
+    } catch (e){
+      throw e ;
+    } ;
   },
   insertMaster: async (parms) => {
     const row = await aqtdb.query("	SELECT count(1) cnt from tmaster where code = ?", [parms.code]);

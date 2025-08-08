@@ -6,11 +6,13 @@
 
   let conds = {
     tcode: "",
+    rcode: "",
     page: 0,
     psize: 20,
     cond: "",
     uri: "",
-    task:""
+    task:"",
+    apps:""
   };
 
   let tcode = "";
@@ -104,7 +106,7 @@
   </div>
 </div>
 <Modal>
-	<Trtable bind:conds />
+	<Trtable {conds} />
 </Modal>
 
 <style>

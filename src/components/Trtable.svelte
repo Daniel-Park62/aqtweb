@@ -197,7 +197,7 @@
           const clist = document.querySelectorAll(".chkb");
           const chk = achk === '□' ;
           for(let i=0; i<clist.length; i++) {
-              clist[i].checked =  chk;
+              clist[i].checked = chk;
               rdata[i].chk = chk ;
           }
           if (chk) achk = '▣' ; else achk = '□' ;
@@ -225,7 +225,7 @@
           }}
         >
 
-          <td><input class="chkb" type="checkbox" bind:checked={row.chk} /></td>
+          <td style="text-align:center"><input class="chkb" type="checkbox" bind:checked={row.chk} /></td>
 
           <td class="cmpid"><strong><em>{row.id}</em></strong></td>
           <td class="stime">{row.송신시간}</td>
