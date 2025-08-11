@@ -19,7 +19,7 @@ const trlist = require('./controllers/trlist') ;
 const tmaster = require('./controllers/tmaster') ;
 const tservice = require('./controllers/tservice') ;
 const texecjob = require('./controllers/texecjob') ;
-const logonchk = require('./controllers/logonchk') ;
+// const logonchk = require('./controllers/logonchk') ;
 const tuser = require('./controllers/tuser') ;
 const trequest = require('./controllers/trequest') ;
 const tresult = require('./controllers/tresult') ;
@@ -28,16 +28,16 @@ const tloadData = require('./controllers/tloadData') ;
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-/* app.use((req,res,next) => {
-   console.log(req.originalUrl, req.ip) ;
+app.use((req,res,next) => {
+   res.locals.aqtlog = (...a) => { console.log((new Date()).toLocaleString('lt'),...a )} ;
    next();
 });
- */
+
 app.get('/', (req, res) => {
    res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
 });
 
-app.use('/logonchk', logonchk) ;
+// app.use('/logonchk', logonchk) ;
 app.use('/dashboard', dashboard) ;
 
 app.use('/byservice', byservice) ;

@@ -5,7 +5,7 @@ function notFound(req, res, next) {
 /* eslint-disable no-unused-vars */
 function errorHandler(err, req, res, next) {
   
-  console.error((new Date()).toLocaleString('lt'),`:${req.originalUrl}:`, err.message);
+  res.locals.aqtlog(`:${req.originalUrl}:`, err.message);
   res.status(501) ;
   res.json({
     message: err.message,

@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const aqtdb = require('../db/dbconn');
 const userDao = require('../dao/taqtuserDao');
 
 router.get('/', function (req, res, next) {
@@ -39,5 +38,43 @@ router.delete('/', function (req, res, next) {
     .catch(e => next(e));
 
 });
+
+router.post('/logonchk', async function (req, res, next) {
+  const parms = {
+     reqip : req.ip ,
+     pass  : Buffer.from(req.body.pass.substring(2), 'base64').toString('utf8'),
+     usrid : Buffer.from(req.body.usrid.substring(1), 'base64').toString('utf8')
+  }
+  
+  res.locals.aqtlog(`${req.ip}: [${parms.usrid}] login.`);
+
+  userDao.passCheck(parms)
+    .then(rows => {
+      if (rows[0])
+        res.json(rows[0])
+      else
+        return next(new Error({ message: "not found" }))
+    })
+    .catch((e) => next(e) );
+});
+
+router.post('/logonchk/cp', async function (req, res, next) {
+  const parms = {
+   reqip : req.ip ,
+   pass : Buffer.from(req.body.pass.substring(2), 'base64').toString('utf8'),
+   npass  : Buffer.from(req.body.npass.substring(2), 'base64').toString('utf8'),
+   usrid : Buffer.from(req.body.usrid.substring(1), 'base64').toString('utf8')
+  }
+  userDao.passUpdate(parms)
+    .then(rows => {
+      // console.log(rows) ;
+      if (rows?.affectedRows)
+        res.status(201).send({message:'변경되었습니다.'});
+      else
+        res.status(201).send(rows) ;
+    })
+    .catch((e) => next(e) );
+  
+}) ;
 
 module.exports = router;

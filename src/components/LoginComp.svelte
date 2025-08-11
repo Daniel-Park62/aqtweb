@@ -20,25 +20,12 @@
 	let usrid = "";
 	let error = "";
 
-	async function login() {
-		// const chk = await getCheckPass(password);
-		const res = await fetch("/logonchk?pass=" + password);
-		let data = await res.json();
-
-		if (data.chk) {
-			$isLogged = 2;
-			if (error) error = "";
-		} else {
-			error = "비밀번호가 맞지않습니다.";
-		}
-	}
-
 	async function login3() {
 		if (password === "aqtuser") {
 			showModal = true;
 			return;
 		}
-		fetch("/logonchk", {
+		fetch("/tuser/logonchk", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
