@@ -2,13 +2,6 @@ const express = require('express');
 const router = express.Router();
 const aqtdb = require('../db/dbconn');
 
-router.get('/', function (req, res, next) {
-  const cond = req.body.cond ? "where " + req.body.cond : "";
-  aqtdb.query({ rowsAsArray: true, sql: "SELECT '' , pkey, appid, svcid,  svckor, svceng, task, manager, svckind FROM tservice a " + cond })
-    .then(rows => res.json(rows))
-    .catch((e) => { return next(e) });
-});
-
 router.post('/part', function (req, res, next) {
   aqtdb.query({ rowsAsArray: true, 
                 sql: "SELECT '' , pkey, appid, svcid,  svckor, svceng, task, manager, svckind FROM tservice a \

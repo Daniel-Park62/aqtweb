@@ -104,4 +104,36 @@
     </where>
 
   </delete>
+
+  <select id="tservice_List">
+    SELECT pkey, appid, svcid,  svckor, svceng, task, manager, svckind 
+      FROM tservice a 
+     WHERE appid rlike '${appid}' and svcid rlike '${svcid}'
+  </select>
+  <update id="tservice_Upd">
+    <foreach item="item" collection="list" separator=";">
+      UPDATE tservice 
+      SET appid=#{item.appid}, svcid='${item.scvid}', svckor='${item.svckor}',
+          svceng='${item.svceng}', task=#{item.task}, manager='${item.manage}',svckind=#{item.svckind} 
+      WHERE pkey = ${item.pkey} 
+     </foreach>
+  </update>
+  <insert id="tservice_Ins">
+    INSERT INTO tservice 
+       ( appid, svcid,  svckor, svceng, task, manager, svckind) 
+    VALUES 
+    <foreach item="r" collection="list" separator="," >
+      #r.appid, '${r.svcid}','${r.svckor}','${r.svceng}','${r.task}',#{r.manager},#{r.svckind}
+    </foreach>
+  </insert>
+  <delete id="tservice_Del">
+    delete from tservice 
+    <where>
+      <foreach item="item" collection="list"
+          open="pkey in (" separator="," close=")" >
+            #{item}
+      </foreach>
+    </where>
+  </delete>
+
 </mapper>
