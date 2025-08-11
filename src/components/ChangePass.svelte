@@ -17,17 +17,17 @@
       alert("영숫자 및 특수문자를 포함하여 8자리이상이어야 합니다.");
       return ;
     }
-    fetch("/logonchk/cp", {
+    fetch("/tuser/logonchk/cp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        opass:
+        pass:
           Math.floor(Math.random() * 100)
             .toString()
             .padStart(2, "0") + Buffer.from(opass, "utf8").toString("base64"),
-        pass:
+        npass:
           Math.floor(Math.random() * 100)
             .toString()
             .padStart(2, "0") + Buffer.from(npass1, "utf8").toString("base64"),

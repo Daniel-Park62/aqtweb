@@ -67,6 +67,10 @@
   <select id="taqtuser_All">
     SELECT  pkey, usrid, host, usrdesc, admin, apps, regdt FROM taqtuser a 
   </select>
+  <select id="taqtuser_PassCheck">
+    SELECT if( PASSWORD('${pass}') = pass1, 1,0) chk, admin, if(#{reqip} like host,1,0) hg, apps 
+      FROM taqtuser where usrid = #{usrid} 
+  </select>
   <update id="taqtuser_Upd">
     <foreach item="item" collection="list" separator=";">
       <![CDATA[ 
@@ -79,8 +83,8 @@
   </update>
   <update id="taqtuser_PassUpd">
      UPDATE taqtuser 
-     SET pass1 = passwd(#{pass}) 
-     WHERE pkey = #{pkey} 
+     SET pass1 = password('${npass}') 
+     WHERE usrid = #{usrid} 
   </update>
   <insert id="taqtuser_Ins">
     INSERT INTO taqtuser 

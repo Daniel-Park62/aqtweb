@@ -17,7 +17,8 @@ async function getUser(uid, pass, ip) {
   // })
   // .catch((e) => { return -1 });
 }
-router.get('/', async function (req, res, next) {
+
+/* router.get('/', async function (req, res, next) {
   if (!req.query.pass) {
     res.send([]);
     return;
@@ -26,7 +27,7 @@ router.get('/', async function (req, res, next) {
     .then(rows => res.json(rows[0]))
     .catch((e) => { return next(e) });
 });
-
+ */
 router.post('/', async function (req, res, next) {
   // console.log(req.ip) ;
   const pass = Buffer.from(req.body.pass.substring(2), 'base64').toString('utf8');
