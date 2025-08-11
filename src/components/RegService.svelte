@@ -1,11 +1,20 @@
 <script>
   import { onMount } from "svelte";
 
-  let rdata = Promise.resolve([]);
+  let rdata = [];
   let curRow = {};
-  let cols = [true,0, "","서비스","한글명","영문명","","","0"];
-  let newRow = [...cols];
-  let pkey, svcid, appid, svckor, svceng, svckind, task, manager;
+  let cols = {
+    chk : 1,
+    pkey : 0,
+    appid : "",
+    svcid : "서비스",
+    svckor : "한글명",
+    svceng : "영문명",
+    task : "",
+    manager : "",
+    svckind : "0",
+  };
+  let newRow = {...cols};
   const columns = [
     " ",
     "APID ",
@@ -17,7 +26,7 @@
     "서비스종류",
   ];
   const conds = {
-    apid : '',
+    appid : '',
     svcid : ''
   };
 
@@ -46,9 +55,9 @@
   }
 
   function updService() {
-    const upds = rdata.filter((r) => ( r[0] && r[1] != 0) ).map((r) => r.slice(1));
-    const inss = rdata.filter((r) => ( r[0] && r[1] == 0) ).map((r) => r.slice(2));
-  console.log(inss)     ;
+    const upds = rdata.filter((r) => ( r.chk && r.pkey != 0) ).map((r) => {delete r.chk; return r;});
+    const inss = rdata.filter((r) => ( r.chk && r.pkey == 0) ).map((r) => {delete r.chk; delete r.pkey; return r;});
+  // console.log(inss)     ;
     fetch("/tservice", {
       method: "POST" ,
       headers: {
@@ -72,7 +81,7 @@
   }
 
   function delService() {
-    const delcodes = rdata.filter((r) => (r[0] && r[1] > 0) ).map((r) => r[1]);
+    const delcodes = rdata.filter((r) => (r.chk && r.pkey > 0) ).map((r) => r.pkey);
 
     if (delcodes.length == 0) return;
     // console.log("del code:", delcodes) ;
@@ -106,7 +115,8 @@ const res = await fetch("/tservice/part", {
       body: JSON.stringify(conds),
     });
     if (res.status === 200) {
-      rdata = await res.json();
+      const rows = await res.json();
+      rdata = rows.map( r => {r.chk = 0; return r}) ;
     } else {
       throw new Error(res.statusText);
     }
@@ -116,11 +126,13 @@ const res = await fetch("/tservice/part", {
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button on:click={() => {rdata = [[...newRow], ...rdata]; newRow = cols; }}>추가</button>
+  <button on:click={() => {
+    rdata = [{...newRow}, ...rdata]; 
+    newRow = {...cols};newRow.appid = curRow.appid }}>추가</button>
   <button on:click={delService}>선택삭제</button>
   <button on:click={updService}>적용</button>
   <button on:click={getdata}>적용취소</button>
-  <span>APID : <input type="text" bind:value={conds.apid} /></span>
+  <span>APPID : <input type="text" bind:value={conds.appid} /></span>
   <span>서비스(URI) : <input type="text" bind:value={conds.svcid} /></span>
   <button style="margin-left: auto" on:click={getdata}>조회</button>
 </div>
@@ -144,23 +156,23 @@ const res = await fetch("/tservice/part", {
           <tr
             on:click={() => (curRow = row)}
           >
-            <td><input type="checkbox" bind:checked={row[0]} /></td>
-            {#if row[1] === 0}
-            <td class="appid" contenteditable="true" bind:textContent={row[2]} />
-            <td class="svcid" contenteditable="true" style="width:20rem ;text-align:left" bind:textContent={row[3]}/>
+            <td><input type="checkbox" bind:checked={row.chk} /></td>
+            {#if row.pkey === 0}
+            <td class="appid" contenteditable="true" bind:textContent={row.appid} />
+            <td class="svcid" contenteditable="true" style="width:20rem ;text-align:left" bind:textContent={row.svcid}/>
             {:else}
-            <td class="appid" >{row[2]}</td>
-            <td class="svcid" style="width:20rem">{row[3]}</td>
+            <td class="appid" >{row.appid}</td>
+            <td class="svcid" style="width:20rem">{row.svcid}</td>
             {/if}
             <td
               contenteditable="true"
               class="svckor"
               style="width:20%"
-              bind:textContent={row[4]}/>
-            <td contenteditable="true" bind:textContent={row[5]} class="svceng" style="width:20%" />
-            <td contenteditable="flase" class="task" bind:textContent={row[6]}/>
-            <td contenteditable="true" class="manager" bind:textContent={row[7]}/>
-            <td contenteditable="true" class="svckind" bind:textContent={row[8]} />
+              bind:textContent={row.svckor}/>
+            <td contenteditable="true" bind:textContent={row.svceng} class="svceng" style="width:20%" />
+            <td contenteditable="false" class="task" bind:textContent={row.task}/>
+            <td contenteditable="true" class="manager" bind:textContent={row.manager}/>
+            <td contenteditable="true" class="svckind" bind:textContent={row.svckind} />
             {#if curRow === row}
               <td>◀</td>
             {/if}
