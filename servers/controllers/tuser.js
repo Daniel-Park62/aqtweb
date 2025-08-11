@@ -67,7 +67,6 @@ router.post('/logonchk/cp', async function (req, res, next) {
   }
   userDao.passUpdate(parms)
     .then(rows => {
-      // console.log(rows) ;
       if (rows?.affectedRows)
         res.status(201).send({message:'변경되었습니다.'});
       else
