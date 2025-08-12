@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const aqtdb = require('../db/dbconn');
+<<<<<<< HEAD
 const tserviceDao = require('../dao/tserviceDao');
+=======
+>>>>>>> 3da36c7d102620b09a9c55687d6b15ed9cf8b1eb
 
 router.post('/part', function (req, res, next) {
   tserviceDao.list(req.body)
