@@ -130,9 +130,6 @@ const res = await fetch("/tservice/part", {
     newRow.appid = curRow.appid ;
     rdata = [{...newRow}, ...rdata]; 
     newRow = {...cols};newRow.appid = curRow.appid }}>추가</button>
-=========
-    newRow = {...cols}; }}>추가</button>
->>>>>>>>> Temporary merge branch 2
   <button on:click={delService}>선택삭제</button>
   <button on:click={updService}>적용</button>
   <button on:click={getdata}>적용취소</button>
