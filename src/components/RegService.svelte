@@ -4,21 +4,13 @@
   let rdata = [];
   let curRow = {};
   let cols = {
-<<<<<<< HEAD
     chk : 1,
-=======
-    chk : 0,
->>>>>>> 3da36c7d102620b09a9c55687d6b15ed9cf8b1eb
     pkey : 0,
     appid : "",
     svcid : "서비스",
     svckor : "한글명",
     svceng : "영문명",
-<<<<<<< HEAD
     task : "",
-=======
-    svctask : "",
->>>>>>> 3da36c7d102620b09a9c55687d6b15ed9cf8b1eb
     manager : "",
     svckind : "0",
   };
@@ -64,11 +56,7 @@
 
   function updService() {
     const upds = rdata.filter((r) => ( r.chk && r.pkey != 0) ).map((r) => {delete r.chk; return r;});
-<<<<<<< HEAD
     const inss = rdata.filter((r) => ( r.chk && r.pkey == 0) ).map((r) => {delete r.chk; delete r.pkey; return r;});
-=======
-    const inss = rdata.filter((r) => ( r.chk && r.pkey == 0) ).map((r) => {delete r.chk; return r;});
->>>>>>> 3da36c7d102620b09a9c55687d6b15ed9cf8b1eb
   // console.log(inss)     ;
     fetch("/tservice", {
       method: "POST" ,
@@ -141,7 +129,7 @@ const res = await fetch("/tservice/part", {
   <button on:click={() => {
     newRow.appid = curRow.appid ;
     rdata = [{...newRow}, ...rdata]; 
-    newRow = {...cols}; }}>추가</button>
+    newRow = {...cols};newRow.appid = curRow.appid }}>추가</button>
   <button on:click={delService}>선택삭제</button>
   <button on:click={updService}>적용</button>
   <button on:click={getdata}>적용취소</button>
