@@ -1,23 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const aqtdb = require('../db/dbconn') ;
+const tapphostDao = require('../dao/tapphostDao') ;
  
 router.get('/', async function(req, res, next) {
 
-  aqtdb.query({ rowsAsArray: true , sql: "select appid,appnm,manager from tapplication "
-    })
+    tapphostDao.appList()
     .then( rows => res.json(rows) ) 
     .catch((e) => {  return next(e) });
   
 });
 
 router.post('/', async function(req, res, next) {
-  const qstr = 'REPLACE INTO tapplication ' +
-	             ' (appid,appnm,manager) ' +
-               'VALUES (?, ?, ?) ' ;
-  await aqtdb.batch(qstr, req.body.values ) 
-  .then(r => res.status(201).send({message: " 등록되었습니다."}) )
-  .catch(e => { next( new Error(e.message) ) } ) ;           
+  tapphostDao.appUpdate(req.body.values)
+  .then(r => res.json({message: `${r.affectedRows} 건 등록되었습니다.`}) )
+  .catch(e => next(e)) ;           
   
 });
 

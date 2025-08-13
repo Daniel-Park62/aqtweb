@@ -1,4 +1,4 @@
-const aqtdb = require('./dbconn') ;
+const aqtdb = require('../db/dbconn') ;
 
 const tconfig = {
  findAll : async () => {

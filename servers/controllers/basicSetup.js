@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const tconfig = require('../db/tconfig');
+const tconfig = require('../dao/tconfigDao');
 
 router.get('/', async function (req, res, next) {
   try {

@@ -8,11 +8,11 @@
     getTypes,
     getPros,
     getProNm,
-    getAppid
+    getAppid,
+    getFirst
   } from "./Common.svelte";
   import Modal, { getModal } from "./Modal.svelte";
   import CopyTr from "./CopyTr.svelte";
-  const appids = [] ;
   let rdata = Promise.resolve([]);
   let tcode;
   let jobnm = "등록";
@@ -135,6 +135,7 @@
       });
   }
   async function getdata() {
+    getFirst();
     const res = await fetch("/tmaster");
     if (res.status <= 300) {
       rdata = await res.json();

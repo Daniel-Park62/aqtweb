@@ -35,7 +35,7 @@
 
   export async function getFirst() {
     const res = await fetch("/regapp");
-    if (res.status <= 300) {
+    if (res.status <= 400) {
       const rdata = await res.json();
       rdata.forEach((/** @type {any[]} */ r) => {
         if ( appids.findIndex((a) => a.value == r[0]) == -1)

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const tloaddata = require('../db/tloaddata');
+const tloaddata = require('../dao/tloaddata');
 
 router.get('/summary', async function (req, res, next) {
   try {

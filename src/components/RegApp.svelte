@@ -1,61 +1,64 @@
 <script>
   import { onMount } from "svelte";
-  import { getFirst } from "./Common.svelte";
 
-  let columns = ["APPID", "APP명", "담당자"];
-  let columns_dtl = ["APPID", "Host IP", "0"];
+  let columns = [1, "APPID", "APP명", "담당자"];
+  let columns_dtl = [0,"APPID", "Host IP", "0"];
   let data = [];
   let deldata = [];
   let deldata_dtl = [];
   let datadtl = [];
   let newRow = [...columns];
-  let newRow_dtl = [0, ...columns_dtl];
+  let newRow_dtl = [...columns_dtl];
 
-  let promise = Promise.resolve([]);
-  let promise_dtl = Promise.resolve([]);
+  let promise = [];
+  let promise_dtl = [];
   let appid = "";
 
   function addRow() {
     data = [...data, [...newRow]];
-    newRow = columns;
-    newRow[0] = "APPID";
+    newRow = [...columns];
   }
   function addRow_dtl() {
     newRow_dtl[1] = appid;
-    datadtl = [...datadtl, [...newRow_dtl]];
-    newRow_dtl = [0, ...columns_dtl];
+    datadtl = [...datadtl, ...newRow_dtl];
+    newRow_dtl = [...columns_dtl];
   }
 
   function deleteRow(rowToBeDeleted) {
-    deldata.push(rowToBeDeleted);
+    deldata.push(rowToBeDeleted[1]);
     data = data.filter((row) => row != rowToBeDeleted);
   }
   function deleteRow_dtl(rowToBeDeleted) {
-    deldata_dtl.push(rowToBeDeleted);
+    deldata_dtl.push(rowToBeDeleted[0]);
     datadtl = datadtl.filter((row) => row != rowToBeDeleted);
   }
 
-  async function getApphost(appid) {
+  /**
+     * @param {string} appid
+     */
+  async function getApphost (appid) {
     if (appid > "") {
       const res = await fetch("/regapp/host/" + appid);
       datadtl = await res.json();
     } else {
-      datadtl = Promise.resolve([]);
+      datadtl = [];
     }
-    newRow_dtl = [0, ...columns_dtl];
+    newRow_dtl = [...columns_dtl];
     return datadtl;
   }
 
   $: promise = data;
   $: promise_dtl = getApphost(appid);
-  $: promise_dtl = datadtl;
+  //$: promise_dtl = datadtl;
 
   async function getData() {
-    const res = await fetch("/regapp");
-    data = await res.json();
+   const res = await fetch("/regapp");
+   const rows = await res.json();
+   data = rows.map(r => { r.unshift(0); return r} ) ;
+
     deldata = [];
     deldata_dtl = [];
-    if (data.length > 0) appid = data[0][0] ;
+    if (data.length > 0) appid = data[0][1] ;
   }
   function delApp() {
     // let udata = [];
@@ -67,7 +70,7 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: deldata.map(([e1]) => e1),
+        values: deldata,
       }),
     }).catch((err) => {
       throw err;
@@ -83,7 +86,7 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: deldata_dtl.map((r) => r[0]),
+        values: deldata_dtl,
       }),
     }).catch((err) => {
       throw err;
@@ -95,18 +98,19 @@
     // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
     updAppHost();
     if (deldata.length) delApp();
-
+    const udata = data.filter(r => r[0] ).map(r => {r.shift(); return r} ) ;
+    if ( udata.length == 0 ) return ;
     fetch("/regapp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: data,
+        values: udata,
       }),
     })
       .then(async (res) => {
-        getFirst() ;
+        // getFirst() ;
         let rmsg = await res.json();
         alert(rmsg.message);
         if (res.status < 300) {
@@ -124,14 +128,14 @@
     // let udata = [];
     // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
     if (deldata_dtl.length) delAppHost();
-
+    if (datadtl.length === 0) return ;
     fetch("/regapp/host", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: datadtl,
+        values: datadtl ,
       }),
     }).catch((err) => {
       throw err;
@@ -151,6 +155,7 @@
   <table class="app-tbl item">
     <thead>
       <tr>
+        <th>수정</th>
         <th>APP id</th>
         <th>APP 명</th>
         <th>담당자</th>
@@ -161,21 +166,22 @@
       <p>...waiting</p>
     {:then rows}
       {#each rows as row}
-        <tr on:click={() => (appid = row[0])}>
-          {#each row as cell, i}
-            {#if i != 0}
-              <td contenteditable="true" bind:textContent={cell} />
-            {:else}
-              <td contenteditable="false" bind:textContent={cell} />
-            {/if}
-          {/each}
+        <tr on:click={() => (appid = row[1])}>
+          <td><input type="checkbox" bind:checked={row[0]} /></td>
+          <td contenteditable="false" bind:textContent={row[1]} />
+          <td contenteditable="true" bind:textContent={row[2]} />
+          <td contenteditable="true" bind:textContent={row[3]} />
           <td><button on:click={() => deleteRow(row)}>X</button></td>
         </tr>
       {/each}
     {/await}
     <tr style="color: grey">
-      {#each newRow as column, i}
-          <td contenteditable="true" bind:textContent={column} />
+      {#each newRow as col, i}
+        {#if i == 0 }
+          <td><input type="checkbox" bind:checked={col} /></td>
+        {:else}
+          <td contenteditable="true" bind:textContent={col} />
+        {/if}
       {/each}
       <td><button on:click={addRow}>add</button></td>
     </tr>
