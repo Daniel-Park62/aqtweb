@@ -8,28 +8,33 @@ const tapphostDao = {
     return await aqtdb.query({ rowsAsArray: true , sql: "select appid,appnm,manager from tapplication "
     });
   },
-  appUpdate : async (parms) => {
-      const qstr = 'REPLACE INTO tapplication ' +
-	             ' (appid,appnm,manager) ' +
-               'VALUES (?, ?, ?) ' ;
+  appSave : async (parms) => {
+      const qstr = `REPLACE INTO tapplication 
+	               (appid,appnm,manager) VALUES (?, ?, ?) ` ;
       return await aqtdb.batch(qstr, parms ) ;
   },
-  list: async (parms) => {
-    const sql = mapper.getStatement(NSPACE, 'tservice_List',parms);
-    return await aqtdb.query({ rowsAsArray: false,sql:sql});
+  hostUpdate : async(parms) => {
+      const qstr = `REPLACE INTO tapphosts 
+	              (pkey, appid,thost,tport) VALUES (?, ?, ?, ?) ` ;
+      return await aqtdb.batch(qstr, parms ) ;
   },
-  update: async (parms) => {
-    const qstr = mapper.getStatement(NSPACE, "tservice_Upd", {list:parms});
-    return await aqtdb.query(qstr);
+  hostInsert : async(parms) => {
+      const qstr = `INSERT INTO tapphosts 
+	              (appid,thost,tport)  VALUES ( ?, ?, ?)  ` ;
+      return await aqtdb.batch(qstr, parms ) ;
   },
-  insert: async (parms) => {
-    const qstr = mapper.getStatement(NSPACE, "tservice_Ins", {list:parms});
-    return await aqtdb.query(qstr);
+  getHost: async (parms) => {
+    return await aqtdb.query({ rowsAsArray: true , 
+      sql: "select pkey, appid,thost,tport from tapphosts where appid = ? "  },parms ) ;
   },
-  delete: async (parms) => {
-    const qstr = mapper.getStatement(NSPACE, 'tservice_Del', {list:parms});
-    return await aqtdb.query(qstr);
-  }
+  appDelete: async (parms) => {
+    await aqtdb.query('delete from tapphosts where appid in (?)', parms) ;
+    const qstr = 'delete from tapplication where appid in (?)' ; 
+    return await aqtdb.query(qstr, parms)  ;
+  },
+  hostDelete: async (parms) => {
+    return await aqtdb.query('delete from tapphosts where pkey in (?)', parms) ;
+  },
 
 }
 

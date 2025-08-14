@@ -10,24 +10,29 @@
   let newRow = [...columns];
   let newRow_dtl = [...columns_dtl];
 
-  let promise = [];
-  let promise_dtl = [];
   let appid = "";
 
   function addRow() {
     data = [...data, [...newRow]];
-    newRow = [...columns];
+//    newRow = [...columns];
   }
   function addRow_dtl() {
     newRow_dtl[1] = appid;
-    datadtl = [...datadtl, ...newRow_dtl];
-    newRow_dtl = [...columns_dtl];
+    datadtl = [...datadtl, [...newRow_dtl]];
+//    newRow_dtl = [...columns_dtl];
+//    console.log(appid,datadtl);
   }
 
+  /**
+     * @param {any[]} rowToBeDeleted
+     */
   function deleteRow(rowToBeDeleted) {
     deldata.push(rowToBeDeleted[1]);
     data = data.filter((row) => row != rowToBeDeleted);
   }
+  /**
+     * @param {any[]} rowToBeDeleted
+     */
   function deleteRow_dtl(rowToBeDeleted) {
     deldata_dtl.push(rowToBeDeleted[0]);
     datadtl = datadtl.filter((row) => row != rowToBeDeleted);
@@ -40,21 +45,23 @@
     if (appid > "") {
       const res = await fetch("/regapp/host/" + appid);
       datadtl = await res.json();
+      deldata_dtl = [];
     } else {
       datadtl = [];
     }
+    columns_dtl[1] = appid ;
     newRow_dtl = [...columns_dtl];
-    return datadtl;
+//    return datadtl;
   }
 
-  $: promise = data;
-  $: promise_dtl = getApphost(appid);
+  // $: promise = data;
+  $: { getApphost(appid); }
   //$: promise_dtl = datadtl;
 
   async function getData() {
    const res = await fetch("/regapp");
    const rows = await res.json();
-   data = rows.map(r => { r.unshift(0); return r} ) ;
+   data = rows.map((r) => { r.unshift(0); return r} ) ;
 
     deldata = [];
     deldata_dtl = [];
@@ -72,8 +79,10 @@
       body: JSON.stringify({
         values: deldata,
       }),
+    }).then(res => {
+      if ( res.ok ) deldata_dtl = [] ;
     }).catch((err) => {
-      throw err;
+      alert( err.message ) ;
     });
   }
   function delAppHost() {
@@ -135,10 +144,14 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: datadtl ,
+        ins: datadtl.filter(r => r[0] == 0).map(r => {r.shift() ; return r ;}) ,
+        upd: datadtl.filter(r => r[0] > 0) ,
       }),
+    }).then(async res => {
+      const rmsg = await res.json() ;
+      console.log(rmsg) ;
     }).catch((err) => {
-      throw err;
+      alert("error:" + err.message);
     });
   }
 
@@ -162,10 +175,10 @@
         <th style="width:4rem">삭제</th>
       </tr>
     </thead>
-    {#await promise}
+    <!-- {#await promise}
       <p>...waiting</p>
-    {:then rows}
-      {#each rows as row}
+    {:then rows} -->
+      {#each data as row}
         <tr on:click={() => (appid = row[1])}>
           <td><input type="checkbox" bind:checked={row[0]} /></td>
           <td contenteditable="false" bind:textContent={row[1]} />
@@ -174,7 +187,7 @@
           <td><button on:click={() => deleteRow(row)}>X</button></td>
         </tr>
       {/each}
-    {/await}
+    <!-- {/await} -->
     <tr style="color: grey">
       {#each newRow as col, i}
         {#if i == 0 }
@@ -196,10 +209,10 @@
         <th style="width:4rem">삭제</th>
       </tr>
     </thead>
-    {#await promise_dtl}
+    <!-- {#await promise_dtl}
       <p>searching...</p>
-    {:then rows}
-      {#each rows as row}
+    {:then rows} -->
+      {#each datadtl as row}
         <tr>
           <td contenteditable="false" bind:textContent={row[1]} />
           <td contenteditable="true" bind:textContent={row[2]} />
@@ -207,9 +220,9 @@
           <td><button on:click={() => deleteRow_dtl(row)}>X</button></td>
         </tr>
       {/each}
-    {:catch error}
+    <!-- {:catch error}
       <p>{error.message}</p>
-    {/await}
+    {/await} -->
     <tr style="color: grey">
       <td contenteditable="false" bind:textContent={newRow_dtl[1]} />
       <td contenteditable="true" bind:textContent={newRow_dtl[2]} />

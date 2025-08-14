@@ -25,7 +25,7 @@
     "등록일",
   ];
 
-  function updService() {
+  function updUser() {
     const upds = rdata
       .filter((r) => r.chk && r.pkey != 0)
       .map((r) => {
@@ -63,7 +63,7 @@
       });
   }
 
-  function delService() {
+  function delUser() {
     const delcodes = rdata
       .filter((r) => r.chk && r.pkey > 0)
       .map((r) => r.pkey);
@@ -80,7 +80,7 @@
       }),
     })
       .then(async (res) => {
-        let rmsg = await res.json();
+//        let rmsg = await res.json();
         if (res.status < 400) {
           alert("정상 삭제되었습니다");
           getdata();
@@ -103,16 +103,6 @@
     }
   }
 
-  function editEnable(chk) {
-    console.log(chk);
-    const editables = document.querySelectorAll('.host, .usrdesc, .apps');
-    // console.log("editable:", editables);
-    if (chk) {
-      editables.forEach(e => e.contentEditable = 'true')
-    } else {
-      editables.forEach(e => e.contentEditable = 'false')
-    }
-  }
   onMount(getdata);
 </script>
 
@@ -126,8 +116,8 @@
       ncount++;
     }}>추가</button
   >
-  <button on:click={delService}>선택삭제</button>
-  <button on:click={updService}>적용</button>
+  <button on:click={delUser}>선택삭제</button>
+  <button on:click={updUser}>적용</button>
   <button on:click={getdata}>적용취소</button>
 </div>
 <hr />
