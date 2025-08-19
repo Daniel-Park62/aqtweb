@@ -113,13 +113,8 @@
   <update id="tservice_Upd">
     <foreach item="item" collection="list" separator=";">
       UPDATE tservice 
-<<<<<<< HEAD
       SET appid=#{item.appid}, svcid='${item.svcid}', svckor='${item.svckor}',
           svceng='${item.svceng}', task=#{item.task}, manager='${item.manager}',svckind=#{item.svckind} 
-=======
-      SET appid=#{item.appid}, svcid='${item.scvid}', svckor='${item.svckor}',
-          svceng='${item.svceng}', task=#{item.task}, manager='${item.manage}',svckind=#{item.svckind} 
->>>>>>> 3da36c7d102620b09a9c55687d6b15ed9cf8b1eb
       WHERE pkey = ${item.pkey} 
      </foreach>
   </update>
@@ -127,13 +122,8 @@
     INSERT INTO tservice 
        ( appid, svcid,  svckor, svceng, task, manager, svckind) 
     VALUES 
-<<<<<<< HEAD
     <foreach item="r" collection="list" open="(" separator="," close=")" >
       #{r.appid}, '${r.svcid}','${r.svckor}','${r.svceng}','${r.task}',#{r.manager},#{r.svckind}
-=======
-    <foreach item="r" collection="list" separator="," >
-      #r.appid, '${r.svcid}','${r.svckor}','${r.svceng}','${r.task}',#{r.manager},#{r.svckind}
->>>>>>> 3da36c7d102620b09a9c55687d6b15ed9cf8b1eb
     </foreach>
   </insert>
   <delete id="tservice_Del">

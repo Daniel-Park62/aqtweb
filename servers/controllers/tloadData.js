@@ -1,20 +1,18 @@
 const router = require('express').Router();
-const tloaddata = require('../dao/tloaddata');
+const tloaddataDao = require('../dao/tloaddataDao');
 
 router.get('/summary', async function (req, res, next) {
   try {
-    const rdata = await tloaddata.summary();
-    
+    const rdata = await tloaddataDao.summary();
     res.json(rdata);
   } catch (err) {
-    console.error(err);
     next(err);
   }
 });
 
 router.get('/getcodes', async function (req, res, next) {
   try {
-    const rdata = await tloaddata.getTcodes();
+    const rdata = await tloaddataDao.getTcodes();
     res.send(rdata);
   } catch (err) {
     console.error(err);
@@ -24,7 +22,7 @@ router.get('/getcodes', async function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
   try {
-    const rdata = await tloaddata.find(req.body);
+    const rdata = await tloaddataDao.find(req.body);
     res.send(rdata);
   } catch (err) {
     console.error(err);
@@ -34,7 +32,7 @@ router.post('/', async function (req, res, next) {
 
 router.post('/compareTcnt', async function (req, res, next) {
   try {
-    const rdata = await tloaddata.compareTcnt(req.body);
+    const rdata = await tloaddataDao.compareTcnt(req.body);
     res.send(rdata[0]);
   } catch (err) {
     console.error(err);
@@ -43,7 +41,7 @@ router.post('/compareTcnt', async function (req, res, next) {
 });
 router.post('/compareData', async function (req, res, next) {
   try {
-    const rdata = await tloaddata.compareData(req.body);
+    const rdata = await tloaddataDao.compareData(req.body);
     res.send(rdata);
   } catch (err) {
     console.error(err);
@@ -54,7 +52,7 @@ router.post('/compareData', async function (req, res, next) {
 router.get('/:id', async function (req, res, next) {
   
   try {
-    const rdata = await tloaddata.findById(req.params.id);
+    const rdata = await tloaddataDao.findById(req.params.id);
     res.send(rdata);
   } catch (err) {
     console.error(err);

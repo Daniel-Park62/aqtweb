@@ -6,11 +6,11 @@ function makeCond(pcond) {
   let etcond = '';
   if (pcond.rcode) etcond = 'and (a.rcode = ' + pcond.rcode + ') ';
   if (pcond.cond) etcond += ' and (' + pcond.cond + ') ';
-  if (pcond.valchk && pcond.valiance) etcond += ` and (a.svctime - b.svctime) > ${pcond.valiance} ` ;
+  if (pcond.valchk && pcond.valiance) etcond += ` and abs(a.svctime - b.svctime) > ${pcond.valiance} ` ;
   return etcond ;
 }
 
-const tloaddata = {
+module.exports = {
   find: async (args) => {
     // console.log(args);
     if (!args.enc) args.enc = '';
@@ -43,29 +43,20 @@ const tloaddata = {
   },
   findById: async (id) => {
 
-    try {
-      const rows = await aqtdb.query({
+      return await aqtdb.query({
         dateStrings: true,
-        sql: "	SELECT pkey, pkey cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  \
-      '' appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, \
-          case tenv when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,\
-          case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,\
-      date_format(cdate,'%Y-%m-%d %T') cdate \
-      FROM tloaddata t left join tmaster m on (t.tcode = m.code) where pkey  = ? limit 1"  }
-        , [id]);
-      return (rows);
-    } catch (e) {
-      throw e.sqlMessage
-    };
+        sql: `	SELECT pkey, pkey cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  \
+      '' appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, 
+          case tenv when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,
+          case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,
+      date_format(cdate,'%Y-%m-%d %T') cdate 
+      FROM tloaddata t left join tmaster m on (t.tcode = m.code) where pkey  = ? limit 1`  }
+        , id);
+
   },
   summary: async () => {
-    try {
-      const rows = await aqtdb.query("SELECT SQL_CACHE tcode, date_format(min(o_stime),'%Y/%m/%d') stimef,date_format(max(o_stime),'%Y/%m/%d') stimet "
+    return await aqtdb.query("SELECT SQL_CACHE tcode, date_format(min(o_stime),'%Y/%m/%d') stimef,date_format(max(o_stime),'%Y/%m/%d') stimet "
         + " ,format(count(1),0) cnt, format(count(distinct(uri)),0) scnt, date_format(max(cdate),'%Y/%m/%d %T') cdate FROM tloaddata GROUP BY tcode ");
-      return (rows);
-    } catch (e) {
-      throw e;
-    }
   },
   getTcodes: async () => {
     return await aqtdb.query("	SELECT tcode, date_format(min(o_stime),'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ");
@@ -74,18 +65,13 @@ const tloaddata = {
 
     let etcond = makeCond(pcond) ;
 
-    try {
-      const rows = await aqtdb.query({
+    return await aqtdb.query({
         dateStrings: true,
         sql: "SELECT concat(format(count(1),0) ,'건') tcnt  \
           FROM vtcppacket a JOIN tloaddata B ON (a.cmpid = B.pkey)  \
           LEFT JOIN tservice s ON (a.appid = s.appid AND a.uri = s.svcid ) \
           WHERE a.tcode = ? and a.appid rlike ? " + etcond 
       }, [pcond.tcode, pcond.apps]);
-      return (rows);
-    } catch (e) {
-      console.error(e); throw (e)
-    };
   },
 
   compareData: async (pcond) => {
@@ -94,8 +80,7 @@ const tloaddata = {
     }
     let etcond = makeCond(pcond) ;
     // console.log(etcond, pcond);
-    try {
-      const rows = await aqtdb.query({
+    return await aqtdb.query({
         dateStrings: true,
         sql: "SELECT '' chk, a.pkey, a.cmpid id, a.uri , a.stime `송신시간`, a.rtime `수신시간`, a.svctime `소요시간`, a.rcode , \
           case tenv when 'euc-kr' then CAST( a.sdata AS CHAR CHARSET euckr) else cast(a.sdata as char) end 송신,   \
@@ -106,13 +91,9 @@ const tloaddata = {
           LEFT JOIN tservice s ON (a.appid = s.appid AND a.uri = s.svcid ) \
           WHERE a.tcode = ? and a.appid rlike ? " + etcond + " order by a.o_stime limit ?, ? "
       }, [pcond.tcode, pcond.apps, pcond.page * pcond.psize, +(pcond.psize)]);
-      return (rows);
-    } catch (e) {
-      console.error(e); throw (e)
-    };
   }
 }
-module.exports = tloaddata;
+
 
 
 

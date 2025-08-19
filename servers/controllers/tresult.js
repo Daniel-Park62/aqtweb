@@ -15,7 +15,7 @@ router.post('/', async function(req, res, next) {
     db_tmpdir = rows[0].variable_value ;
   }) ;
 
-  const tfile = 't' + Date.now().toString().substr(-6) + '.csv' ;
+  const tfile = 't' + Date.now().toString().slice(-6) + '.csv' ;
 //  const tfilenm =  (process.env.AQTLOG ?? '.' ) + '/' + tfile ;
 // const tfilenm =  path.join(__dirname, "../") + tfile ;
 //  const tfilenm =  "/tmp/" + tfile ;

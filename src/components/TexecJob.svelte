@@ -42,6 +42,33 @@
     "작업메세지",
   ];
 
+  function newJob(){
+
+        jobsts = 1;
+
+        if ( ! (curRow = rdata.find(a => a.pkey == 0)) ) {
+        curRow = {
+          pkey: 0,
+          tcode: tcodelist.sort((a,b) => a.enddate > b.enddate)[0].code ,
+          tdesc: "",
+          resultstat: 0,
+          jobkind: 9,
+          dbskip: "0",
+          limits: "",
+          etc: "",
+          in_file: "",
+          reqstartDt: (new Date()).toLocaleString('lt'),
+          msg: "",
+          exectype: 0,
+          tnum: 1,
+          repnum: 1,
+          reqnum: 0,
+        };
+        rdata = [curRow, ...rdata] ;
+        }
+//        document.getElementsByTagName("table")[0].scrollIntoView() ;
+  }
+
   function reExec() {
     if (curRow.tcode == "") {
       alert("작업할 테스트 ID 를 선택하세요.");
@@ -243,32 +270,7 @@
   <hr />
   <div class="flex py-1 ">
     <button
-      on:click={() => {
-        jobsts = 1;
-        let today = new Date();
-        today.setHours(today.getHours() + 9);
-        if ( ! (curRow = rdata.find(a => a.pkey == 0)) ) {
-        curRow = {
-          pkey: 0,
-          tcode: tcodelist.sort((a,b) => a.enddate > b.enddate)[0].code ,
-          tdesc: "",
-          resultstat: 0,
-          jobkind: 9,
-          dbskip: "0",
-          limits: "",
-          etc: "",
-          in_file: "",
-          reqstartDt: today.toISOString().slice(0, -5).replace("T", " "),
-          msg: "",
-          exectype: 0,
-          tnum: 1,
-          repnum: 1,
-          reqnum: 0,
-        };
-        rdata = [curRow, ...rdata] ;
-        }
-        document.getElementsByTagName("table")[0].scrollIntoView() ;
-      }}>신규작업</button>
+      on:click={newJob}>신규작업</button>
     <button on:click={reExec}>{curRow.pkey > 0 ? "재" :""}실행요청</button>
     {#if curRow.pkey > 0}
       <button on:click={deljob(curRow.pkey)}>작업삭제</button>

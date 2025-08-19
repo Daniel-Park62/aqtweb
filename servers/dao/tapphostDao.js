@@ -1,7 +1,4 @@
 const aqtdb = require('../db/dbconn');
-const mapper = require('mybatis-mapper');
-mapper.createMapper(['servers/mappers/aqtdb.xml']);
-const NSPACE = 'aqtdb';
 
 const tapphostDao = {
   appList : async () => {
