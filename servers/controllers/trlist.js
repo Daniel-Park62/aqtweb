@@ -1,208 +1,68 @@
 const express = require('express');
 const router = express.Router();
-const aqtdb = require('../db/dbconn');
+const tconfigDao = require('../dao/tconfigDao') ;
+const tcppacketDao = require('../dao/tcppacketDao') ;
+const tloaddataDao = require('../dao/tloaddataDao') ;
 
 let senc = '';
-let col1 = false;
-let col2 = false;
-aqtdb.query("select encval, col1, col2 from tconfig limit 1")
-  .then(rows => {
-    if (rows[0].encval == 'MS949' || rows[0].encval == 'EUCKR') senc = ' character set euckr';
-    if (rows[0].col1) col1 = true;
-    if (rows[0].col2) col2 = true;
-  });
-aqtdb.query("SET character_set_connection = 'euckr';");
-router.get('/config', async function (req, res, next) {
-  aqtdb.query("select encval, col1, col2 from tconfig limit 1")
-    .then(rows => {
-      const row = {};
-      if (rows[0].encval == 'MS949' || rows[0].encval == 'EUCKR') senc = ' character set euckr';
-      if (rows[0].col1) { col1 = true; row.col1 = rows[0].col1 }
-      if (rows[0].col2) { col2 = true; row.col2 = rows[9].col2 }
-      return res.json(row)
-    })
-    .catch((e) => { console.error(e); return next(e) });
+let col1 = false ;
+let col2 = false ;
+const configCol = {} ;
+tconfigDao.findAll()
+.then( r => {
+    if (r[0][0].encval == 'MS949' || r[0][0].encval.encval == 'EUCKR') senc = ' character set euckr';
+    if (r[0][0].col1) { col1 = true; configCol.col1 = r[0][0].col1 }
+    if (r[0][0].col2) { col2 = true; configCol.col2 = r[0][0].col2 }
+})
+.catch(e => console.log );
 
+router.get('/config', async function (req, res, next) {
+    res.json(configCol) ;
 });
 
 router.put('/change', async function (req, res, next) {
-  let qstr = "update ttcppacket set sdata = ? where pkey = ? ; commit ;" ;
-/*   aqtdb.query("select tenv  from vtcppacket where pkey = ? limit 1", [req.body.pkey])
-  .then(rows => {
-    if (rows[0].tenv == 'euc-kr') qstr = "update ttcppacket set sdata = convert( ? using euckr)  where pkey = ? ; commit ;";
-  })
-  .catch() ;
-  console.log(qstr) ;
- */
-  await aqtdb.query(qstr, [req.body.sdata, req.body.pkey])
-    .then(r => res.status(201).send({ message: `${req.body.pkey}` + " 등록되었습니다." }))
-    .catch(e => { next(new Error(e.message)) });
+  tcppacketDao.changeSdata([req.body.sdata , req.body.pkey])
+    .then( res.json({ message: `${req.body.pkey} 수정되었습니다.` }))
+    .catch(e => next(e) );
 });
 
 router.put('/redo', async function (req, res, next) {
-
-  await aqtdb.query("update ttcppacket t, tloaddata o  SET t.sdata = o.sdata WHERE t.pkey = ? AND t.cmpid = o.pkey ; commit ;",
-    [req.body.pkey])
-    .then(r => res.status(201).send({ message: `${req.body.pkey}` + " 등록되었습니다." }))
-    .catch(e => { next(new Error(e.message)) });
+  tcppacketDao.redoSdata([req.body.pkey])
+    .then(r => {
+      res.json({ message: r[0].affectedRows > 0 ? "원복 되었습니다.": "변경되지 않았습니다." });
+    })
+    .catch(e => next(e) );
 });
 router.post('/tcnt', async function (req, res, next) {
-  if (!req.body.psize) {
-    res.send([]);
-    return;
-  }
-  let etcond = '';
-  if (req.body.rcode) etcond = 'and (rcode = ' + req.body.rcode + ') ';
-  if (req.body.cond) etcond += ' and (' + req.body.cond + ') ';
-  if (req.body.apps) etcond += ' and (t.appid rlike \'' + req.body.apps + '\')';
-  // console.log("enc:", senc);
-  try {
-    let rcnt = await aqtdb.query(" select concat(format(count(1),0) ,'건') tcnt "
-      + "FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where tcode = ? and t.uri rlike ? " + etcond
-      , [req.body.tcode, req.body.uri]);
-      return res.json(rcnt) ;
-  } catch (e) {
-    return next(e);
-  }
-
-  // const rows = await conn.query({dateStrings:true, sql: 'select * from vtrxlist '})  ;
-  // const scnt = await conn.query('select count(1) as scnt from tservice') ;
-  // res.send({ scnt: scnt[0].scnt, data: rows} ) ;
-
+  tcppacketDao.tcount(req.body)
+  .then(rcnt => res.json(rcnt) )
+  .catch (e => next(e)) ;
 });
 
 router.post('/', async function (req, res, next) {
   if (!req.body.psize) {
-    res.send([]);
-    return;
-  }
-  let etcond = '';
-  if (req.body.rcode) etcond = 'and (rcode = ' + req.body.rcode + ') ';
-  if (req.body.cond) etcond += ' and (' + req.body.cond + ') ';
-  if (req.body.apps) etcond += ' and (t.appid rlike \'' + req.body.apps + '\')';
-
-  aqtdb.query({
-    dateStrings: true,
-    sql: "	SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, svctime `소요시간`, method, uri, sflag, rcode status, \
-                  if(tport=0,dstport,tport) dstport, t.appid , tenv,if(sflag='2',errinfo,\
-                   case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end ) `수신데이터`,  \
-                  rlen `수신크기`," + (col1 ? "col1," : "") + (col2 ? "col2," : "") + " date_format(cdate,'%Y-%m-%d %T') cdate \
-                  FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where t.tcode = ? and t.uri rlike ? " + etcond + " order by o_stime limit ?, ? "
-  }, [req.body.tcode, req.body.uri, req.body.page * req.body.psize, +(req.body.psize)])
-  .then(rows => { return res.json(rows) })
-  .catch((e) => { return next(e) });
-
-  // const rows = await conn.query({dateStrings:true, sql: 'select * from vtrxlist '})  ;
-  // const scnt = await conn.query('select count(1) as scnt from tservice') ;
-  // res.send({ scnt: scnt[0].scnt, data: rows} ) ;
+    return res.send([]);
+  };
+  tcppacketDao.find(req.body)
+  .then(rows =>  res.json(rows) )
+  .catch((e) => next(e) );
 
 });
 
 router.get('/:id', async function (req, res, next) {
-  // console.log(req.params)
 
-  // aqtdb.query({dateStrings:true, 
-  //              sql: "	SELECT pkey, cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
-  //              uri, seqno, ackno, rcode, errinfo,sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
-  //              FROM ttcppacket t  where pkey  = ? "  }
-  //             , [ req.params.id])
-  getPacket(req.params.id)
+  tcppacketDao.findById(req.params.id)
     .then(rows => { return res.json(rows) })
     .catch((e) => { console.error(e); return next(e) });
-
-  // const rows = await conn.query({dateStrings:true, sql: 'select * from vtrxlist '})  ;
-  // const scnt = await conn.query('select count(1) as scnt from tservice') ;
-  // res.send({ scnt: scnt[0].scnt, data: rows} ) ;
-});
-
-router.get('/next/:id', async function (req, res, next) {
-
-  let etcond = '';
-  try {
-
-    const rows = await aqtdb.query({
-      dateStrings: true,
-      sql: "	SELECT t.pkey, cmpid, t.tcode, t.o_stime, stime, rtime, svctime, elapsed, srcip, srcport,thost dstip, if(tport=0,dstport,tport) dstport, method,  \
-               appid, uri, seqno, ackno, rcode, errinfo,sflag, rhead, slen, rlen, tenv,\
-                  case tenv when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,\
-                  case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,\
-               date_format(cdate,'%Y-%m-%d %T') cdate \
-               FROM vtcppacket t ,(SELECT pkey, O_STIME, TCODE FROM ttcppacket where pkey = ?) c  \
-               where t.tcode = c.tcode and t.o_stime > c.o_stime and t.pkey  != c.pkey  limit 1"  }
-      , [req.params.id]);
-    if (rows.length > 0) {
-      return res.json(rows);
-    } else {
-      const error = new Error('다음 데이터가 없습니다.');
-      res.status(404);
-      return next(error);
-    }
-  } catch (e) {
-    console.error(e);
-    return next(e)
-  }
-
-  // const rows = await conn.query({dateStrings:true, sql: 'select * from vtrxlist '})  ;
-  // const scnt = await conn.query('select count(1) as scnt from tservice') ;
-  // res.send({ scnt: scnt[0].scnt, data: rows} ) ;
-});
-
-router.get('/prev/:id', async function (req, res, next) {
-  let etcond = '';
-  try {
-
-    const rows = await aqtdb.query({
-      dateStrings: true,
-      sql: "	SELECT t.pkey, cmpid, t.tcode, t.o_stime, stime, rtime, svctime, elapsed, srcip, srcport, thost dstip, if(tport=0,dstport,tport) dstport, method,  \
-               appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, tenv,\
-                  case tenv when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,\
-                  case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,\
-               date_format(cdate,'%Y-%m-%d %T') cdate \
-               FROM vtcppacket t ,(SELECT pkey, O_STIME, TCODE FROM ttcppacket where pkey = ?) c  \
-               where t.tcode = c.tcode and t.o_stime < c.o_stime and t.pkey  != c.pkey  order by t.o_stime desc limit 1"  }
-      , [req.params.id]);
-    if (rows.length > 0) {
-      res.json(rows);
-    } else {
-      const error = new Error('이전 데이터가 없습니다.');
-      res.status(404);
-      return next(error);
-    }
-  } catch (e) {
-    console.error(e);
-    return next(e)
-  }
 
 });
 
 router.post('/orig', async function (req, res, next) {
-  // console.log(req);
-  if (!req.body.enc) req.body.enc = '';
-  aqtdb.query({
-    dateStrings: true,
-    sql: "	SELECT pkey,  tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
-               '' appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, \
-               cast(sdata AS CHAR " + req.body.enc + ") sdata , cast(rdata AS CHAR " + req.body.enc + ") rdata,\
-               date_format(cdate,'%Y-%m-%d %T') cdate \
-               FROM tloaddata t  where pkey  = ? limit 1"  }
-    , [req.body.id])
+  if (!req.body.id) throw new Error('조회할 origin id값이 없습니다.') ;
+  tloaddataDao.findById(req.body.id)
     .then(rows => { return res.json(rows) })
     .catch((e) => { console.error(e); return next(e) });
 
-  // const rows = await conn.query({dateStrings:true, sql: 'select * from vtrxlist '})  ;
-  // const scnt = await conn.query('select count(1) as scnt from tservice') ;
-  // res.send({ scnt: scnt[0].scnt, data: rows} ) ;
 });
 
-async function getPacket(id) {
-
-  return await aqtdb.query({
-    dateStrings: true,
-    sql: "	SELECT pkey, cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, thost dstip, if(tport=0,dstport,tport) dstport, method,  \
-                  appid, uri, seqno, ackno, rcode, errinfo,sflag, rhead, slen, rlen, tenv,\
-                  case tenv when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,\
-                  case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,\
-                  date_format(cdate,'%Y-%m-%d %T') cdate   FROM vtcppacket t  where pkey  = ? "  }
-    , [id]);
-}
 module.exports = router;

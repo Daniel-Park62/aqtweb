@@ -7,7 +7,6 @@ router.get('/', async function (req, res, next) {
   trDao.tasksum()
     .then(rows => res.json(rows))
     .catch((e) => next(e));
-
 });
 
 router.post('/', async function(req, res, next) {

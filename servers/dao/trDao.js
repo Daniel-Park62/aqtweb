@@ -1,4 +1,6 @@
 const aqtdb = require('../db/dbconn');
+const path = require('path');
+const fs = require('fs');
 const mapper = require('mybatis-mapper');
 mapper.createMapper(['servers/mappers/aqtdb.xml']);
 const NSPACE = 'aqtdb';
@@ -33,68 +35,61 @@ module.exports = {
       throw e ;
     } ;
   },
-  insertMaster: async (parms) => {
-    const row = await aqtdb.query("	SELECT count(1) cnt from tmaster where code = ?", [parms.code]);
-    if (row[0].cnt > 0) {
-      throw Error(`이미 존재하는 코드입니다(${parms.code})`);
-    }
-    const qstr = mapper.getStatement(NSPACE, 'tmaster_Ins', parms);
-    return await aqtdb.query(qstr);
-  },
-  updateMaster: async (parms) => {
-    const qstr = mapper.getStatement(NSPACE, 'tmaster_Upd', parms);
 
-    return await aqtdb.query(qstr);
-  },
-  deleteMaster: async (parms) => {
-    const qstr = mapper.getStatement(NSPACE, 'tmaster_Del', parms);
-    console.log("deleteMaster:" ,qstr);
-    return await aqtdb.query(qstr);
-  },
   eraseTr: async (parms) => {
     const qstr = mapper.getStatement(NSPACE, 'ttcppacket_Erase', parms);
     console.log("eraseTr:" ,qstr);
     return await aqtdb.query(qstr);
   },
+  async getTempDir() {
+    aqtdb.query(`select variable_value from  information_schema.global_variables 
+                      where variable_name = 'tmpdir'  limit 1`)
+    .then(rows => {
+      return rows[0].variable_value ;
+    });
+    
+  },
   async findToFile(parms) {
     let senc = '' ;
     let db_tmpdir = '/tmp'
-  await aqtdb.query(`select tenv, variable_value from tmaster, information_schema.global_variables 
+  await aqtdb.query(`select case tenv when 'euc-kr' then 'charset euckr' else '' end tenv,
+                           variable_value from tmaster, information_schema.global_variables 
                      where variable_name = 'tmpdir' AND code = ? limit 1`,[parms.tcode])
   .then(rows => {
-    if ( rows[0]?.tenv == 'euc-kr') senc = ' charset euckr' ;
+    senc = rows[0].tenv ;
     db_tmpdir = rows[0].variable_value ;
-  }) ;
+  })
+  .catch( e => {throw e}) ;
 
   const tfile = 't' + Date.now().toString().slice(-6) + '.csv' ;
   const tfilenm =   path.join(db_tmpdir  , tfile) ; 
   let etcond = '';
   if (parms.uri) etcond = `and (t.uri = '${parms.uri}' ) ` ;
-  if (parms.rcode) etcond = `and (t.rcode = '${parms.rcode}') ` ;
+  if (parms.rcode) etcond += ` and (t.rcode = '${parms.rcode}') ` ;
   if (parms.cond) etcond += ` and ('${parms.cond}') ` ;
 
   const str_qry = ` SELECT t.tcode, t.uri URI, t.stime 송신시간, t.rtime 수신시간, t.svctime 소요시간, t.rcode 응답코드, 
-        REGEXP_REPLACE(SUBSTR(t.sdata,1,100),'[\0\r\n]',' ') 송신데이터, 
-        REGEXP_REPLACE(CAST( SUBSTR(t.rdata,1,100) AS CHAR ${senc} ),'[\0\r\n]',' ') 수신,   
-        REGEXP_REPLACE(CAST( SUBSTR(B.rdata,1,100) AS CHAR ${senc} ),'[\0\r\n]',' ') 원수신  
+        REGEXP_REPLACE(cast(t.sdata as char(200) ${senc} ),'[\0\r\n]',' ') 송신데이터, 
+        REGEXP_REPLACE(CAST( t.rdata AS CHAR(200) ${senc} ),'[\0\r\n]',' ') 수신,   
+        REGEXP_REPLACE(CAST( B.rdata AS CHAR(200) ${senc} ),'[\0\r\n]',' ') 원수신  
         FROM ttcppacket t JOIN tloaddata B ON (t.cmpid = B.pkey)  
         LEFT JOIN tservice s ON (t.appid = s.appid AND t.uri = s.svcid ) 
         WHERE t.tcode = ? and t.appid rlike ? ${etcond}
          INTO OUTFILE ? 
-          FIELDS TERMINATED BY '\\t' OPTIONALLY ENCLOSED BY '\"' 
+          FIELDS TERMINATED BY '\\t'  
           LINES TERMINATED BY '\\n'  ` ;
 
   const fff =  path.join( __dirname , tfile );
+  
+  try {
+    const rst = await aqtdb.query({dateStrings:true, 
+                sql: str_qry  }, [ parms.tcode,parms.apps,  tfilenm ]);
 
-  aqtdb.query({dateStrings:true, 
-               sql: str_qry  }, [ parms.tcode,parms.apps,  tfilenm ])
-    .then( rows => {   fs.copyFileSync(tfilenm, fff) ;
-        fs.unlinkSync(tfilenm);
-        // res.setHeader('Content-Disposition', `attachment; filename=${tfile}`) ;
-        res.download(fff) ;
-         console.log( fff) ;
-        setTimeout( () => fs.unlinkSync(fff), 5000) ;
-      } )
-    .catch( e => { throw e.sqlMessage });
+    fs.copyFileSync(tfilenm, fff);
+    fs.unlinkSync(tfilenm);
+    setTimeout( () => fs.unlinkSync(fff), 5000) ;
+    return fff;
+  } catch (e){  throw (e)};
+
   }
 }

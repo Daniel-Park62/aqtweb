@@ -3,7 +3,7 @@ const mapper = require('mybatis-mapper');
 mapper.createMapper(['servers/mappers/aqtdb.xml']);
 const NSPACE = 'aqtdb';
 
-const tmasterDao = {
+module.exports = {
   listByUid: async (uid) => {
     const sql = mapper.getStatement(NSPACE, 'tmaster_ListUid', { uid });
     return await aqtdb.query(sql);
@@ -36,7 +36,6 @@ const tmasterDao = {
   },
   updateMaster: async (parms) => {
     const qstr = mapper.getStatement(NSPACE, 'tmaster_Upd', parms);
-
     return await aqtdb.query(qstr);
   },
   deleteMaster: async (parms) => {
@@ -51,8 +50,6 @@ const tmasterDao = {
   },
 
 }
-
-module.exports = tmasterDao;
 
 
 

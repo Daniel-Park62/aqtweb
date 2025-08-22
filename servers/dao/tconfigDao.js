@@ -1,6 +1,6 @@
 const aqtdb = require('../db/dbconn') ;
 
-const tconfig = {
+module.exports =  {
  findAll : async () => {
     return await aqtdb.query(`	SELECT pjtnm, encval, diffc, col1, col2 from tconfig limit 1;
                   SELECT column_type col1type ,generation_expression expr1 FROM information_schema.COLUMNS
@@ -9,7 +9,7 @@ const tconfig = {
                 WHERE table_schema  = database() and TABLE_NAME = 'ttcppacket' AND COLUMN_NAME = 'col2' `) ;
 
   },
- findAllbk : async () => {
+/*  findAllbk : async () => {
     let rows = await aqtdb.query("	SELECT pjtnm, encval, diffc, col1, col2 from tconfig limit 1" ) ;
     let row1 = await aqtdb.query("SELECT column_type col1type ,generation_expression expr1 FROM information_schema.`COLUMNS` \
                 WHERE table_schema  = database() and TABLE_NAME = 'ttcppacket' AND COLUMN_NAME = 'col1' ") ;
@@ -19,6 +19,7 @@ const tconfig = {
     let rdata = {...rows[0],...row1[0],...row2[0]} ;
     return(rdata) ;
   },
+ */  
   saveConfig : async (args) => {
     return await aqtdb.query('update tconfig set pjtnm = ? ,\
         encval = ?, diffc = ?, col1 = ?, col2 = ? where id = 1 ',
@@ -36,8 +37,7 @@ const tconfig = {
       return await aqtdb.query(sqlstr ) ;
   },
 }
- 
-module.exports = tconfig ;
+
 
 
 

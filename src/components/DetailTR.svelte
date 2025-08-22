@@ -113,9 +113,8 @@
         },
         body: JSON.stringify({ 
           'id': qdata.cmpid,
-          'enc': qdata.tenv == 'euc-kr' ? 'charset euckr':'',
           'tcode':qdata.tcode,
-          $userid
+          'userid':$userid
         })
       });
     
