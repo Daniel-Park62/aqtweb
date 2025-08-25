@@ -11,8 +11,8 @@
     psize: 20,
     cond: "",
     uri: "",
-    task:"",
-    apps:""
+    task: "",
+    apps: "",
   };
 
   let tcode = "";
@@ -106,7 +106,7 @@
   </div>
 </div>
 <Modal>
-	<Trtable {conds} />
+	<Trtable bind:conds />
 </Modal>
 
 <style>

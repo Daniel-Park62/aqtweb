@@ -8,18 +8,20 @@
   export let tcode ;
   let conds = {
     tcode: "",
-    rcode: '',
+    rcode: "",
     page: 0,
     psize: 20,
     cond: "",
     uri: "",
-    task:""
+    task: "",
+    apps: "",
   };
   let sv_row;
-  let promise = Promise.resolve([]);
+  // let promise = [Promise.resolve([])];
+  let rows = [];
   async function getdata() {
       const res = await fetch( "/dashboard/list/"+$authApps);
-      promise = await res.json();
+      rows = await res.json();
 //      console.log(" call dashboard end", promise) ;
   }
 
@@ -46,9 +48,9 @@
       </tr>
     </thead>
     <tbody>
-      {#await promise}
+      <!-- {#await promise}
         <p>...waiting</p>
-      {:then rows}
+      {:then rows} -->
         {#each rows as row}
           <tr on:click={() => {
             if (sv_row) sv_row.classList.remove("row-selected");
@@ -72,9 +74,9 @@
             <td align="right">{(row.data_cnt - row.scnt - row.fcnt).toLocaleString("ko-KR")}</td>
           </tr>
         {/each}
-      {:catch error}
+      <!-- {:catch error}
         <p style="color: red">{error.message}</p>
-      {/await}
+      {/await} -->
     </tbody>
   </table>
 </div>
@@ -86,7 +88,7 @@
 
 
   .tcode-status {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "맑은 고딕", "Lato", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
     overflow-y: auto;

@@ -97,11 +97,11 @@ function select_item(item) {
 	.column {
 		margin: 5px;
 		padding: 5px;
+		height: 100%;
 	}
 
 	.menu {
 		flex-basis: 240px;
-		/* height: 100%; */
 		color: rgb(248, 241, 241);
 		background-color: blue;
 		text-align: left;
@@ -131,6 +131,7 @@ function select_item(item) {
 
 	.main-scr {
 		flex: 1 1 0;
+		/* max-height: 90%; */
 	}
 	.menu img {
 		padding: 3px 0px 0px 3px;
@@ -152,7 +153,7 @@ function select_item(item) {
 		text-decoration: underline;
 	}
 
-	.right .job_name {
+	.job_name {
 		text-align: left;
 		color: orangered;
 		text-transform: uppercase;

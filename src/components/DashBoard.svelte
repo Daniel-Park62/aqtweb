@@ -1,9 +1,9 @@
 <script>
   import { onMount, afterUpdate, beforeUpdate } from "svelte";
   import TidList from "./TidList.svelte";
-  import {rooturl} from '../aqtstore' ;
+  import { rooturl } from "../aqtstore";
   import { Doughnut } from "svelte-chartjs";
-  import ChartDataLabels from 'chartjs-plugin-datalabels';
+  import ChartDataLabels from "chartjs-plugin-datalabels";
   import {
     Chart as ChartJS,
     Title,
@@ -12,78 +12,98 @@
     ArcElement,
     CategoryScale,
   } from "chart.js";
- 
-  ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, ChartDataLabels );
+
+  ChartJS.register(
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement,
+    CategoryScale,
+    ChartDataLabels,
+  );
   ChartJS.register({
-  id: "doughnutInnerText",
+    id: "doughnutInnerText",
 
-  afterDraw: (chart, args, options) => {
-    const { ctx, chartArea:{width,height}} = chart ;
+    afterDraw: (chart, args, options) => {
+      const {
+        ctx,
+        chartArea: { width, height },
+      } = chart;
 
-    ctx.restore();
-    ctx.font = "14px sans-serif";
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "#6a40ff" ;
-    const ltext = "총 " + ( chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1])
-                                .toLocaleString() + "건" ;
-    let textX = Math.round((width - ctx.measureText(ltext).width) / 2),
+      ctx.restore();
+      ctx.font = "14px sans-serif";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = "#6a40ff";
+      const ltext =
+        "총 " +
+        (
+          chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1]
+        ).toLocaleString() +
+        "건";
+      let textX = Math.round((width - ctx.measureText(ltext).width) / 2),
         textY = height + 5;
 
-    ctx.fillText(ltext, textX, textY  );
+      ctx.fillText(ltext, textX, textY);
       // console.log("espnVal", espnVal, textX, textY) ;
-    const espnVal = 
-                ( chart.data.datasets[0].data[0] * 100 / 
-                ( chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1])).toFixed(2) + "%"; 
-    if (espnVal) {
-      textX = Math.round((width - ctx.measureText(espnVal).width) / 2) ;
-      ctx.font = "bold 16px sans-serif";
+      const espnVal =
+        (
+          (chart.data.datasets[0].data[0] * 100) /
+          (chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1])
+        ).toFixed(2) + "%";
+      if (espnVal) {
+        textX = Math.round((width - ctx.measureText(espnVal).width) / 2);
+        ctx.font = "bold 16px sans-serif";
 
-      ctx.fillText(espnVal, textX, textY - 16);
-      // console.log("espnVal", espnVal, textX, textY) ;
-    }
-    ctx.save();
-  },
-});
+        ctx.fillText(espnVal, textX, textY - 16);
+        // console.log("espnVal", espnVal, textX, textY) ;
+      }
+      ctx.save();
+    },
+  });
 
-const formatf = (v,ctx) => {
-          const vsum = ctx.chart.data.datasets[0].data[0] + ctx.chart.data.datasets[0].data[1];
-          if (v === 0  || (v * 100 / vsum) < 5 ) return "" ;
-          
-          return ctx.chart.data.labels[ctx.dataIndex].padStart(7,' ') 
-          +  v.toLocaleString().padStart(6,' ')  + " 건" ;
+  const formatf = (v, ctx) => {
+    const vsum =
+      ctx.chart.data.datasets[0].data[0] + ctx.chart.data.datasets[0].data[1];
+    if (v === 0 || (v * 100) / vsum < 5) return "";
+
+    return (
+      ctx.chart.data.labels[ctx.dataIndex].padStart(7, " ") +
+      v.toLocaleString().padStart(6, " ") +
+      " 건"
+    );
   };
 
   const options = {
     responsive: false,
     aspectRatio: 1.8,
     maintainAspectRatio: false,
-    onResize: function(chart, size) {
+    onResize: function (chart, size) {
       chart.update();
     },
     plugins: {
       legend: {
         display: false,
       },
-      tooltip:{
-        enabled:false
+      tooltip: {
+        enabled: false,
       },
       title: {
         display: true,
-        text: '누적진척율',
+        text: "누적진척율",
         fontSize: 10,
-        padding: {top: 5, left: 0, right: 0, bottom: 0}
+        padding: { top: 5, left: 0, right: 0, bottom: 0 },
       },
       datalabels: {
-        color: 'darkblue',
-        align:"center",
+        color: "darkblue",
+        align: "center",
         display: true,
         font: {
           size: 11,
           weight: "lighter",
-          family: "Verdana" ,
+          family: "Verdana",
         },
-        formatter: formatf ,
-      }
+        formatter: formatf,
+      },
     },
     animation: false,
   };
@@ -98,22 +118,25 @@ const formatf = (v,ctx) => {
         hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870"],
         circumference: 180, // 도넛 반 자르기
         rotation: 270,
-        cutout : "55%",
+        cutout: "55%",
         borderRadius: 5,
       },
     ],
   };
-  const data2 = structuredClone(data) ; // JSON.parse(JSON.stringify(data)) ;
-  data2.clabel = "테스트성공률" ;
-  data2.labels = ["성공건수\n","실패건수\n"];
-  const data3 = JSON.parse(JSON.stringify(data)) ;
-  const data4 = JSON.parse(JSON.stringify(data)) ;
-  data4.clabel = "테스트성공률" ;
-  data4.labels = ["성공건수\n","실패건수\n"];
-  data2.datasets[0].backgroundColor = data4.datasets[0].backgroundColor = ["#F7464A", "#46BFBD"] ;
-  const options2 = JSON.parse(JSON.stringify(options)) ;
-  options2.plugins.title.text="테스트성공률" ;
-  options2.plugins.datalabels.formatter = formatf ;
+  const data2 = structuredClone(data); // JSON.parse(JSON.stringify(data)) ;
+  data2.clabel = "테스트성공률";
+  data2.labels = ["성공건수\n", "실패건수\n"];
+  const data3 = JSON.parse(JSON.stringify(data));
+  const data4 = JSON.parse(JSON.stringify(data));
+  data4.clabel = "테스트성공률";
+  data4.labels = ["성공건수\n", "실패건수\n"];
+  data2.datasets[0].backgroundColor = data4.datasets[0].backgroundColor = [
+    "#F7464A",
+    "#46BFBD",
+  ];
+  const options2 = JSON.parse(JSON.stringify(options));
+  options2.plugins.title.text = "테스트성공률";
+  options2.plugins.datalabels.formatter = formatf;
 
   let tick = 0;
   setInterval(() => {
@@ -133,20 +156,21 @@ const formatf = (v,ctx) => {
   };
 
   async function getdata(x = 0) {
-
-    const res = await fetch($rooturl+ "/dashboard/summary");
+    const res = await fetch($rooturl + "/dashboard/summary");
     datas = await res.json();
 
     if (res.ok) {
       data.datasets[0].data[0] = datas.rows[0].svc_cnt * 1;
-      data.datasets[0].data[1] = datas.svccnt - datas.rows[0].svc_cnt * 1 ;
+      data.datasets[0].data[1] = datas.svccnt - datas.rows[0].svc_cnt * 1;
 
-      data2.datasets[0].data[0] = datas.rows[0].scnt * 1 ;
-      data2.datasets[0].data[1] = datas.rows[0].data_cnt * 1 - datas.rows[0].scnt * 1 ;
+      data2.datasets[0].data[0] = datas.rows[0].scnt * 1;
+      data2.datasets[0].data[1] =
+        datas.rows[0].data_cnt * 1 - datas.rows[0].scnt * 1;
       data3.datasets[0].data[0] = datas.rows[1].svc_cnt * 1;
-      data3.datasets[0].data[1] = datas.svccnt - datas.rows[1].svc_cnt * 1 ;
-      data4.datasets[0].data[0] = datas.rows[1].scnt * 1 ;
-      data4.datasets[0].data[1] = datas.rows[1].data_cnt * 1 - datas.rows[1].scnt * 1 ;
+      data3.datasets[0].data[1] = datas.svccnt - datas.rows[1].svc_cnt * 1;
+      data4.datasets[0].data[0] = datas.rows[1].scnt * 1;
+      data4.datasets[0].data[1] =
+        datas.rows[1].data_cnt * 1 - datas.rows[1].scnt * 1;
 
       return datas;
     } else {
@@ -159,8 +183,7 @@ const formatf = (v,ctx) => {
   }
 
   onMount(() => {
-
-    getdata() ;
+    getdata();
   });
 </script>
 
@@ -172,23 +195,21 @@ const formatf = (v,ctx) => {
       <div class="cap">단위테스트</div>
       <div class="items">
         <div class="item1 item">
-          <Doughnut {data} {options} plugins={[ChartDataLabels]} height=120vh  />
-          <!-- <div>전체누적진척율</div>
-          <div class="per">{(datas.rows[0].svc_cnt * 100 / datas.svccnt).toFixed(2) }%</div>
-          <span class="lbl">대상서비스 :</span><span>{datas.svccnt.toLocaleString("ko-KR")}</span><br>
-          <span class="lbl">진행건수   :</span><span class="text-blue text-xl font-bold">{(datas.rows[0].svc_cnt *1).toLocaleString("ko-KR")}</span> -->
+          <Doughnut
+            {data}
+            {options}
+            plugins={[ChartDataLabels]}
+            height="120vh"
+          />
         </div>
 
         <div class="item2 item">
-          <Doughnut data={data2} options={options2} plugins={[ChartDataLabels]} height=120vh  />
-<!--           <div>테스트성공률</div>
-          <div class="per">{datas.rows[0].srate * 1}%</div>
-          <span class="lbl">수행건수 :</span><span
-            >{(datas.rows[0].data_cnt * 1).toLocaleString("ko-KR")}</span
-          ><br />
-          <span class="lbl">성공건수 :</span><span
-            >{(datas.rows[0].scnt * 1).toLocaleString("ko-KR")}</span
-          > -->
+          <Doughnut
+            data={data2}
+            options={options2}
+            plugins={[ChartDataLabels]}
+            height="120vh"
+          />
         </div>
       </div>
     </div>
@@ -196,34 +217,21 @@ const formatf = (v,ctx) => {
       <div class="cap">통합테스트</div>
       <div class="items">
         <div class="item1 item">
-          <Doughnut data={data3} {options} plugins={[ChartDataLabels]} height=120vh />
-<!--           <div>전체누적진척율</div>
-          <div class="per">
-            {(((datas.rows[1].svc_cnt ?? 0) * 100) / datas.svccnt).toFixed(2)}%
-          </div>
-          <span class="lbl">대상서비스 :</span><span
-            >{datas.svccnt.toLocaleString("ko-KR")}</span
-          ><br />
-          <span class="lbl">진행건수 :</span><span
-            >{(datas.rows[1].svc_cnt * 1).toLocaleString("ko-KR")}</span
-          > -->
+          <Doughnut
+            data={data3}
+            {options}
+            plugins={[ChartDataLabels]}
+            height="120vh"
+          />
         </div>
 
         <div class="item2 item">
-          <Doughnut data={data4} options={options2} plugins={[ChartDataLabels]} height=120vh  />
-<!--           <div>테스트성공률</div>
-          <div class="per">
-            {(
-              ((datas.rows[1].scnt || 0) * 100) /
-              (datas.rows[1].data_cnt || 1)
-            ).toFixed(2)}%
-          </div>
-          <span class="lbl">수행건수 :</span><span
-            >{(datas.rows[1].data_cnt * 1).toLocaleString("ko-KR")}</span
-          ><br />
-          <span class="lbl">성공건수 :</span><span
-            >{(datas.rows[1].scnt * 1).toLocaleString("ko-KR")}</span
-          > -->
+          <Doughnut
+            data={data4}
+            options={options2}
+            plugins={[ChartDataLabels]}
+            height="120vh"
+          />
         </div>
       </div>
     </div>
@@ -232,7 +240,18 @@ const formatf = (v,ctx) => {
 </div>
 
 <style>
-  .container,
+  .main {
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+  }
+  .container {
+    display: flex;
+    flex-basis: 183px;
+    margin: 0%;
+    height: auto;
+    justify-content: space-evenly;
+  }
   .items {
     display: flex;
     margin: 0%;
@@ -248,7 +267,7 @@ const formatf = (v,ctx) => {
   }
   .subm > .cap {
     padding: 0 1em;
-    color: silver;
+    color: rgb(108, 107, 107);
     font-family: "맑은 고딕";
     font-weight: bold;
     font-size: 1.4rem;
@@ -282,7 +301,8 @@ const formatf = (v,ctx) => {
     width: 6rem;
   }
   .tlist {
-    max-height: 70vh;
+    /* max-height: 85%; */
+    flex: 1;
     overflow-y: auto;
   }
 </style>

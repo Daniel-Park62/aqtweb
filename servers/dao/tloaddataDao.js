@@ -42,7 +42,6 @@ module.exports = {
     };
   },
   findById: async (id) => {
-console.log('findbyid',id);
       return await aqtdb.query({
         dateStrings: true,
         sql: `SELECT pkey, pkey cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, 

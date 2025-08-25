@@ -98,7 +98,7 @@
 
 </script>
 
-<div>
+<div class="container">
 
   <div class="fitem tbl">
     <table>
@@ -186,6 +186,12 @@
 <DetailTR bind:vid bind:pid bind:parr bind:pidx bind:origin />
 
 <style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: hidden;
+  }
   .pgset {
     display: flex;
     align-items: baseline;
@@ -209,7 +215,7 @@
 
   .tbl {
     overflow: auto;
-    max-height: 80vh;
+    flex: 1;
     width: auto ;
   }
   thead {
