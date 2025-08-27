@@ -15,8 +15,8 @@ let topDiv
 let visible=false
 let prevOnTop
 let closeCallback = null;
-let w = 90;
-let h = 90;
+let w = 95;
+let h = 95;
 
 export let id='' ;
 
@@ -26,19 +26,19 @@ function keyPress(ev){
 }
 
 /**  API **/
-function open(callback, wd,he){
-	closeCallback=callback
-	if(visible) return
-	prevOnTop=onTop
-	onTop=topDiv
-	window.addEventListener("keydown",keyPress)
-	let modal = document.getElementById('modal') ;
+function open(callback, wd=95,he=95){
+	closeCallback=callback ;
+	if(visible) return ;
+	prevOnTop=onTop ;
+	onTop=topDiv ;
+	window.addEventListener("keydown",keyPress) ;
+	// let modal = document.getElementById('modal') ;
 
 	if (wd) w = wd ;
 	if (he) h = he ;
 	
 	//this prevents scrolling of the main window on larger screens
-	document.body.style.overflow="hidden" 
+	document.body.style.overflow="visible" 
 
 	visible=true ;
 	//Move the modal in the DOM to be the last child of <BODY> so that it can be on top of everything

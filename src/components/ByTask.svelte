@@ -12,16 +12,17 @@
     psize: 20,
     cond: "",
     uri: "",
-    task:""
+    task:"",
+    apps:""
   };
 
   let task, lvl ,ischg = 0;
   let dtls = [];
-  let promise = Promise.resolve([]);
+  // let promise = Promise.resolve([]);
 
   let sortBy = { col: "svcid", ascending: true };
 
-  $: if(ischg) promise = getDetail(task,lvl);
+  $: if(ischg) getDetail(task,lvl);
 
   $: sort = (column) => {
     if (sortBy.col == column) {
@@ -42,7 +43,7 @@
         : 0;
 
     dtls = dtls.sort(sort);
-    promise = Promise.resolve(dtls);
+    // promise = Promise.resolve(dtls);
   };
   // onMount(async () => {
   //   promise = getDatas() ;
@@ -57,14 +58,14 @@
      }
     );
     if (res.ok)
-      return await res.json();
+      dtls = await res.json();
     else
       throw new Error(res.statusText);
   }
 </script>
 
 <div class="main">
-  <div class="dashboard">
+  <div class="tlist">
     <TaskList bind:task bind:lvl bind:ischg />
   </div>
   <div class="sub-tit">
@@ -85,10 +86,10 @@
         </tr>
       </thead>
       <tbody>
-        {#await promise}
+        <!-- {#await promise}
           <p>...waiting</p>
-        {:then rows}
-          {#each rows as row}
+        {:then rows} -->
+          {#each dtls as row}
             <tr on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
@@ -100,25 +101,26 @@
               <td align="right">{row.tcode}</td>
             </tr>
           {/each}
-        {:catch error}
+        <!-- {:catch error}
           <p style="color: red">{error.message}</p>
-        {/await}
+        {/await} -->
       </tbody>
     </table>
   </div>
 </div>
+<div>
 <Modal>
 	<Trtable bind:conds/>
 </Modal>
-
+</div>
 <style>
   .main {
     height: 100%;
     display: flex;
     flex-direction: column;
   }
-  .dashboard {
-    height: 30vh;
+  .tlist {
+    height: 30%;
     overflow-y: auto;
   }
   .sub-tit {
@@ -134,36 +136,5 @@
     flex: 1 1 0;
     overflow: auto;
   }
-/*
-  .tbl-svc {
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    height: auto;
-  }
 
-  .tbl-svc td,
-  .tbl-svc th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-    max-width: 20%;
-  }
-
-  .tbl-svc th {
-    position: sticky;
-    top: 0px;
-    text-align: center;
-  }
-
-  .tbl-svc thead {
-    height: 1.2em;
-  }
-  .tbl-svc tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-
-  .tbl-svc tr:hover {
-    background-color: #ddd;
-  }
-    */
 </style>

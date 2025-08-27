@@ -194,7 +194,7 @@
               curRow = row;
               encv = curRow.tenv === "euc-kr";
               jobnm = "수정";
-              getModal().open({}, "50", "70");
+              getModal().open({}, "40", "70");
             }}
           >
             <td><input type="checkbox" bind:checked={row.chk} /></td>
@@ -223,68 +223,71 @@
   </table>
 </div>
 <Modal>
-  <h2 class="h-10 text-lg text-blue-800 font-bold">{jobnm != "등록" ? curRow.code : ""} 테스트코드 {jobnm}</h2>
-  <div class="items">
-    <div class="item in_label">테스트코드:</div>
-    <div>
-      <input
-        class="item in_value"
-        pattern="[A-Z0-9]{(3, 6)}"
-        bind:value={curRow.code}
-      />
+  <div class="hero from-amber-100 via-sky-300 to-sky-500 bg-gradient-to-br">
+    <h2 class="mx-auto my-5 text-center sm:text-4xl text-3xl text-blue-800 font-bold">{curRow.code} 테스트코드 {jobnm}</h2>
+    <hr />
+    <div class="items p-5">
+      <div class="item in_label">테스트코드:</div>
+      <div>
+        <input
+          class="item in_value"
+          pattern="[A-Z0-9]{(3, 6)}"
+          bind:value={curRow.code}
+        />
+      </div>
+      <div class="item in_label">테스트명:</div>
+      <div><input class="item in_value" bind:value={curRow.desc1} /></div>
+      <div class="item in_label">APPID:</div>
+      <div>    <select     class="item in_value"     bind:value={curRow.appid}>
+        {#each getAppid() as r}
+            <option value={r.value}>
+              {r.name}
+            </option>
+          {/each}
+               </select>
+      </div>
+      <div class="item in_label">단계:</div>
+      <div>
+        <select class="item in_value" bind:value={curRow.lvl}>
+          {#each Object.entries(getLvls()) as [key, value], index (key)}
+            <option value={key}>{value}</option>
+          {/each}
+        </select>
+      </div>
+      <div class="item in_label">테스트시작일:</div>
+      <div>
+        <input class="item in_value" type="date" bind:value={curRow.tdate} />
+      </div>
+      <div class="item in_label">대상서버:</div>
+      <div><input class="item in_value" bind:value={curRow.thost} /></div>
+      <div class="item in_label">대상Port:</div>
+      <div>
+        <input
+          class="item in_value"
+          type="number"
+          min="2"
+          max="65535"
+          bind:value={curRow.tport}
+        />
+      </div>
+      <div class="item in_label">전문구분:</div>
+      <div>
+        <select class="item in_value" bind:value={curRow.pro}>
+          {#each Object.entries(getPros()) as [key, value], index (key)}
+            <option value={key}>{value}</option>
+          {/each}
+        </select>
+      </div>
+      <label class="item in_label">
+        <input type="checkbox" bind:checked={encv} />
+        EUC-KR
+      </label>
     </div>
-    <div class="item in_label">테스트명:</div>
-    <div><input class="item in_value" bind:value={curRow.desc1} /></div>
-    <div class="item in_label">APPID:</div>
-    <div>    <select     class="item in_value"     bind:value={curRow.appid}>
-      {#each getAppid() as r}
-          <option value={r.value}>
-            {r.name}
-          </option>
-        {/each}
-             </select>
+    <hr />
+    <div class='m-2'>
+      <button type="button" class="bg-blue-600 rounded-md text-white" on:click={updTcode}>저장</button>
+      <button type="button" class="bg-blue-600 rounded-md text-white" on:click={() => getModal().close()}>닫기</button>
     </div>
-    <div class="item in_label">단계:</div>
-    <div>
-      <select class="item in_value" bind:value={curRow.lvl}>
-        {#each Object.entries(getLvls()) as [key, value], index (key)}
-          <option value={key}>{value}</option>
-        {/each}
-      </select>
-    </div>
-    <div class="item in_label">테스트시작일:</div>
-    <div>
-      <input class="item in_value" type="date" bind:value={curRow.tdate} />
-    </div>
-    <div class="item in_label">대상서버:</div>
-    <div><input class="item in_value" bind:value={curRow.thost} /></div>
-    <div class="item in_label">대상Port:</div>
-    <div>
-      <input
-        class="item in_value"
-        type="number"
-        min="2"
-        max="65535"
-        bind:value={curRow.tport}
-      />
-    </div>
-    <div class="item in_label">전문구분:</div>
-    <div>
-      <select class="item in_value" bind:value={curRow.pro}>
-        {#each Object.entries(getPros()) as [key, value], index (key)}
-          <option value={key}>{value}</option>
-        {/each}
-      </select>
-    </div>
-    <label class="item in_label">
-      <input type="checkbox" bind:checked={encv} />
-      EUC-KR
-    </label>
-  </div>
-  <hr />
-  <div>
-    <button on:click={updTcode}>저장</button>
-    <button on:click={() => getModal().close()}>닫기</button>
   </div>
 </Modal>
 <Modal bind:id={copytr}>

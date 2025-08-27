@@ -7,13 +7,13 @@
   export let origin ='';
 
   let modal;
-  let cdata;
+  let cdata = [];
   let odata = { ok: false, display: "none" };
 
   let encd = 'UTF-8' ;
 
   $: if (modal) modal.style.display = vid;
-  $: cdata = getDetail(pid);
+  $: getDetail(pid);
 
   async function reSend(row) {
     
@@ -46,15 +46,15 @@
     if (origin) urlv="/tloaddata/" + pid  ; // + `?v=${nnn}`
     
     const res = await fetch(urlv);
-    return await res.json();
+    cdata = await res.json();
   }
 
-  async function getNext(pkey) {
+  async function getNext() {
     if (pidx >= parr.length -1) {
       window.alert('다음자료가 없습니다.');
       return ;
     }
-    cdata = await getDetail(parr[++pidx]);
+    await getDetail(parr[++pidx]);
 /* 
     const res = await fetch("/trlist/" + parr[++pidx]);
     if (res.ok) cdata = await res.json();
@@ -68,12 +68,12 @@
       getOrig(cdata[0]);
   }
 
-  async function getPrev(pkey) {
+  async function getPrev() {
     if (pidx < 1) {
       window.alert('이전자료가 없습니다.');
       return ;
     }
-    cdata = await getDetail(parr[--pidx]);
+    await getDetail(parr[--pidx]);
 
 /*     const res = await fetch("/trlist/" + parr[--pidx]);
     if (res.ok) cdata = await res.json();
@@ -104,7 +104,7 @@
   }
 
   async function getOrig(qdata) {
-    let rows;
+    let cdata;
     if (!odata.ok) {
       const res = await fetch("/trlist/orig" ,
       { method: "POST" ,
@@ -118,14 +118,14 @@
         })
       });
     
-      if (res.ok) rows = await res.json();
+      if (res.ok) cdata = await res.json();
       else {
         const err = await res.json();
         window.alert(err.message);
         return;
       }
       odata.ok = true;
-      for (let row of rows) {
+      for (let row of cdata) {
         odata.row = row;
       }
     }
@@ -186,19 +186,18 @@
 <div id="myModal" class="modal">
   <!-- Modal content -->
   <div class="modal-content">
-    {#await cdata then rows}
-      {#if rows.length > 0}
+      {#if cdata.length > 0}
         <div class="ny1">
-          <span class="title">{" 전문ID : " + rows[0].cmpid} </span>
+          <span class="title">{" 전문ID : " + cdata[0].cmpid} </span>
           <nav>
-            {#if !origin} <button on:click={async () => reSend(rows[0])}>재전송</button> {/if}
-            <button on:click={async () => { cdata = getDetail(rows[0].pkey)}}>새로고침</button>
-            <button on:click={async () => getNext(rows[0].pkey)}>다음</button>
-            <button on:click={async () => getPrev(rows[0].pkey)}>이전</button>
+            {#if !origin} <button on:click={async () => reSend(cdata[0])}>재전송</button> {/if}
+            <button on:click={async () => getDetail(cdata[0].pkey)}>새로고침</button>
+            <button on:click={async () => getNext()}>다음</button>
+            <button on:click={async () => getPrev()}>이전</button>
             {#if !origin} 
             <button
               on:click={async () => {
-                viewOrig(rows[0]);
+                viewOrig(cdata[0]);
               }}>원본보기</button
             >
             {/if}
@@ -207,24 +206,23 @@
         </div>
 
         <div class="data">
-          {#each rows as row}
             <div class="cdata">
               <div class="ny2">
                 <table>
                   <tr>
-                    <td class="lbl">테스트ID</td><td>{rows[0].tcode}</td>
-                    <td class="lbl">ID</td><td>{rows[0].pkey}</td>
+                    <td class="lbl">테스트ID</td><td>{cdata[0].tcode}</td>
+                    <td class="lbl">ID</td><td>{cdata[0].pkey}</td>
                     <td class="lbl">Source</td><td
-                      >{rows[0].srcip + ":" + rows[0].srcport}</td
+                      >{cdata[0].srcip + ":" + cdata[0].srcport}</td
                     >
                   </tr>
                   <tr>
                     <td class="lbl">송수신</td><td
-                      >{rows[0].stime + " ~ " + rows[0].rtime.substring(11)}</td
+                      >{cdata[0].stime + " ~ " + cdata[0].rtime.substring(11)}</td
                     >
-                    <td class="lbl">소요시간</td><td>{rows[0].svctime}</td>
+                    <td class="lbl">소요시간</td><td>{cdata[0].svctime}</td>
                     <td class="lbl">Destination</td>
-                    <td>{rows[0].dstip + ":" + rows[0].dstport}</td
+                    <td>{cdata[0].dstip + ":" + cdata[0].dstport}</td
                     >
                   </tr>
                   <!-- <tr>
@@ -237,26 +235,25 @@
               </div>
               <div class="ny3">
                 <br /><span
-                  >{"송신데이터 : " + rows[0].slen.toLocaleString("ko-KR")}
+                  >{"송신데이터 : " + cdata[0].slen.toLocaleString("ko-KR")}
                 </span>
                 {#if $isLogged == 2}
-                <button on:click={ () => trChange(rows[0])}>송신저장</button>
-                <button on:click={ () => trRedo(rows[0])}>송신원복</button>
+                <button on:click={ () => trChange(cdata[0])}>송신저장</button>
+                <button on:click={ () => trRedo(cdata[0])}>송신원복</button>
                 {/if}
                  <br />
-                <textarea  rows="8" cols="120" bind:value={row.sdata} />
+                <textarea  rows="8" cols="120" bind:value={cdata[0].sdata} />
               </div>
               <div class="ny3">
                 <span>수신헤더</span> <br />
-                <textarea readonly rows="5">{rows[0].rhead}</textarea>
+                <textarea readonly rows="5">{cdata[0].rhead}</textarea>
               </div>
               <div class="ny3">
-                <span>{"수신데이터 : " + rows[0].rlen.toLocaleString("ko-KR")}</span
+                <span>{"수신데이터 : " + cdata[0].rlen.toLocaleString("ko-KR")}</span
                 ><br />
-                <textarea readonly rows="8" cols="120">{rows[0].rdata.toString()}</textarea>
+                <textarea readonly rows="8" cols="120">{cdata[0].rdata.toString()}</textarea>
               </div>
             </div>
-          {/each}
           <div id="odata">
             {#if odata.ok}
               <div class="ny2">
@@ -307,9 +304,6 @@
           </div>
         </div>
       {/if}
-    {:catch err}
-        <p style="color: red">{err.message}</p>
-    {/await}
   </div>
 </div>
 

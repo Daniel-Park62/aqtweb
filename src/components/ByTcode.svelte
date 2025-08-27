@@ -1,5 +1,4 @@
 <script>
-  import { onMount, getContext } from "svelte";
   import TidList from "./TidList.svelte";
   import Trtable from "./Trtable.svelte";
   import Modal,{getModal} from "./Modal.svelte";
@@ -14,14 +13,13 @@
     task: "",
     apps: "",
   };
-
-  let tcode = "";
   let dtls = [];
-  let promise = Promise.resolve([]);
+  let tcode = "";
+  // let promise = Promise.resolve([]);
   
   let sortBy = { col: "svcid", ascending: true };
 
-  $: tcode, promise = getDetail(tcode);
+  $:  getDetail(tcode);
 
   $: sort = (column) => {
     if (sortBy.col == column) {
@@ -42,7 +40,7 @@
         : 0;
 
     dtls = dtls.sort(usort);
-    promise = Promise.resolve(dtls);
+    // promise = Promise.resolve(dtls);
   };
   // onMount(async () => {
   //   promise = getDatas() ;
@@ -58,14 +56,16 @@
      }
     );
 
-    dtls = await res.json();
-    return dtls;
+    if (res.ok)
+      dtls = await res.json();
+    else
+      throw new Error(res.statusText);
   }
 </script>
 
 <div class="main">
-  <div class="dashboard">
-    <TidList bind:tcode />
+  <div class="tlist">
+    <TidList bind:tcode vdisp={false}/>
   </div>
   <div class="sub-tit">
     서비스별 현황({tcode})
@@ -84,11 +84,11 @@
         </tr>
       </thead>
       <tbody>
-        {#await promise}
+        <!-- {#await promise}
           <p>...waiting</p>
-        {:then rows}
-          {#each rows as row}
-            <tr on:dblclick={()=> { conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}        >
+        {:then rows} -->
+          {#each dtls as row}
+            <tr on:dblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>
@@ -98,25 +98,26 @@
               <td align="right">{row.fcnt.toLocaleString("ko-KR")}</td>
             </tr>
           {/each}
-        {:catch error}
+        <!-- {:catch error}
           <p style="color: red">{error.message}</p>
-        {/await}
+        {/await} -->
       </tbody>
     </table>
   </div>
+  <div class="fff">
+    <Modal>
+      <Trtable bind:conds />
+    </Modal>
+  </div>
 </div>
-<Modal>
-	<Trtable bind:conds />
-</Modal>
-
 <style>
   .main {
     height: 100%;
     display: flex;
     flex-direction: column;
   }
-  .dashboard {
-    height: 30vh;
+  .tlist {
+    height: 30%;
     overflow-y: auto;
   }
   .sub-tit {
@@ -132,37 +133,4 @@
     flex: 1 1 0;
     overflow: auto;
   }
-
-  /*
-  .tbl-svc {
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    height: auto;
-  }
-  
-  .tbl-svc td,
-  .tbl-svc th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-    max-width: 20%;
-  }
-
-  .tbl-svc th {
-    position: sticky;
-    top: 0px;
-    text-align: center;
-  }
-
-  .tbl-svc thead {
-    height: 1.2em;
-  }
-  .tbl-svc tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-
-  .tbl-svc tr:hover {
-    background-color: #ddd;
-  }
-    */
 </style>

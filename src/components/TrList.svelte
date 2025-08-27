@@ -1,13 +1,9 @@
 <script>
   import { onMount } from "svelte";
   import { userid,authApps } from "../aqtstore.js";
-//   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
-// import { bind } from "svelte/internal";
-// import DetailTr from "./DetailTR.svelte";
-import Trtable from "./Trtable.svelte";
+  import Trtable from "./Trtable.svelte";
 
   let vid = 'none';
-  let pid ;
   let mycond = {
     rcode: '',
     cond: "",

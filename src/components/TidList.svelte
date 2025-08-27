@@ -4,7 +4,8 @@
   import { getLvlnm } from "./Common.svelte";
   import Trtable from "./Trtable.svelte";
   import Modal,{getModal} from './Modal.svelte';
-
+  /* trtable 사용여부 기능 추가, byTcode 에서 중복되는문제 해결을 위함*/
+  export let vdisp = true ;
   export let tcode ;
   let conds = {
     tcode: "",
@@ -80,9 +81,11 @@
     </tbody>
   </table>
 </div>
+{#if vdisp }
 <Modal>
 	<Trtable bind:conds/>
 </Modal>
+{/if}
 
 <style>
 
@@ -94,21 +97,4 @@
     overflow-y: auto;
   }
 
-  /*
-  .tcode-status td,
-  .tcode-status th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  .tcode-status th {
-    text-align: center;
-    position: sticky;
-    top: 0;
-  }
-
-  .tcode-status tr:hover {
-    background-color: #ddd;
-  }
-    */
 </style>

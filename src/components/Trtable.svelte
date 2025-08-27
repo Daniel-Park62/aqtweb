@@ -1,5 +1,4 @@
 <script>
-    import { query_selector_all } from "svelte/internal";
   import { authApps, userid } from "../aqtstore.js";
   import DetailTR from "./DetailTR.svelte";
   import { onMount } from "svelte";
@@ -299,56 +298,5 @@
     border-collapse: collapse;
     width: 100%;
   }
-  /*
-  thead {
-    max-height: 1.2em;
-    position: sticky;
-    top: 0px;
-  }
-  th {
-    max-width: 20%;
-    padding-left: 5px;
-    text-align: center;
-    border-right: 1px solid #f0f2fa;
-  }
 
-  td {
-    max-width: 20%;
-    margin: 0;
-    padding: 0.5rem;
-    vertical-align: top;
-    text-align: center;
-    font-size: 0.9rem;
-    background-color: #ffffff;
-    border-right: 1px solid #f0f2fa;
-  }
-
-  td, th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  tbody tr:nth-child(odd) td {
-    background-color: #fafbff;
-  }
-
-  thead th:first-child {
-    border-top-left-radius: 5px;
-  }
-
-  thead th:last-child {
-    border-top-right-radius: 5px;
-  }
-
-  tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-
-  tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-
-  tbody tr:hover td{
-    background-color: #ddd;
-  } */
 </style>
