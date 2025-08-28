@@ -92,7 +92,7 @@
   .cond * {
     margin: 2px 4px;
     padding: 0 3px;
-    height: 1.7em;
+    height: 1.8em;
   }
   .cond span {
     margin: 2px 8px;

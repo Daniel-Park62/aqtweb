@@ -19,35 +19,29 @@
   let task, lvl ,ischg = 0;
   let dtls = [];
   // let promise = Promise.resolve([]);
-
-  let sortBy = { col: "svcid", ascending: true };
-
+  
   $: if(ischg) getDetail(task,lvl);
-
-  $: sort = (column) => {
-    if (sortBy.col == column) {
-      sortBy.ascending = !sortBy.ascending;
-    } else {
-      sortBy.col = column;
-      sortBy.ascending = true;
-    }
-
-    // Modifier to sorting function for ascending or descending
-    let sortModifier = sortBy.ascending ? 1 : -1;
-
-    let sort = (a, b) =>
-      a[column] < b[column]
-        ? -1 * sortModifier
-        : a[column] > b[column]
-        ? 1 * sortModifier
-        : 0;
-
-    dtls = dtls.sort(sort);
-    // promise = Promise.resolve(dtls);
-  };
-  // onMount(async () => {
-  //   promise = getDatas() ;
-  //  }) ;
+  
+  const sortBy = { col: "", ascending: 1 };
+  function sortdata(e) {
+      if (sortBy.col == e.target.id) {
+        sortBy.direction = sortBy.direction * -1;
+      } else {
+        sortBy.col = e.target.id;
+        sortBy.direction = 1;
+        if (sortBy.old) sortBy.old.textContent = sortBy.old.textContent.replace(/ [△▽]/,'') ;
+      }
+      e.target.textContent = e.target.textContent.replace(/ [△▽]/,'') ;
+      e.target.textContent += sortBy.direction == 1 ? ' △': ' ▽' ;
+      sortBy.old = e.target ;
+      let usort = (a, b) =>
+        a[e.target.id] < b[e.target.id] 
+          ? -1 * sortBy.direction
+          : a[e.target.id] > b[e.target.id]
+          ? 1 * sortBy.direction
+          : 0;
+      dtls = dtls.sort(usort);
+    };
   async function getDetail(t,l) {
     const res = await fetch("/byservice" ,
       { method : 'POST',
@@ -72,17 +66,17 @@
     서비스별 현황({task != '' ? task + ':' :''} {getLvlnm(lvl)})
   </div>
   <div class="bottom">
-    <table class="tbl-svc">
+    <table>
       <thead>
         <tr>
-          <th on:click={sort("svcid")}>서비스ID</th>
-          <th on:click={sort("svckor")}>서비스명</th>
-          <th on:click={sort("cumcnt")}>누적건수</th>
-          <th on:click={sort("tcnt")}>패킷건수</th>
-          <th on:click={sort("avgt")}>평균시간</th>
-          <th on:click={sort("scnt")}>성공건수</th>
-          <th on:click={sort("fcnt")}>실패건수</th>
-          <th >테스트ID</th>
+          <th id='svcid' class="cursor-pointer" on:click={sortdata}>서비스ID</th>
+          <th id='svckor' class="cursor-pointer" on:click={sortdata}>서비스명</th>
+          <th id='cumcnt' class="cursor-pointer" on:click={sortdata}>누적건수</th>
+          <th id='tcnt' class="cursor-pointer" on:click={sortdata}>패킷건수</th>
+          <th id='avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
+          <th>성공건수</th>
+          <th>실패건수</th>
+          <th id='tcode' class="cursor-pointer" on:click={sortdata}>테스트ID</th>
         </tr>
       </thead>
       <tbody>
@@ -91,14 +85,14 @@
         {:then rows} -->
           {#each dtls as row}
             <tr on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
-              <td style="max-width:30%">{row.svcid}</td>
+              <td >{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.avgt}</td>
               <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.fcnt.toLocaleString("ko-KR")}</td>
-              <td align="right">{row.tcode}</td>
+              <td>{row.tcode}</td>
             </tr>
           {/each}
         <!-- {:catch error}

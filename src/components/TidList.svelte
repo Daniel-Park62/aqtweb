@@ -28,17 +28,40 @@
 
   onMount(getdata);
   
+  const sortBy = { col: "tdate", direction: -1 };
+
+  function sortdata(e) {
+
+    if (sortBy.col == e.target.id) {
+      sortBy.direction = sortBy.direction * -1;
+    } else {
+      sortBy.col = e.target.id;
+      sortBy.direction = 1;
+      if (sortBy.old) sortBy.old.textContent = sortBy.old.textContent.replace(/ [△▽]/,'') ;
+    }
+    e.target.textContent = e.target.textContent.replace(/ [△▽]/,'') ;
+    e.target.textContent += sortBy.direction == 1 ? ' △': ' ▽' ;
+    sortBy.old = e.target ;
+    let usort = (a, b) =>
+      a[e.target.id] < b[e.target.id] 
+        ? -1 * sortBy.direction
+        : a[e.target.id] > b[e.target.id]
+        ? 1 * sortBy.direction
+        : 0;
+    rows = [...rows].sort(usort);
+  };
+  
 </script>
 
 <div class="container">
   <table class="tcode-status">
     <thead>
       <tr>
-        <th>테스트ID</th>
-        <th>테스트명</th>
-        <th style="width:6em">테스트일자</th>
+        <th id='code' class='cursor-pointer' on:click={sortdata}>테스트ID</th>
+        <th id='desc1' class='cursor-pointer' on:click={sortdata}>테스트명</th>
+        <th id='tdate' class='cursor-pointer' on:click={sortdata}>테스트일자 ▽</th>
         <th>단계</th>
-        <th>대상호스트</th>
+        <th id='thost' class='cursor-pointer' on:click={sortdata}>대상호스트</th>
         <th>서비스수</th>
         <th>패킷건수</th>
         <th>성공건수</th>
@@ -88,8 +111,6 @@
 {/if}
 
 <style>
-
-
   .tcode-status {
     font-family: "맑은 고딕", "Lato", Arial, Helvetica, sans-serif;
     border-collapse: collapse;

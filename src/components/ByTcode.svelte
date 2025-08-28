@@ -16,35 +16,31 @@
   let dtls = [];
   let tcode = "";
   // let promise = Promise.resolve([]);
-  
-  let sortBy = { col: "svcid", ascending: true };
-
+    
   $:  getDetail(tcode);
+  
+  const sortBy = { col: "", ascending: 1 };
 
-  $: sort = (column) => {
-    if (sortBy.col == column) {
-      sortBy.ascending = !sortBy.ascending;
-    } else {
-      sortBy.col = column;
-      sortBy.ascending = true;
-    }
-
-    // Modifier to sorting function for ascending or descending
-    let sortModifier = sortBy.ascending ? 1 : -1;
-
-    let usort = (a, b) =>
-      a[column] < b[column]
-        ? -1 * sortModifier
-        : a[column] > b[column]
-        ? 1 * sortModifier
-        : 0;
-
-    dtls = dtls.sort(usort);
-    // promise = Promise.resolve(dtls);
-  };
-  // onMount(async () => {
-  //   promise = getDatas() ;
-  //  }) ;
+  function sortdata(e) {
+      if (sortBy.col == e.target.id) {
+        sortBy.direction = sortBy.direction * -1;
+      } else {
+        sortBy.col = e.target.id;
+        sortBy.direction = 1;
+        if (sortBy.old) sortBy.old.textContent = sortBy.old.textContent.replace(/ [△▽]/,'') ;
+      }
+      e.target.textContent = e.target.textContent.replace(/ [△▽]/,'') ;
+      e.target.textContent += sortBy.direction == 1 ? ' △': ' ▽' ;
+      sortBy.old = e.target ;
+      let usort = (a, b) =>
+        a[e.target.id] < b[e.target.id] 
+          ? -1 * sortBy.direction
+          : a[e.target.id] > b[e.target.id]
+          ? 1 * sortBy.direction
+          : 0;
+      dtls = dtls.sort(usort);
+    };
+  
   async function getDetail(c) {
     // const res = await fetch("/bytcode?tcode=" + c);
     const res = await fetch("/byservice" ,
@@ -74,13 +70,13 @@
     <table class="tbl-svc">
       <thead>
         <tr >
-          <th on:click={() => sort("svcid")}>서비스ID</th>
-          <th on:click={() => sort("svckor")}>서비스명</th>
-          <th on:click={() => sort("cumcnt")}>누적건수</th>
-          <th on:click={() => sort("tcnt")}>패킷건수</th>
-          <th on:click={() => sort("avgt")}>평균시간</th>
-          <th on:click={() => sort("scnt")}>성공건수</th>
-          <th on:click={() => sort("fcnt")}>실패건수</th>
+          <th id='svcid' class="cursor-pointer" on:click={sortdata}>서비스ID</th>
+          <th id='svckor' class="cursor-pointer" on:click={sortdata}>서비스명</th>
+          <th id='cumcnt' class="cursor-pointer" on:click={sortdata}>누적건수</th>
+          <th id='tcnt' class="cursor-pointer" on:click={sortdata}>패킷건수</th>
+          <th id='avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
+          <th>성공건수</th>
+          <th>실패건수</th>
         </tr>
       </thead>
       <tbody>

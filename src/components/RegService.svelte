@@ -193,9 +193,14 @@ const res = await fetch("/tservice/part", {
   }
 
   #btns * {
-    margin: 2px 8px;
-    height: 1.7em;
+    margin: 2px 4px;
+    padding: 0 8px;
+    height: 1.8em;
   }  
+
+  button {
+    width:6em ;
+  }
 
   .svcid, .svckor, .svceng {
     word-break:break-all;

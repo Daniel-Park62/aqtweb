@@ -1,5 +1,5 @@
 <script>
-  import { onMount, afterUpdate, beforeUpdate } from "svelte";
+  import { onMount } from "svelte";
   import TidList from "./TidList.svelte";
   import { rooturl } from "../aqtstore";
   import { Doughnut } from "svelte-chartjs";
@@ -23,7 +23,6 @@
   );
   ChartJS.register({
     id: "doughnutInnerText",
-
     afterDraw: (chart, args, options) => {
       const {
         ctx,
@@ -54,7 +53,7 @@
         textX = Math.round((width - ctx.measureText(espnVal).width) / 2);
         ctx.font = "bold 16px sans-serif";
 
-        ctx.fillText(espnVal, textX, textY - 16);
+        ctx.fillText(espnVal, textX, textY - 17);
         // console.log("espnVal", espnVal, textX, textY) ;
       }
       ctx.save();
@@ -62,15 +61,12 @@
   });
 
   const formatf = (v, ctx) => {
-    const vsum =
-      ctx.chart.data.datasets[0].data[0] + ctx.chart.data.datasets[0].data[1];
+    const vsum =  ctx.chart.data.datasets[0].data[0] + ctx.chart.data.datasets[0].data[1];
     if (v === 0 || (v * 100) / vsum < 5) return "";
 
     return (
       ctx.chart.data.labels[ctx.dataIndex].padStart(7, " ") +
-      v.toLocaleString().padStart(6, " ") +
-      " 건"
-    );
+      v.toLocaleString().padStart(6, " ") + " 건"  );
   };
 
   const options = {
@@ -89,8 +85,9 @@
       },
       title: {
         display: true,
-        text: "누적진척율",
-        fontSize: 10,
+        color: "#272EF5",
+        text: "[ 누적진척율 ]",
+        font : { size: 12, weight: 'bolder'},  
         padding: { top: 5, left: 0, right: 0, bottom: 0 },
       },
       datalabels: {
@@ -126,16 +123,11 @@
   const data2 = structuredClone(data); // JSON.parse(JSON.stringify(data)) ;
   data2.clabel = "테스트성공률";
   data2.labels = ["성공건수\n", "실패건수\n"];
-  const data3 = JSON.parse(JSON.stringify(data));
-  const data4 = JSON.parse(JSON.stringify(data));
-  data4.clabel = "테스트성공률";
-  data4.labels = ["성공건수\n", "실패건수\n"];
-  data2.datasets[0].backgroundColor = data4.datasets[0].backgroundColor = [
-    "#F7464A",
-    "#46BFBD",
-  ];
+  data2.datasets[0].backgroundColor = [  "#F7464A", "#8BE8E7", ];
+  const data3 = structuredClone(data); // JSON.parse(JSON.stringify(data));
+  const data4 = structuredClone(data2); // JSON.parse(JSON.stringify(data));
   const options2 = JSON.parse(JSON.stringify(options));
-  options2.plugins.title.text = "테스트성공률";
+  options2.plugins.title.text = "[ 테스트성공률 ]";
   options2.plugins.datalabels.formatter = formatf;
 
   let tick = 0;
@@ -302,7 +294,7 @@
   }
   .tlist {
     /* max-height: 85%; */
-    flex: 1;
+    flex: 1 ;
     overflow-y: auto;
   }
 </style>

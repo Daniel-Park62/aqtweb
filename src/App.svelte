@@ -32,13 +32,13 @@ let mitems = [
 ];
 
 let mitems2 = [
-    { nm: "▷ 기초정보", url: "regConfig", cnm: RegConfig },
-    { nm: "▷ App 등록", url: "regapp", cnm: RegApp },
-    { nm: "▷ 사용자 등록", url: "regUser", cnm: RegUser },
-    { nm: "▷ 서비스 등록", url: "regService", cnm: RegService },
-    { nm: "▷ 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
-    { nm: "▷ 테스트 실행", url: "texecjob", cnm: TexecJob },
-    { nm: "▷ 원본현황", url: "tloaddata", cnm: Tloaddata },
+    { nm: "기초정보", url: "regConfig", cnm: RegConfig },
+    { nm: "App 등록", url: "regapp", cnm: RegApp },
+    { nm: "사용자 등록", url: "regUser", cnm: RegUser },
+    { nm: "서비스 등록", url: "regService", cnm: RegService },
+    { nm: "테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
+    { nm: "테스트 실행", url: "texecjob", cnm: TexecJob },
+    { nm: "원본현황", url: "tloaddata", cnm: Tloaddata },
 ];
 $: chklabel = boxChecked ? "▶" : "◀";
 let boxChecked = false;
@@ -52,15 +52,15 @@ function select_item(item) {
 	<LoginComp></LoginComp>
 {:else}
 	<main class="container">
-		<input class="column" type="checkbox" name id="checkbtn" bind:checked="{boxChecked}" />
-		<label for="checkbtn" style="color:blue">{chklabel}</label>
+		<input class="column" type="checkbox" id="checkbtn" bind:checked="{boxChecked}" />
+		<label for="checkbtn" class='text-blue-500  cursor-pointer'>{chklabel}</label>
 		<div class="column menu">
 			<img src="/images/Logo.png" alt="" />
 			<p></p>
 			<img src="/images/result.png" alt="" />
 			<ul>
 				{#each mitems as item}
-					<li on:click={() => select_item(item)}>{item.nm}</li>
+					<li on:click={() => select_item(item)}>◽ {item.nm}</li>
 				{/each}
 			</ul>
 			{#if $isLogged == 2}
@@ -69,7 +69,7 @@ function select_item(item) {
 				<img src="/images/operating.png" alt="" />
 				<ul>
 					{#each mitems2 as item}
-						<li on:click={() => select_item(item)}>{item.nm}</li>
+						<li on:click={() => select_item(item)}>◽ {item.nm}</li>
 					{/each}
 				</ul>
 			</div>
@@ -77,7 +77,7 @@ function select_item(item) {
 		</div>
 
 		<div class="column right">
-			<div class="job_name">☞ {selected.nm}</div>
+			<div class="job_name">🔸 {selected.nm}</div>
 			<div class="main-scr"><svelte:component this="{selected.cnm}"></svelte:component></div>
 		</div>
 	</main>
@@ -130,8 +130,8 @@ function select_item(item) {
 	}
 
 	.main-scr {
-		flex: 1 1 0;
-		/* max-height: 90%; */
+		flex: 1 1 auto;
+		max-height: 100%;
 	}
 	.menu img {
 		padding: 3px 0px 0px 3px;
@@ -158,11 +158,11 @@ function select_item(item) {
 		color: orangered;
 		text-transform: uppercase;
 		text-shadow: 1px 1px 0px #bdbdbd;
-		font-size: 1.2em;
-		font-weight: 400;
+		font-size: 1.4em;
+		font-weight: 500;
 		padding: 4px;
 		margin-bottom: 2px;
-		border: 1px solid rgb(245, 239, 239);
+		border: 1px solid rgb(215, 211, 211);
 		border-radius: 6px;
 	}
 
