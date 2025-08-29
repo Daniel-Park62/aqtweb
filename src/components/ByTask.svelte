@@ -21,7 +21,14 @@
   // let promise = Promise.resolve([]);
   
   $: if(ischg) getDetail(task,lvl);
-  
+
+  let sv_row ;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+  }
+
   const sortBy = { col: "", ascending: 1 };
   function sortdata(e) {
       if (sortBy.col == e.target.id) {
@@ -43,6 +50,7 @@
       dtls = dtls.sort(usort);
     };
   async function getDetail(t,l) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
     const res = await fetch("/byservice" ,
       { method : 'POST',
       headers: {
@@ -68,7 +76,7 @@
   <div class="bottom">
     <table>
       <thead>
-        <tr>
+        <tr >
           <th id='svcid' class="cursor-pointer" on:click={sortdata}>서비스ID</th>
           <th id='svckor' class="cursor-pointer" on:click={sortdata}>서비스명</th>
           <th id='cumcnt' class="cursor-pointer" on:click={sortdata}>누적건수</th>
@@ -84,7 +92,8 @@
           <p>...waiting</p>
         {:then rows} -->
           {#each dtls as row}
-            <tr on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
+            <tr on:click={(e)=>clickRow(e,row)}
+                on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
               <td >{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>

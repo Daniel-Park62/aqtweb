@@ -1,7 +1,5 @@
 <script>
-  import SvelteTable from "svelte-table";
   import DetailTR from "./DetailTR.svelte";
-  import { onMount } from "svelte";
 
   const columns = [
     {
@@ -51,6 +49,13 @@
     uri: "",
   };
 
+  let sv_row ;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+  }
+
   //  let rdata = Promise.resolve([]);
   let rdata = [];
 
@@ -75,7 +80,7 @@
     }
   }
   async function getTRlist() {
-    // console.log("entr ...", conds) ;
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
     conds.tcode = tcode;
     if (conds.tcode == undefined) return [];
     pg = conds.page + 1;
@@ -106,7 +111,6 @@
         <tr>
           {#each columns as column}
             <th>
-              <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
               {column.title}
             </th>
           {/each}
@@ -119,11 +123,12 @@
         {#each rdata as row, i (row.pkey)}
           <tr
             class={row.sflag}
-            on:dblclick={() => {
+            on:dblclick={(e) => {
               pid = row.pkey;
               parr = rdata.map(e => e.pkey) ;
               pidx = i ;
               vid = "block";
+              clickRow(e,row);
             }}
           >
             <td class="id"><strong><em>{row.pkey}</em></strong></td>
@@ -220,8 +225,5 @@
   }
   thead {
     background-color: rgb(209, 165, 69);
-  }
-  :global(.row-selected) {
-    background-color: #f8c;
   }
 </style>

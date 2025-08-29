@@ -35,9 +35,14 @@
   //  let rdata = Promise.resolve([]);
   let rdata = [];
   let achk = '□';
-  let sortColumn = null;
-  let sortDirection = null;
   let pg = conds.page + 1;
+
+  let sv_row ;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+  }
 
   $: if (conds.tcode > " ") {
     getTRlist();
@@ -82,7 +87,7 @@
     // promise = Promise.resolve(tcodelist) ;
   });
   async function getTRlist() {
-    // console.log("entr ...", conds) ;
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
     if (conds.tcode == undefined) return Promise.resolve([]);
     pg = conds.page + 1;
     conds.apps = $authApps;
@@ -131,21 +136,6 @@
     }
   }
 
-  function sortBy(column) {
-    const sameColumn = column === sortColumn;
-    const currentlyAscending = sortDirection === "ASC";
-    const unsetSort = sameColumn && !currentlyAscending;
-
-    sortColumn = unsetSort ? null : column;
-    sortDirection = unsetSort
-      ? null
-      : sameColumn && currentlyAscending
-        ? "DESC"
-        : "ASC";
-  }
-
-  //  $: display = sortColumn && sortDirection ? sortData() : [...data];
-  //  $: conds.page = pg - 1 ;
 </script>
 
 <div class="fitem pgset">
@@ -199,11 +189,10 @@
               clist[i].checked = chk;
               rdata[i].chk = chk ;
           }
-          if (chk) achk = '▣' ; else achk = '□' ;
+          achk = ((chk) ? '▣' : '□') ;
         }}>{achk}</th>
         {#each columns as column }
           <th>
-            <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
             {column}
           </th>
         {/each}
@@ -216,11 +205,12 @@
       {#each rdata as row , i (row.pkey)}
         <tr
           class={row.sflag}
-          on:dblclick={() => {
+          on:dblclick={(e) => {
             pid = row.pkey;
             vid = "block";
             pidx = i ;
             parr = rdata.map( k => k.pkey ) ;
+            clickRow(e,row);
           }}
         >
 

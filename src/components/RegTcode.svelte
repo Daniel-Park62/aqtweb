@@ -19,18 +19,7 @@
   let copytr = "copytr";
   let curRow = {};
   let encv = false;
-  let lvl,
-    ttype,
-    desc1,
-    cmpCode = "",
-    tdate,
-    endDate,
-    tdir = null,
-    tuser = null,
-    thost,
-    tport,
-    tenv = "",
-    pro = "0";
+
   const columns = [
     " ",
     "테스트Id",
@@ -46,6 +35,13 @@
     "데이터건수",
   ];
 
+  let sv_row;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+    curRow = row;
+  }
 
   function updTcode() {
     fetch("/tmaster", {
@@ -135,6 +131,7 @@
       });
   }
   async function getdata() {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
     getFirst();
     const res = await fetch("/tmaster");
     if (res.status <= 300) {
@@ -187,8 +184,7 @@
       {:then rows}
         {#each rows as row (row.code)}
           <tr
-            class={row.type}
-            on:click={() => (curRow = row)}
+            on:click={(e) => clickRow(e, row)}
             on:dblclick={() => {
               // copyRow(row) ;
               curRow = row;
@@ -211,9 +207,6 @@
             <td class="cnt" style="text-align:right"
               >{row.data_cnt.toLocaleString("ko-KR")}</td
             >
-            {#if curRow === row}
-              <td>◀</td>
-            {/if}
           </tr>
         {/each}
       {:catch err}

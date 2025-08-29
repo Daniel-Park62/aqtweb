@@ -5,6 +5,12 @@
   export let task = "";
   export let lvl = '';
   export let ischg = 1;
+  let sv_row ;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+  }
 
   let promise = Promise.resolve([]);
   onMount(async () => {
@@ -34,13 +40,13 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={() => {
+          <tr on:click={(e) => {
               ischg=0;
               if (task != row.task || lvl != row.lvl) {
                 ischg=1;
                 task = row.task; lvl = row.lvl ; 
-              }
-              
+              };
+              clickRow(e,row) ;
           }} >
             <td>{row.task}</td>
             <td>{getLvlnm(row.lvl)}</td>

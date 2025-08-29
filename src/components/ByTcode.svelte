@@ -15,7 +15,12 @@
   };
   let dtls = [];
   let tcode = "";
-  // let promise = Promise.resolve([]);
+  let sv_row ;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+  }
     
   $:  getDetail(tcode);
   
@@ -43,6 +48,7 @@
   
   async function getDetail(c) {
     // const res = await fetch("/bytcode?tcode=" + c);
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
     const res = await fetch("/byservice" ,
       { method : 'POST',
       headers: {
@@ -84,7 +90,7 @@
           <p>...waiting</p>
         {:then rows} -->
           {#each dtls as row}
-            <tr on:dblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}>
+            <tr on:click={(e)=>clickRow(e,row)} on:dblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>

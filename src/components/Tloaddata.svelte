@@ -14,6 +14,12 @@
     "등록일",
   ];
   let sv_row;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+    tcode = row.tcode ;
+  }
 
   async function getdata() {
     try {
@@ -49,12 +55,7 @@
         {#each rdata as row}
           <tr
             class={row.sflag}
-            on:click={(event) => {
-              tcode = row.tcode;
-              if (sv_row) sv_row.classList.remove("row-selected");
-              sv_row = event.target.parentElement.cells[0];
-              sv_row.classList.toggle("row-selected");
-            }}
+            on:click={(e) => clickRow(e,row)}
           >
             <td class="tcode">{row.tcode}</td>
             <td class="stimef">{row.stimef}</td>
@@ -106,11 +107,5 @@
     background-color: var(--th_bgcolor);
     color: var(--th_color);
   }
-  /* tbody tr:nth-child(odd) td {
-	background-color: #fafbff;
-} */
 
-  .row-selected {
-    background-color: #f8c;
-  }
 </style>

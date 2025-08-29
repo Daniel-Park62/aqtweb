@@ -7,6 +7,7 @@
   /* trtable 사용여부 기능 추가, byTcode 에서 중복되는문제 해결을 위함*/
   export let vdisp = true ;
   export let tcode ;
+  export let tick ;
   let conds = {
     tcode: "",
     rcode: "",
@@ -17,10 +18,18 @@
     task: "",
     apps: "",
   };
+  $: getdata(tick);
   let sv_row;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+    tcode=row.code;
+  }
+
   // let promise = [Promise.resolve([])];
   let rows = [];
-  async function getdata() {
+  async function getdata(x) {
       const res = await fetch( "/dashboard/list/"+$authApps);
       rows = await res.json();
 //      console.log(" call dashboard end", promise) ;
@@ -28,7 +37,7 @@
 
   onMount(getdata);
   
-  const sortBy = { col: "tdate", direction: -1 };
+  const sortBy = { col: "", direction: -1 };
 
   function sortdata(e) {
 
@@ -59,7 +68,7 @@
       <tr>
         <th id='code' class='cursor-pointer' on:click={sortdata}>테스트ID</th>
         <th id='desc1' class='cursor-pointer' on:click={sortdata}>테스트명</th>
-        <th id='tdate' class='cursor-pointer' on:click={sortdata}>테스트일자 ▽</th>
+        <th id='tdate' class='cursor-pointer' on:click={sortdata}>테스트일자</th>
         <th>단계</th>
         <th id='thost' class='cursor-pointer' on:click={sortdata}>대상호스트</th>
         <th>서비스수</th>
@@ -76,13 +85,8 @@
         <p>...waiting</p>
       {:then rows} -->
         {#each rows as row}
-          <tr on:click={() => {
-            if (sv_row) sv_row.classList.remove("row-selected");
-            sv_row = event.target.parentElement.cells[0];
-            sv_row.classList.toggle("row-selected");
-            tcode=row.code;
-            }}
-              on:dblclick={()=> { conds.tcode=row.code;conds.page=0; getModal().open()}} >
+          <tr on:click={(e)=>clickRow(e,row)}
+              on:dblclick={()=> { if (!vdisp) return; conds.tcode=row.code;conds.page=0; getModal().open()}} >
             <td>{row.code}</td>
             <td align="left">{row.desc1}</td>
             <td>{row.tdate}</td>

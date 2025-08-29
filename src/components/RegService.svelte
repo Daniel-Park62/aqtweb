@@ -4,17 +4,17 @@
   let rdata = [];
   let curRow = {};
   let cols = {
-    chk : 1,
-    pkey : 0,
-    appid : "",
-    svcid : "서비스",
-    svckor : "한글명",
-    svceng : "영문명",
-    task : "",
-    manager : "",
-    svckind : "0",
+    chk: 1,
+    pkey: 0,
+    appid: "",
+    svcid: "서비스",
+    svckor: "한글명",
+    svceng: "영문명",
+    task: "",
+    manager: "",
+    svckind: "0",
   };
-  let newRow = {...cols};
+  let newRow = { ...cols };
   const columns = [
     " ",
     "APID ",
@@ -26,46 +26,41 @@
     "서비스종류",
   ];
   const conds = {
-    appid : '',
-    svcid : ''
+    appid: "",
+    svcid: "",
   };
 
-  function insService() {
-    const inss = newRow.slice(2);
-    
-    fetch("/tservice", {
-      method: "POST" ,
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        ins: inss
-      }),
-    })
-      .then(async (res) => {
-        let rmsg = await res.json();
-        alert(rmsg.message);
-        if (res.status < 300) {
-          getdata();
-        }
-      })
-      .catch((err) => {
-        alert("error:" + err.message);
-      });
+  let sv_row;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+    curRow = row;
   }
 
   function updService() {
-    const upds = rdata.filter((r) => ( r.chk && r.pkey != 0) ).map((r) => {delete r.chk; return r;});
-    const inss = rdata.filter((r) => ( r.chk && r.pkey == 0) ).map((r) => {delete r.chk; delete r.pkey; return r;});
-  // console.log(inss)     ;
+    const upds = rdata
+      .filter((r) => r.chk && r.pkey != 0)
+      .map((r) => {
+        delete r.chk;
+        return r;
+      });
+    const inss = rdata
+      .filter((r) => r.chk && r.pkey == 0)
+      .map((r) => {
+        delete r.chk;
+        delete r.pkey;
+        return r;
+      });
+    // console.log(inss)     ;
     fetch("/tservice", {
-      method: "POST" ,
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         upd: upds,
-        ins: inss
+        ins: inss,
       }),
     })
       .then(async (res) => {
@@ -81,7 +76,9 @@
   }
 
   function delService() {
-    const delcodes = rdata.filter((r) => (r.chk && r.pkey > 0) ).map((r) => r.pkey);
+    const delcodes = rdata
+      .filter((r) => r.chk && r.pkey > 0)
+      .map((r) => r.pkey);
 
     if (delcodes.length == 0) return;
     // console.log("del code:", delcodes) ;
@@ -106,8 +103,9 @@
       });
   }
   async function getdata() {
-//    const res = await fetch("/tservice");
-const res = await fetch("/tservice/part", {
+    //    const res = await fetch("/tservice");
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    const res = await fetch("/tservice/part", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -116,20 +114,27 @@ const res = await fetch("/tservice/part", {
     });
     if (res.status === 200) {
       const rows = await res.json();
-      rdata = rows.map( r => {r.chk = 0; return r}) ;
+      rdata = rows.map((r) => {
+        r.chk = 0;
+        return r;
+      });
     } else {
       throw new Error(res.statusText);
     }
   }
 
-//  onMount(getdata);
+  //  onMount(getdata);
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button on:click={() => {
-    newRow.appid = curRow.appid ;
-    rdata = [{...newRow}, ...rdata]; 
-    newRow = {...cols};newRow.appid = curRow.appid }}>추가</button>
+  <button
+    on:click={() => {
+      newRow.appid = curRow.appid;
+      rdata = [{ ...newRow }, ...rdata];
+      newRow = { ...cols };
+      newRow.appid = curRow.appid;
+    }}>추가</button
+  >
   <button on:click={delService}>선택삭제</button>
   <button on:click={updService}>적용</button>
   <button on:click={getdata}>적용취소</button>
@@ -153,30 +158,52 @@ const res = await fetch("/tservice/part", {
       {#await rdata}
         <p>...waiting</p>
       {:then rows}
-        {#each rows as row }
-          <tr
-            on:click={() => (curRow = row)}
-          >
+        {#each rows as row}
+          <tr on:click={(e) => clickRow(e, row)}>
             <td><input type="checkbox" bind:checked={row.chk} /></td>
             {#if row.pkey === 0}
-            <td class="appid" contenteditable="true" bind:textContent={row.appid} />
-            <td class="svcid" contenteditable="true" style="width:20rem ;text-align:left" bind:textContent={row.svcid}/>
+              <td
+                class="appid"
+                contenteditable="true"
+                bind:textContent={row.appid}
+              />
+              <td
+                class="svcid"
+                contenteditable="true"
+                style="width:20rem ;text-align:left"
+                bind:textContent={row.svcid}
+              />
             {:else}
-            <td class="appid" >{row.appid}</td>
-            <td class="svcid" style="width:20rem">{row.svcid}</td>
+              <td class="appid">{row.appid}</td>
+              <td class="svcid" style="width:20rem">{row.svcid}</td>
             {/if}
             <td
               contenteditable="true"
               class="svckor"
               style="width:20%"
-              bind:textContent={row.svckor}/>
-            <td contenteditable="true" bind:textContent={row.svceng} class="svceng" style="width:20%" />
-            <td contenteditable="false" class="task" bind:textContent={row.task}/>
-            <td contenteditable="true" class="manager" bind:textContent={row.manager}/>
-            <td contenteditable="true" class="svckind" bind:textContent={row.svckind} />
-            {#if curRow === row}
-              <td>◀</td>
-            {/if}
+              bind:textContent={row.svckor}
+            />
+            <td
+              contenteditable="true"
+              bind:textContent={row.svceng}
+              class="svceng"
+              style="width:20%"
+            />
+            <td
+              contenteditable="false"
+              class="task"
+              bind:textContent={row.task}
+            />
+            <td
+              contenteditable="true"
+              class="manager"
+              bind:textContent={row.manager}
+            />
+            <td
+              contenteditable="true"
+              class="svckind"
+              bind:textContent={row.svckind}
+            />
           </tr>
         {/each}
       {:catch err}
@@ -196,13 +223,15 @@ const res = await fetch("/tservice/part", {
     margin: 2px 4px;
     padding: 0 8px;
     height: 1.8em;
-  }  
-
-  button {
-    width:6em ;
   }
 
-  .svcid, .svckor, .svceng {
-    word-break:break-all;
+  button {
+    width: 6em;
+  }
+
+  .svcid,
+  .svckor,
+  .svceng {
+    word-break: break-all;
   }
 </style>

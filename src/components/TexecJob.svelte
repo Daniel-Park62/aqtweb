@@ -24,7 +24,6 @@
   let rdata = [] ; // Promise.resolve([]);
   let jobsts = 0;
   let copytr = "copytr";
-  let edited = false;
   let qselected = 4;
 
   let curRow = {};
@@ -41,6 +40,14 @@
     "작업종료시간",
     "작업메세지",
   ];
+
+  let sv_row;
+  function clickRow(e, row) {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    sv_row = e.target.parentElement;
+    sv_row.classList.toggle("bg-teal-100");
+    curRow = row;
+  }
 
   function newJob(){
 
@@ -163,6 +170,7 @@
       });
   }
   async function getdata(a='1') {
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
     const res = await fetch("/texecjob?"+a);
     if (res.status === 200) {
       rdata = await res.json();
@@ -231,12 +239,12 @@
             {#if qselected == 4 || qselected == row.resultstat}
               <tr
                 class={"s"+row.resultstat}
-                on:click={() => {
+                on:click={(e) => {
                   if (curRow.pkey) {
                     const ii = rdata.findIndex(a => a.pkey == curRow.pkey) ;
                     rdata[ii] = curRow ;
                   }
-                  curRow = row;
+                  clickRow(e,row);
                   jobsts = 0;
                 }}
               >
@@ -254,9 +262,6 @@
                   >미수행{(row.tcnt - row.ccnt).toLocaleString('ko-KR')}건 <img height="20" src="./images/hg5m.gif"/>&nbsp;{(row.ccnt).toLocaleString('ko-KR')}건 처리</td>
                 {:else}
                   <td class="msg" style="max-width:20%">{row.msg ? row.msg.split("\n")[0] : ""}</td>
-                {/if}
-                {#if (curRow === row)}
-                  <td>◀</td>
                 {/if}
               </tr>
             {/if}

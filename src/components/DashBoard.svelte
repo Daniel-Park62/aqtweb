@@ -61,12 +61,15 @@
   });
 
   const formatf = (v, ctx) => {
-    const vsum =  ctx.chart.data.datasets[0].data[0] + ctx.chart.data.datasets[0].data[1];
+    const vsum =
+      ctx.chart.data.datasets[0].data[0] + ctx.chart.data.datasets[0].data[1];
     if (v === 0 || (v * 100) / vsum < 5) return "";
 
     return (
       ctx.chart.data.labels[ctx.dataIndex].padStart(7, " ") +
-      v.toLocaleString().padStart(6, " ") + " 건"  );
+      v.toLocaleString().padStart(6, " ") +
+      " 건"
+    );
   };
 
   const options = {
@@ -87,7 +90,7 @@
         display: true,
         color: "#272EF5",
         text: "[ 누적진척율 ]",
-        font : { size: 12, weight: 'bolder'},  
+        font: { size: 12, weight: "bolder" },
         padding: { top: 5, left: 0, right: 0, bottom: 0 },
       },
       datalabels: {
@@ -123,7 +126,7 @@
   const data2 = structuredClone(data); // JSON.parse(JSON.stringify(data)) ;
   data2.clabel = "테스트성공률";
   data2.labels = ["성공건수\n", "실패건수\n"];
-  data2.datasets[0].backgroundColor = [  "#F7464A", "#8BE8E7", ];
+  data2.datasets[0].backgroundColor = ["#F7464A", "#8BE8E7"];
   const data3 = structuredClone(data); // JSON.parse(JSON.stringify(data));
   const data4 = structuredClone(data2); // JSON.parse(JSON.stringify(data));
   const options2 = JSON.parse(JSON.stringify(options));
@@ -131,10 +134,6 @@
   options2.plugins.datalabels.formatter = formatf;
 
   let tick = 0;
-  setInterval(() => {
-    tick += 1;
-  }, 5000);
-
   $: getdata(tick);
 
   let tcode;
@@ -148,6 +147,7 @@
   };
 
   async function getdata(x = 0) {
+    datas = {svccnt: 0, rows:[]};
     const res = await fetch($rooturl + "/dashboard/summary");
     datas = await res.json();
 
@@ -162,9 +162,7 @@
       data3.datasets[0].data[1] = datas.svccnt - datas.rows[1].svc_cnt * 1;
       data4.datasets[0].data[0] = datas.rows[1].scnt * 1;
       data4.datasets[0].data[1] =
-        datas.rows[1].data_cnt * 1 - datas.rows[1].scnt * 1;
-
-      return datas;
+      datas.rows[1].data_cnt * 1 - datas.rows[1].scnt * 1;
     } else {
       throw new Error(res.statusText);
     }
@@ -181,7 +179,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="main" on:click={() => getdata()}>
+<div class="main" >
   <div class="container">
     <div class="subm">
       <div class="cap">단위테스트</div>
@@ -205,6 +203,7 @@
         </div>
       </div>
     </div>
+    <img class='w-[80%] cursor-pointer' on:click={()=>tick+=1} src="/images/refresh.svg" title="다시조회" />
     <div class="subm">
       <div class="cap">통합테스트</div>
       <div class="items">
@@ -228,7 +227,7 @@
       </div>
     </div>
   </div>
-  <div class="tlist"><TidList bind:tcode /></div>
+  <div class="tlist"><TidList bind:tick /></div>
 </div>
 
 <style>
@@ -239,7 +238,7 @@
   }
   .container {
     display: flex;
-    flex-basis: 183px;
+    /* flex-basis: 183px; */
     margin: 0%;
     height: auto;
     justify-content: space-evenly;
@@ -275,7 +274,12 @@
     font-size: 1.2rem;
     justify-content: center;
   }
-  .item .per {
+  .tlist {
+    /* max-height: 85%; */
+    flex: 1;
+    overflow-y: auto;
+  }
+  /* .item .per {
     font-size: 1.5rem;
     font-weight: bold;
     color: #6a40ff;
@@ -291,10 +295,6 @@
   }
   .item .lbl {
     width: 6rem;
-  }
-  .tlist {
-    /* max-height: 85%; */
-    flex: 1 ;
-    overflow-y: auto;
-  }
+  } */
+  
 </style>
