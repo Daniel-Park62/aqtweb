@@ -47,6 +47,9 @@
     
     const res = await fetch(urlv);
     cdata = await res.json();
+    odata.ok = false;
+    if (document.getElementById("odata").style.display == "block")
+      getOrig(cdata[0]);
   }
 
   async function getNext() {
@@ -54,7 +57,8 @@
       window.alert('다음자료가 없습니다.');
       return ;
     }
-    await getDetail(parr[++pidx]);
+    pid = parr[++pidx] ;
+    // await getDetail(parr[++pidx]);
 /* 
     const res = await fetch("/trlist/" + parr[++pidx]);
     if (res.ok) cdata = await res.json();
@@ -62,10 +66,10 @@
       const err = await res.json();
       window.alert(err.message);
     }
-    */    
     odata.ok = false;
     if (document.getElementById("odata").style.display == "block")
-      getOrig(cdata[0]);
+    getOrig(cdata[0]);
+    */    
   }
 
   async function getPrev() {
@@ -73,7 +77,8 @@
       window.alert('이전자료가 없습니다.');
       return ;
     }
-    await getDetail(parr[--pidx]);
+    // await getDetail(parr[--pidx]);
+    pid = parr[--pidx] ;
 
 /*     const res = await fetch("/trlist/" + parr[--pidx]);
     if (res.ok) cdata = await res.json();
@@ -81,10 +86,10 @@
       const err = await res.json();
       window.alert(err.message);
     }
- */
     odata.ok = false;
     if (document.getElementById("odata").style.display == "block")
-      getOrig(cdata[0]);
+    getOrig(cdata[0]);
+    */
   }
 
   function closedtl() {

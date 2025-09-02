@@ -30,8 +30,9 @@
   // let promise = [Promise.resolve([])];
   let rows = [];
   async function getdata(x) {
-      const res = await fetch( "/dashboard/list/"+$authApps);
-      rows = await res.json();
+    if (sv_row) sv_row.classList.remove("bg-teal-100");
+    const res = await fetch( "/dashboard/list/"+$authApps);
+    rows = await res.json();
 //      console.log(" call dashboard end", promise) ;
   }
 

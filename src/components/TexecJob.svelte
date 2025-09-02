@@ -5,7 +5,7 @@
   import {  userid } from "../aqtstore" ;
 
   let tick = 0 ;
-  setInterval(() => {
+  let intv = setInterval(() => {
     tick += 1
   }, 5000);
 
@@ -83,7 +83,7 @@
     }
     let jname = jobsts == 1 ? "신규작업" : "";
     let result = confirm(
-      ` ${jname} ${curRow.tcode} : ${curRow.reqstartDt} \n 실행 등록하시겠습니까?`
+      `작업시작시간:${curRow.reqstartDt} 에 JobNo:${jname} [${curRow.tcode}] :  \n 실행 요청하시겠습니까?`
     );
     if (result) updTcode();
   }
@@ -145,7 +145,7 @@
   function deljob(pkey) {
     if (
       !confirm(
-        `${curRow.pkey} ${curRow.tcode} ${curRow.tdesc} 삭제하시겠습니까?`
+        `JobNo:${curRow.pkey} [${curRow.tcode}]:${curRow.tdesc} 삭제하시겠습니까?`
       )
     )
       return;
@@ -161,8 +161,8 @@
       .then(async (res) => {
         let rmsg = await res.json();
         if (res.status < 400) {
-          alert("정상 삭제되었습니다");
           getdata();
+          alert("정상 삭제되었습니다");
         }
       })
       .catch((err) => {
@@ -188,7 +188,7 @@
 
     
 	  const el = document.querySelector("#processing");
-    el.animate([
+    el?.animate([
           { left: "0%", transform: "rotate(0deg)" },
           { left: "50%", transform: "rotate(360deg)" }
       ], {
@@ -201,13 +201,10 @@
   
 </script>
 
-<div class="main">
-  <div
-    class="itemx"
-    style="display:flex; justify-content: flex-start; align-items:baseline"
-  >
+<div class="flex flex-col h-100 " >
+  <div  class="flex justify-start items-baseline"  >
     <lebel>[ ▼ 전문송신이력 ] 조회선택▶</lebel>
-    <div style="display:flex; border: 1px solid silver;">
+    <div style="display:flex; border: 1px solid silver; margin:0 3px">
       <label class="rlabel"
         ><input type="radio" name="drone" bind:group={qselected} value={0} /> 미실행Job</label
       >
@@ -220,11 +217,12 @@
       <label class="rlabel"
         ><input type="radio" name="drone" bind:group={qselected} value={4} /> 모두보기</label
       >
+      <button title="5초마다 조회" on:click={()=>{intv ? (clearInterval(intv) , intv=null) : intv = setInterval(() => tick+=1,5000) }}>{intv ? '조회중지':'자동조회시작'}</button>
     </div>
   </div>
   <hr />
-  <div class="itemx texecList">
-    <table style='width: 100%;'>
+  <div class="max-h-[45vh] overflow-auto grow">
+    <table class='my-1'>
       <thead>
         <tr>
           {#each columns as column}
@@ -258,10 +256,13 @@
                 <td class="startDt">{row.startDt === null ? "" :row.startDt}</td>
                 <td class="endDt">{row.endDt === null ? "" : row.endDt }</td>
                 {#if (row.resultstat === 1)}
-                  <td style="width:20%; "
-                  >미수행{(row.tcnt - row.ccnt).toLocaleString('ko-KR')}건 <img height="20" src="./images/hg5m.gif"/>&nbsp;{(row.ccnt).toLocaleString('ko-KR')}건 처리</td>
+                  <td class="flex w-90 align-top">
+                    <p>미수행:{(row.tcnt - row.ccnt).toLocaleString('ko-KR')}건 </p>
+                    <img class='mx-4 my-0 h-6 animate-bounce' src="/images/hg5m.gif" />
+                    <p class='text-blue-700'>&nbsp;{(row.ccnt/row.tcnt*100).toFixed(2)}% 완료</p>
+                  </td>
                 {:else}
-                  <td class="msg" style="max-width:20%">{row.msg ? row.msg.split("\n")[0] : ""}</td>
+                  <td class="msg max-w-[20%]" >{row.msg ? row.msg.split("\n")[0] : ""}</td>
                 {/if}
               </tr>
             {/if}
@@ -273,17 +274,16 @@
     </table>
   </div>
   <hr />
-  <div class="flex py-1 ">
+  <div class="flex pt-2 ">
     <button
       on:click={newJob}>신규작업</button>
     <button on:click={reExec}>{curRow.pkey > 0 ? "재" :""}실행요청</button>
     {#if curRow.pkey > 0}
-      <button on:click={deljob(curRow.pkey)}>작업삭제</button>
+      <button on:click={() => deljob(curRow.pkey)}>작업삭제</button>
     {/if}
     <button on:click={getModal(copytr).open({}, "60", "60")}>전문생성</button>
   </div>
-  <hr />
-  <div class="itemx items">
+  <div class="p-2 border-2 border-indigo-500 items basis-[250px] flex-none">
     <div class="item in_label">테스트ID:</div>
     <!-- <input class="item in_value" maxlength=10 style="width:200px"
           pattern="[A-Z0-9]{(3, 6)}"
@@ -296,11 +296,11 @@
     </select>
 
     <div class="item in_label">Description:</div>
-    <input class="item in_value" style="grid-column: 4 / span 3;" bind:value={curRow.tdesc} />
+    <input class="item in_value caret-pink-500 col-start-4 col-span-3" bind:value={curRow.tdesc} />
     <div class="item in_label">작업개수:</div>
     <input class="item in_value" type="number" bind:value={curRow.tnum} />
     <div class="item in_label">작업종류:</div>
-    <div class="item in_value" style="display:flex;align-items:center">
+    <div class="item in_value flex items-center">
       <label
         ><input
           type="radio"
@@ -331,7 +331,7 @@
       >
     </div>
     <div class="item in_label">수행결과:</div>
-    <div class="item in_value" style="display:flex;align-items:center">
+    <div class="item in_value flex items-center">
       <label
         ><input
           type="radio"
@@ -350,7 +350,7 @@
       >
     </div>
     <div class="item in_label">작업방법:</div>
-    <div class="item in_value" style="display:flex;align-items:center">
+    <div class="item in_value flex items-center" >
       <label
         ><input
           type="radio"
@@ -370,23 +370,22 @@
     <div class="item in_label">송신간격(ms):</div>
     <input class="item in_value" type="number" bind:value={curRow.reqnum} />
     <div class="item in_label">처리건수:</div>
-    <input class="item in_value" style="grid-column: 2 / span 2;" bind:value={curRow.limits} />
+    <input class="item in_value col-start-2 col-span-2" bind:value={curRow.limits} />
     <div class="item in_label">작업요청일시:</div>
     <input
-      class="item in_value" style="grid-column: 5 / span 2;"
+      class="item in_value col-start-5 col-span-2" 
       type="datetime-local"
       bind:value={curRow.reqstartDt}
     />
     <div class="item in_label">반복횟수:</div>
     <input class="item in_value" type="number" bind:value={curRow.repnum} />
     <div class="item in_label">대상선택조건:</div>
-    <input class="item in_value" style="grid-column: 2 / span 2;" bind:value={curRow.etc} />
+    <input class="item in_value col-start-2 col-span-2" bind:value={curRow.etc} />
     <div class="item in_label">작업메세지:</div>
     <textarea
       readonly
-      class="item in_value"
+      class="item in_value col-start-5 col-span-4"
       bind:value={curRow.msg}
-      style="grid-column: 5 / span 4;"
     />
   </div>
 </div>
@@ -395,18 +394,10 @@
 </Modal>
 
 <style>
-  .main {
+  /* .main {
     max-height: 100%;
     overflow: auto;
-  }
-  .texecList {
-    max-height: 45vh;
-    overflow: auto;
-  }
-
-  .itemx:nth-child(n + 2) {
-    flex: 1 0 0;
-  }
+  } */
   .in_value > label,
   .rlabel {
     margin: 0px 5px;
@@ -419,7 +410,6 @@
     align-content: start;
     /* align-items: center; */
     margin: 10px;
-    height: 40vh;
   }
 
   .item {
@@ -438,17 +428,6 @@
   textarea {
     height: 100px;
     font-size: 0.8em;
-  }
-
-  table {
-    border-collapse: collapse;
-    overflow: auto;
-  }
-
-  td,
-  th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
   }
 
   .s0 {

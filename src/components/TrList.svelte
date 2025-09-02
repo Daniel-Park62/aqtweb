@@ -22,7 +22,7 @@
 
   let tcodelist = [];
   let selected ;
-  let tcnt = '';
+  let tcnt = 0;
 
   async function getTRlistm() {
     [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
@@ -37,6 +37,7 @@
     if (res.ok) {
       const rdata = await res.json();
       tcnt = rdata[0].tcnt ;
+      conds.page = Math.min( Math.trunc(Number(tcnt) / conds.psize), conds.page ) ;
     } else {
       // rdata = Promise.resolve([]);
       throw new Error(res.statusText);
@@ -69,7 +70,9 @@
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
     <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} /></span>
     <button on:click={getTRlistm}>조회</button>
-    <span>{tcnt}</span>
+    {#if tcnt > 0}
+    <span>{Number(tcnt).toLocaleString()} 건</span>
+    {/if}
 
   </div>
   <div class="fitem">

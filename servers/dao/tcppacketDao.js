@@ -62,7 +62,7 @@ module.exports = {
     if (parms.cond) etcond += ` and ('${parms.cond}') `;
 
     // console.log("enc:", senc);
-    return await aqtdb.query(" select concat(format(count(1),0) ,'건') tcnt "
+    return await aqtdb.query(" select count(1) tcnt "
       + "FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where tcode = ? and t.uri rlike ? " + etcond
       , [parms.tcode, parms.uri]);
   },

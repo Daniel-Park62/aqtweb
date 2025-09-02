@@ -57,7 +57,7 @@
     SELECT code, type, lvl, desc1, cmpCode, tdate, endDate, 
         tdir, tuser, thost, tport, tenv, appid, svc_cnt, fsvc_cnt, 
         data_cnt, scnt, fcnt, spct, tot_svccnt 
-    FROM vtrxlist WHERE appid rlike #{appid} order by tdate desc
+    FROM vtrxlist WHERE appid rlike #{appid} and data_cnt != 0 order by tdate desc
   </select>
   <select id="tlevel_sel">
     <![CDATA[ 

@@ -88,7 +88,6 @@
   });
   async function getTRlist() {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
-    if (conds.tcode == undefined) return Promise.resolve([]);
     pg = conds.page + 1;
     conds.apps = $authApps;
     const res = await fetch("/trlist", {
@@ -237,7 +236,7 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid bind:pid bind:parr />
+<DetailTR bind:vid bind:pid bind:parr bind:pidx />
 
 <style>
   .elapsed,
