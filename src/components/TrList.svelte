@@ -53,6 +53,11 @@
     // promise = Promise.resolve(tcodelist) ;
   });
   
+  function enterkey(e) {
+	if (e.keyCode == 13) {
+    	getTRlistm();
+    }
+}
 </script>
 
 <div class="main" on:mouseenter={() => vid = 'none' }>
@@ -66,7 +71,7 @@
       </option>
       {/each}
     </select>
-    <span>URI : <input type="text" bind:value={mycond.uri} /></span>
+    <span>URI : <input on:keyup={enterkey} type="text" bind:value={mycond.uri} /></span>
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
     <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} /></span>
     <button on:click={getTRlistm}>조회</button>

@@ -49,10 +49,16 @@
     curRow = row;
   }
 
+  function autoGet(t) {
+      intv = setInterval(() => {
+      tick += 1
+      }, t);
+  }
+  
   function newJob(){
 
         jobsts = 1;
-
+        if (intv) { clearInterval(intv) , intv=null; }
         if ( ! (curRow = rdata.find(a => a.pkey == 0)) ) {
         curRow = {
           pkey: 0,
@@ -83,52 +89,19 @@
     }
     let jname = jobsts == 1 ? "신규작업" : "";
     let result = confirm(
-      `작업시작시간:${curRow.reqstartDt} 에 JobNo:${jname} [${curRow.tcode}] :  \n 실행 요청하시겠습니까?`
+      `작업시작시간:[${curRow.reqstartDt}] 에 테스트ID:${jname} [${curRow.tcode}] :  \n 실행 요청하시겠습니까?`
     );
     if (result) updTcode();
   }
   function updTcode() {
-    let {
-      pkey,
-      jobkind,
-      tcode,
-      tdesc,
-      tnum,
-      dbskip,
-      limits,
-      etc,
-      in_file,
-      outlogdir,
-      reqstartDt,
-      exectype,
-      resultstat,
-      reqnum,
-      repnum
-    } = curRow;
-    resultstat = 0;
+    curRow.resultstat = 0;
 
     fetch("/texecjob", {
       method: jobsts === 1 ? "POST" : "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        pkey,
-        jobkind,
-        tcode,
-        tdesc,
-        tnum,
-        dbskip,
-        limits,
-        etc,
-        in_file,
-        outlogdir,
-        reqstartDt,
-        exectype,
-        resultstat,
-        reqnum,
-        repnum
-      }),
+      body: JSON.stringify(curRow),
     })
       .then(async (res) => {
         let rmsg = await res.json();
@@ -186,7 +159,7 @@
     const res = await fetch("/tmaster/tsellist/"+$userid );
     tcodelist =   await res.json();
 
-    
+/*     
 	  const el = document.querySelector("#processing");
     el?.animate([
           { left: "0%", transform: "rotate(0deg)" },
@@ -196,7 +169,7 @@
           fill: "forwards",
           iterations : Infinity
       });         
-    
+ */    
 });
   
 </script>
@@ -217,7 +190,7 @@
       <label class="rlabel"
         ><input type="radio" name="drone" bind:group={qselected} value={4} /> 모두보기</label
       >
-      <button title="5초마다 조회" on:click={()=>{intv ? (clearInterval(intv) , intv=null) : intv = setInterval(() => tick+=1,5000) }}>{intv ? '조회중지':'자동조회시작'}</button>
+      <button title="5초마다 조회" on:click={()=>{intv ? (clearInterval(intv) , intv=null) : autoGet(5000) }}>{intv ? '조회중지':'자동조회시작'}</button>
     </div>
   </div>
   <hr />

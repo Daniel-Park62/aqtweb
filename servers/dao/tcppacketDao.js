@@ -18,7 +18,7 @@ module.exports = {
     let etcond = '';
     if (parms.rcode) etcond = `and (t.rcode = ${parms.rcode}) `;
     if (parms.apps) etcond += ` and (t.appid rlike '${parms.apps}' ) `;
-    if (parms.cond) etcond += ` and ('${parms.cond}') `;
+    if (parms.cond) etcond += ` and (${parms.cond}) `;
     await vcolSet() ;
     // console.log(`[${etcond}]`);
     const sqlval = `SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime 송신시간, rtime, svctime 소요시간, method, uri, sflag, rcode status, 
@@ -59,7 +59,7 @@ module.exports = {
     let etcond = '';
     if (parms.rcode) etcond = `and (t.rcode = ${parms.rcode}) `;
     if (parms.apps) etcond += ` and (t.appid rlike '${parms.apps}' ) `;
-    if (parms.cond) etcond += ` and ('${parms.cond}') `;
+    if (parms.cond) etcond += ` and (${parms.cond}) `;
 
     // console.log("enc:", senc);
     return await aqtdb.query(" select count(1) tcnt "

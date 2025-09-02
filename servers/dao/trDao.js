@@ -66,7 +66,7 @@ module.exports = {
   let etcond = '';
   if (parms.uri) etcond = `and (t.uri = '${parms.uri}' ) ` ;
   if (parms.rcode) etcond += ` and (t.rcode = '${parms.rcode}') ` ;
-  if (parms.cond) etcond += ` and ('${parms.cond}') ` ;
+  if (parms.cond) etcond += ` and (${parms.cond}) ` ;
 
   const str_qry = ` SELECT t.tcode, t.uri URI, t.stime 송신시간, t.rtime 수신시간, t.svctime 소요시간, t.rcode 응답코드, 
         REGEXP_REPLACE(cast(t.sdata as char(200) ${senc} ),'[\0\r\n]',' ') 송신데이터, 
