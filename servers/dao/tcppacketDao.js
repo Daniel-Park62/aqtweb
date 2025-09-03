@@ -16,9 +16,11 @@ module.exports = {
   /** @param {*} parms */
   async find(parms) {
     let etcond = '';
+    let sortby = 'o_stime';
     if (parms.rcode) etcond = `and (t.rcode = ${parms.rcode}) `;
     if (parms.apps) etcond += ` and (t.appid rlike '${parms.apps}' ) `;
     if (parms.cond) etcond += ` and (${parms.cond}) `;
+    if (parms.sortby) sortby = parms.sortby ;
     await vcolSet() ;
     // console.log(`[${etcond}]`);
     const sqlval = `SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime 송신시간, rtime, svctime 소요시간, method, uri, sflag, rcode status, 
@@ -26,7 +28,7 @@ module.exports = {
                     case tenv when 'euc-kr' then CAST( rdata AS CHAR(200) CHARSET euckr) else cast(rdata as char(200)) end ) 수신데이터, 
                     rlen 수신크기, date_format(cdate,'%Y-%m-%d %T') cdate ${vcol}
                     FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) 
-                    where t.tcode = ? and t.uri rlike ? ${etcond} order by o_stime limit ?, ? ` ;
+                    where t.tcode = ? and t.uri rlike ? ${etcond} order by ${sortby} limit ?, ? ` ;
                 // console.log(`[${sqlval}]`) ;
     return await aqtdb.query({
       dateStrings: true,

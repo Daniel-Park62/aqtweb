@@ -29,7 +29,7 @@ import CompareTr from "./CompareTr.svelte";
   let tcnt = '';
 
   async function getTRlistm() {
-    [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
+    Object.assign(conds, mycond) ; // [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
     conds.tcode = selected.code ;
     const res = await fetch("/tloaddata/compareTcnt", {
       method: "POST",
@@ -47,6 +47,11 @@ import CompareTr from "./CompareTr.svelte";
       throw new Error(res.statusText);
     }
   }
+  function enterkey(e) {
+    if (e.keyCode == 13) {
+        getTRlistm();
+      }
+  }
 
   onMount(async () => {
     const res = await fetch( "/tmaster/tsellist/"+$userid ) ;
@@ -60,7 +65,7 @@ import CompareTr from "./CompareTr.svelte";
 </script>
 
 <div class="main" on:mouseenter={() => vid = 'none' }>
-  <div class="cond fitem">
+  <div class="cond fitem" on:keyup={enterkey}>
     <p>* 테스트ID : </p> 
     <select bind:value={selected} on:change={()=> {conds.tcode = ''; conds.page=0}} >
         

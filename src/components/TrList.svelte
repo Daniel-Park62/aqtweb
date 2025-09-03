@@ -17,7 +17,7 @@
     psize: 20,
     cond: "",
     uri: "",
-    apps:""
+    apps:"",
   };
 
   let tcodelist = [];
@@ -25,7 +25,8 @@
   let tcnt = 0;
 
   async function getTRlistm() {
-    [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
+    // [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
+    Object.assign(conds,mycond);
     conds.tcode = selected.code ;
     const res = await fetch("/trlist/tcnt", {
       method: "POST",
@@ -37,7 +38,7 @@
     if (res.ok) {
       const rdata = await res.json();
       tcnt = rdata[0].tcnt ;
-      conds.page = Math.min( Math.trunc(Number(tcnt) / conds.psize), conds.page ) ;
+      // conds.page = Math.min( Math.trunc(Number(tcnt) / conds.psize), conds.page ) ;
     } else {
       // rdata = Promise.resolve([]);
       throw new Error(res.statusText);
@@ -54,14 +55,14 @@
   });
   
   function enterkey(e) {
-	if (e.keyCode == 13) {
-    	getTRlistm();
-    }
-}
+    if (e.keyCode == 13) {
+        getTRlistm();
+      }
+  }
 </script>
 
 <div class="main" on:mouseenter={() => vid = 'none' }>
-  <div class="cond fitem">
+  <div class="cond fitem" on:keyup={enterkey} >
     <p>* 테스트ID : </p> 
     <select bind:value={selected} on:change={()=> {conds.tcode = ''; conds.page=0}} >
         
@@ -71,10 +72,10 @@
       </option>
       {/each}
     </select>
-    <span>URI : <input on:keyup={enterkey} type="text" bind:value={mycond.uri} /></span>
+    <span>URI : <input type="text" bind:value={mycond.uri} /></span>
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
     <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} /></span>
-    <button on:click={getTRlistm}>조회</button>
+    <button  on:click={getTRlistm}>조회</button>
     {#if tcnt > 0}
     <span>{Number(tcnt).toLocaleString()} 건</span>
     {/if}

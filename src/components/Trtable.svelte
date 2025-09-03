@@ -30,9 +30,10 @@
     uri: "",
     task: "",
     apps: "",
+    
   };
 
-  //  let rdata = Promise.resolve([]);
+  let sortby = ""
   let rdata = [];
   let achk = '□';
   let pg = conds.page + 1;
@@ -90,6 +91,7 @@
     if (sv_row) sv_row.classList.remove("bg-teal-100");
     pg = conds.page + 1;
     conds.apps = $authApps;
+    conds.sortby = sortby ?? '';
     const res = await fetch("/trlist", {
       method: "POST",
       headers: {
@@ -172,6 +174,7 @@
       &lt; Prev
     </button>
   {/if}
+  <span> 정렬 : <input on:keyup={(e) => {if(e.key == 'Enter') getTRlist()}} placeholder="o_stime" class="w-[20rem]" type="text" bind:value={sortby} /></span>
   <div style="margin-left: auto">
     <button on:click={reSend}>재전송</button>
     <button on:click={getDownLoad}>CSV</button>
