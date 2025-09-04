@@ -2,7 +2,7 @@ const aqtdb = require('../db/dbconn') ;
  
 module.exports = {
   find : async (parms) => {
-      return await aqtdb.query(`	SELECT a.pkey, jobkind, tcode, tdesc, tnum, dbskip, etc, in_file, limits, outlogdir, tuser, tdir, tenv, 
+      return await aqtdb.query(`	SELECT a.pkey, jobkind, tcode, tdesc, tnum, dbskip, etc, in_file, limits,  tuser, tdir, tenv, 
                 thost, tport, reqstartDt, exectype, resultstat, reqnum, repnum,  startDt, endDt, msg , b.tcnt,b.ccnt,b.ecnt 
            FROM texecjob a left join texecing b on(a.pkey = b.pkey)  
            ${parms}  order by if(resultstat=3,1.5,resultstat) , startdt desc `) ;
