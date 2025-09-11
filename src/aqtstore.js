@@ -8,7 +8,7 @@ export const isLogged = writable(0);
 export const authApps = writable("");
 export const userid = writable("");
 export const appids = writable([]) ;
-export const rooturl = readable('http://localhost:5972') ;
+export const rooturl = readable('') ;
 
 export const getCheckPass = async ( password ) => {
 	if ( password === aqtpass )
