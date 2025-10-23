@@ -5,7 +5,10 @@ const trequestDao = require('../dao/trequestDao') ;
 router.post('/', async function (req, res, next) {
 
     trequestDao.insert(req.body.insdata)
-      .then(r => res.json({message : `${r.affectedRows} 건 등록되었습니다.`}) )
+      .then(r => {
+        const tot = Array.isArray(r) ? r.reduce((t,i) => { return t + i.affectedRows} ) : r.affectedRows ;
+        res.json({message : `${tot} 건 등록되었습니다.`}) 
+      })
       .catch(e => { next(new Error(e.message)) });
 
 });
