@@ -93,12 +93,12 @@
             <td>{row.tdate}</td>
             <td>{getLvlnm(row.lvl)}</td>
             <td>{row.thost}</td>
-            <td align="right">{row.svc_cnt}</td>
+            <td align="right">{row.svc_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.data_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
             <td align="right" on:dblclick={()=> { conds.tcode=row.code;conds.cond = "sflag='2'"; getModal().open()}} >
                 {row.fcnt.toLocaleString("ko-KR")}</td>
-            <td align="right">{row.fsvc_cnt}</td>
+            <td align="right">{row.fsvc_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.spct.toFixed(2)}</td>
             <td align="right">{(row.data_cnt - row.scnt - row.fcnt).toLocaleString("ko-KR")}</td>
           </tr>

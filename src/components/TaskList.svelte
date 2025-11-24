@@ -50,13 +50,13 @@
           }} >
             <td>{row.task}</td>
             <td>{getLvlnm(row.lvl)}</td>
-            <td align="right">{row.svc_cnt}</td>
-            <td align="right">{row.fsvc_cnt}</td>
+            <td align="right">{row.svc_cnt.toLocaleString("ko-KR")}</td>
+            <td align="right">{row.fsvc_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.data_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.fcnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.srate }</td>
-            <td align="right">{row.data_cnt - row.scnt - row.fcnt}</td>
+            <td align="right">{(row.data_cnt - row.scnt - row.fcnt).toLocaleString("ko-KR")}</td>
           </tr>
         {/each}
       {:catch error}

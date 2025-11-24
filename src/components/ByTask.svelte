@@ -79,12 +79,12 @@
         <tr >
           <th id='svcid' class="cursor-pointer" on:click={sortdata}>서비스ID</th>
           <th id='svckor' class="cursor-pointer" on:click={sortdata}>서비스명</th>
-          <th id='cumcnt' class="cursor-pointer" on:click={sortdata}>누적건수</th>
           <th id='tcnt' class="cursor-pointer" on:click={sortdata}>패킷건수</th>
           <th id='avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
+          <th id='avgt' class="cursor-pointer" on:click={sortdata}>표준편차</th>
           <th>성공건수</th>
           <th>실패건수</th>
-          <th id='tcode' class="cursor-pointer" on:click={sortdata}>테스트ID</th>
+          <th>테스트ID</th>
         </tr>
       </thead>
       <tbody>
@@ -96,9 +96,9 @@
                 on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
               <td >{row.svcid}</td>
               <td>{row.svckor}</td>
-              <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.avgt}</td>
+              <td align="right">{row.stdv}</td>
               <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.fcnt.toLocaleString("ko-KR")}</td>
               <td>{row.tcode}</td>

@@ -71,6 +71,7 @@
           etc: "",
           in_file: "",
           reqstartDt: (new Date()).toLocaleString('lt'),
+          reqstartDt2: (new Date()).toLocaleString('lt'),
           msg: "",
           exectype: 0,
           tnum: 1,
@@ -224,7 +225,7 @@
                 <td class="tcode">{row.tcode}</td>
                 <td class="tdesc" style="width:10rem">{row.tdesc}</td>
                 <td class="tnum">{row.tnum}</td>
-                <td class="reqstartDt">{row.reqstartDt}</td>
+                <td class="reqstartDt">{row.reqstartDt2}</td>
                 <td class="resultstat">{statusnm[row.resultstat]}</td>
                 <td class="startDt">{row.startDt === null ? "" :row.startDt}</td>
                 <td class="endDt">{row.endDt === null ? "" : row.endDt }</td>

@@ -43,15 +43,16 @@
     SELECT *, if(scnt+fcnt=0,0,round(scnt*100/(scnt+fcnt),2)) srate FROM TTASKSUM order by TASK,LVL
   </select>
   <select id="vtr_SumByService">
-    select t.tcode, t.uri svcid, s.svckor , count(1) tcnt, round(avg(t.svctime),3) avgt,
-         sum(case when t.sflag = '1' then 1 else 0 end) scnt 
-        , sum(case when t.sflag = '2' then 1 else 0 end) fcnt , s.cumcnt 
-        from   vtcppacket t join tservice s on (t.uri = s.svcid and t.appid = s.appid)  
-        WHERE 1=1 
+    select group_concat(t.tcode) tcode, t.svcid, s.svckor , sum(tcnt) tcnt, round(avg(t.avgt),3) avgt,
+         round(avg(t.stdv),3) stdv,sum(scnt) scnt 
+        , sum(fcnt) fcnt , s.cumcnt 
+        from   tsvcsum t join tservice s on (t.svcid = s.svcid and t.appid = s.appid) 
+              join (select code, lvl from tmaster ) m on (t.tcode = m.code) 
+        WHERE tcnt != 0 
          <if test="tcode != null"> and t.tcode = #{tcode} </if>
          <if test="task != null"> and s.task = #{task} </if>
          <if test="lvl != null"> and lvl = #{lvl} </if> 
-         group by t.tcode, t.uri ORDER BY T.URI
+         group by t.svcid ORDER BY t.svcid
   </select>
   <select id="vtrxlist_sel">
     SELECT code, type, lvl, desc1, cmpCode, tdate, endDate, 
@@ -90,7 +91,7 @@
     INSERT INTO taqtuser 
          ( usrid, host, usrdesc, admin, apps ) 
         VALUES 
-        <foreach item="r" collection="list" open="(" separator="," close=")" >
+        <foreach item="r" collection="list" separator="," >
           (  #{r.usrid}, #{r.host}, #{r.usrdesc}, #{r.admin}, #{r.apps} )
       </foreach>
   </insert>
@@ -122,8 +123,8 @@
     INSERT INTO tservice 
        ( appid, svcid,  svckor, svceng, task, manager, svckind) 
     VALUES 
-    <foreach item="r" collection="list" open="(" separator="," close=")" >
-      #{r.appid}, '${r.svcid}','${r.svckor}','${r.svceng}','${r.task}',#{r.manager},#{r.svckind}
+    <foreach item="r" collection="list" separator="," >
+      ( #{r.appid}, '${r.svcid}','${r.svckor}','${r.svceng}','${r.task}',#{r.manager},#{r.svckind} )
     </foreach>
   </insert>
   <delete id="tservice_Del">

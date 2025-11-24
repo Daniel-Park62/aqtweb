@@ -92,6 +92,7 @@
     pg = conds.page + 1;
     conds.apps = $authApps;
     conds.sortby = sortby ?? '';
+    document.body.style.cursor = "wait";
     const res = await fetch("/trlist", {
       method: "POST",
       headers: {
@@ -99,11 +100,13 @@
       },
       body: JSON.stringify(conds),
     });
+    document.body.style.cursor = "default";
     if (res.ok) {
       rdata = await res.json();
       //  console.log("trlist end", rdata) ;
     } else {
       // rdata = Promise.resolve([]);
+      rdata = [];
       throw new Error(res.statusText);
     }
   }
@@ -183,6 +186,9 @@
 <div class="fitem tbl">
   <table>
     <thead>
+      {#await rdata}
+      <p> </p>
+      {:then rs}
       <tr>
         <th  on:click={() => {
           const clist = document.querySelectorAll(".chkb");
@@ -199,11 +205,12 @@
           </th>
         {/each}
       </tr>
+      {/await}
     </thead>
     <tbody>
-      <!-- {#await rdata}
+      {#await rdata}
         <p>...waiting</p>
-      {:then rows} -->
+      {:then rows}
       {#each rdata as row , i (row.pkey)}
         <tr
           class={row.sflag}
@@ -233,9 +240,9 @@
           {#if row.col1}<td class="col1">{row.col1}</td>{/if}
         </tr>
       {/each}
-      <!-- {:catch err}
+      {:catch err}
         <p style="color: red">{err.message}</p>
-      {/await} -->
+      {/await}
     </tbody>
   </table>
 </div>

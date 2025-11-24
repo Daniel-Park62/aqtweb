@@ -48,7 +48,7 @@
     const res = await fetch(urlv);
     cdata = await res.json();
     odata.ok = false;
-    if (document.getElementById("odata").style.display == "block")
+    if (document.getElementById("odata")?.style.display == "block")
       getOrig(cdata[0]);
   }
 

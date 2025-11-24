@@ -3,6 +3,7 @@
 
   let rdata = [];
   let curRow = {};
+  let rcnt = 0 ;
   let cols = {
     chk: 1,
     pkey: 0,
@@ -114,6 +115,7 @@
     });
     if (res.status === 200) {
       const rows = await res.json();
+      rcnt = rows.length ;
       rdata = rows.map((r) => {
         r.chk = 0;
         return r;
@@ -141,6 +143,7 @@
   <span>APPID : <input type="text" bind:value={conds.appid} /></span>
   <span>서비스(URI) : <input type="text" bind:value={conds.svcid} /></span>
   <button style="margin-left: auto" on:click={getdata}>조회</button>
+  <span>{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
 </div>
 <hr />
 <div class="tList">

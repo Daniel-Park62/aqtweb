@@ -16,11 +16,13 @@ module.exports = {
   /** @param {*} parms */
   async find(parms) {
     let etcond = '';
-    let sortby = 'o_stime';
+    let sortby = '';
+    let tcodes = parms.tcode.split(/,\s*/) ;
     if (parms.rcode) etcond = `and (t.rcode = ${parms.rcode}) `;
     if (parms.apps) etcond += ` and (t.appid rlike '${parms.apps}' ) `;
+    if (parms.uri) etcond += ` and (t.uri rlike '${parms.uri}' ) `;
     if (parms.cond) etcond += ` and (${parms.cond}) `;
-    if (parms.sortby) sortby = parms.sortby ;
+    if (parms.sortby) sortby = ` order by ${parms.sortby}` ;
     await vcolSet() ;
     // console.log(`[${etcond}]`);
     const sqlval = `SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime 송신시간, rtime, svctime 소요시간, method, uri, sflag, rcode status, 
@@ -28,12 +30,12 @@ module.exports = {
                     case tenv when 'euc-kr' then CAST( rdata AS CHAR(200) CHARSET euckr) else cast(rdata as char(200)) end ) 수신데이터, 
                     rlen 수신크기, date_format(cdate,'%Y-%m-%d %T') cdate ${vcol}
                     FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) 
-                    where t.tcode = ? and t.uri rlike ? ${etcond} order by ${sortby} limit ?, ? ` ;
-                // console.log(`[${sqlval}]`) ;
+                    where t.tcode in (${tcodes.map(i => "'"+ i +"'").join()})  ${etcond} ${sortby} limit ?, ? ` ;
+                //  console.log(`[${sqlval}]`) ;
     return await aqtdb.query({
       dateStrings: true,
       sql: sqlval
-    }, [parms.tcode, parms.uri, parms.page * parms.psize, +(parms.psize)]);
+    }, [parms.page * parms.psize, +(parms.psize)]);
   },
   /** @param {number} id */
   async findById(id) {
@@ -59,14 +61,18 @@ module.exports = {
   /** @param {*} parms */
   async tcount(parms) {
     let etcond = '';
+    let tcodes = parms.tcode.split(/,\s*/) ;
     if (parms.rcode) etcond = `and (t.rcode = ${parms.rcode}) `;
+    if (parms.apps == '.*') parms.apps = '';
     if (parms.apps) etcond += ` and (t.appid rlike '${parms.apps}' ) `;
+    if (parms.uri) etcond += ` and (t.uri rlike '${parms.uri}' ) `;
     if (parms.cond) etcond += ` and (${parms.cond}) `;
 
     // console.log("enc:", senc);
-    return await aqtdb.query(" select count(1) tcnt "
-      + "FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where tcode = ? and t.uri rlike ? " + etcond
-      , [parms.tcode, parms.uri]);
+    return await aqtdb.query(` select count(1) tcnt 
+         FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) 
+         where tcode in ( ${tcodes.map(i => "'"+ i + "'").join()} )  ${etcond}`) ;
+
   },
 
 }

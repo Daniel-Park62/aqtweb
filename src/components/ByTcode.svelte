@@ -81,6 +81,7 @@
           <th id='cumcnt' class="cursor-pointer" on:click={sortdata}>누적건수</th>
           <th id='tcnt' class="cursor-pointer" on:click={sortdata}>패킷건수</th>
           <th id='avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
+          <th id='stdv' class="cursor-pointer" on:click={sortdata}>표준편차</th>
           <th>성공건수</th>
           <th>실패건수</th>
         </tr>
@@ -96,6 +97,7 @@
               <td align="right">{row.cumcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.avgt}</td>
+              <td align="right">{row.stdv}</td>
               <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.fcnt.toLocaleString("ko-KR")}</td>
             </tr>
