@@ -26,7 +26,6 @@ router.post('/copyTr', function(req, res, next) {
   // console.log(parms) ;
   tmasterDao.copyTr(parms)
     .then( r => {
-      console.log("h:",r)
       res.status(201).send(r);
     })
     .catch( e => {

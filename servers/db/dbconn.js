@@ -2,8 +2,9 @@ const mariadb = require('mariadb');
 const config = require('./dbinfo').real;
 
 const pool = mariadb.createPool({
-      host: config.host,
-      port: config.port,
+//      host: config.host,
+//      port: config.port,
+      socketPath: '\\\\.\\pipe.\\MySQL',
       user: config.user,
       password: config.password,
       database: config.database,

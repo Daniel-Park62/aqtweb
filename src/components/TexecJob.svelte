@@ -9,7 +9,7 @@
     tick += 1
   }, 5000);
 
-  $: getdata(tick) ;
+  $: geting(tick) ;
 
   let tcodelist = [] ;
 
@@ -77,6 +77,8 @@
           tnum: 1,
           repnum: 1,
           reqnum: 0,
+          thost: '',
+          tport: 0,
         };
         rdata = [curRow, ...rdata] ;
         }
@@ -153,12 +155,40 @@
     }
   }
 
+  async function geting(x) {
+    const res = await fetch("/texecjob/ing?"+x);
+    if (res.ok) {
+      const ring = await res.json();
+      ring.forEach(rw => { 
+        const elm = document.getElementById(rw.pkey) ;
+        if (elm)
+          elm.innerHTML = `
+                    <p>미수행:${(rw.tcnt - rw.ccnt).toLocaleString('ko-KR')}건 </p>
+                    <img class='mx-4 my-0 h-6 animate-bounce' src="/images/hg5m.gif" />
+                    <p class='text-blue-700'>&nbsp;${(rw.ccnt/rw.tcnt*100).toFixed(2)}% 완료</p>
+      `;
+      } ) ;
+        
+    } else {
+      throw new Error(res.statusText);
+    }
+  }
+
   let selected;
 
   onMount(async () => {
     getdata();
     const res = await fetch("/tmaster/tsellist/"+$userid );
     tcodelist =   await res.json();
+    const selEl = document.getElementById('tcode') ;
+    selEl.addEventListener('change', (e) => {
+      const fcode = tcodelist.find( r => r.code == e.target.value ) ;
+      console.log(fcode) ;
+      if (fcode) {
+        curRow.thost = fcode.thost ;
+        curRow.tport = fcode.tport ;
+      }
+    });
 
 /*     
 	  const el = document.querySelector("#processing");
@@ -207,7 +237,10 @@
         </tr>
       </thead>
       <tbody>
-          {#each rdata as row (row.pkey)}
+        {#await rdata}
+        <p>...waiting</p>
+      {:then rows}
+          {#each rows as row (row.pkey)}
             {#if qselected == 4 || qselected == row.resultstat}
               <tr
                 class={"s"+row.resultstat}
@@ -223,14 +256,14 @@
                 <td class="pkey"><strong>{row.pkey}</strong></td>
                 <td class="jobkind">{jobkindnm[row.jobkind]}</td>
                 <td class="tcode">{row.tcode}</td>
-                <td class="tdesc" style="width:10rem">{row.tdesc}</td>
+                <td class="tdesc" >{row.tdesc}</td>
                 <td class="tnum">{row.tnum}</td>
                 <td class="reqstartDt">{row.reqstartDt2}</td>
                 <td class="resultstat">{statusnm[row.resultstat]}</td>
                 <td class="startDt">{row.startDt === null ? "" :row.startDt}</td>
                 <td class="endDt">{row.endDt === null ? "" : row.endDt }</td>
                 {#if (row.resultstat === 1)}
-                  <td class="flex w-90 align-top">
+                  <td id={row.pkey} class="flex w-90 align-top" title={'총: ' + row.tcnt.toLocaleString('ko-KR') + ' 건'}>
                     <p>미수행:{(row.tcnt - row.ccnt).toLocaleString('ko-KR')}건 </p>
                     <img class='mx-4 my-0 h-6 animate-bounce' src="/images/hg5m.gif" />
                     <p class='text-blue-700'>&nbsp;{(row.ccnt/row.tcnt*100).toFixed(2)}% 완료</p>
@@ -241,9 +274,9 @@
               </tr>
             {/if}
           {/each}
-        <!-- {:catch err}
+        {:catch err}
           <p style="color: red">{err.message}</p>
-        {/await} -->
+        {/await} 
       </tbody>
     </table>
   </div>
@@ -263,7 +296,7 @@
           pattern="[A-Z0-9]{(3, 6)}"
           bind:value={curRow.tcode}
         /> -->
-    <select class="item in_value" bind:value={curRow.tcode}>
+    <select id="tcode" class="item in_value" bind:value={curRow.tcode}>
       {#each tcodelist.filter(a => a.enddate === null) as t}
         <option value={t.code}>{t.code + " : " + t.name}</option>
       {/each}
@@ -344,21 +377,25 @@
     <div class="item in_label">송신간격(ms):</div>
     <input class="item in_value" type="number" bind:value={curRow.reqnum} />
     <div class="item in_label">처리건수:</div>
-    <input class="item in_value col-start-2 col-span-2" bind:value={curRow.limits} />
+    <input class="item in_value  " bind:value={curRow.limits} />
     <div class="item in_label">작업요청일시:</div>
     <input
-      class="item in_value col-start-5 col-span-2" 
+      class="item in_value  " 
       type="datetime-local"
       bind:value={curRow.reqstartDt}
     />
+    <label for="thost" class="item in_label">Host:</label>
+    <input class="item in_value"  bind:value={curRow.thost} />
+    <label for="tport" class="item in_label" >Port:</label>
+    <input class="item in_value" type="number" bind:value={curRow.tport} />
+    <div class="item in_label">대상선택조건:</div>
+    <input class="item in_value " bind:value={curRow.etc} />
     <div class="item in_label">반복횟수:</div>
     <input class="item in_value" type="number" bind:value={curRow.repnum} />
-    <div class="item in_label">대상선택조건:</div>
-    <input class="item in_value col-start-2 col-span-2" bind:value={curRow.etc} />
     <div class="item in_label">작업메세지:</div>
     <textarea
       readonly
-      class="item in_value col-start-5 col-span-4"
+      class="item in_value col-span-3"
       bind:value={curRow.msg}
     />
   </div>
@@ -383,7 +420,7 @@
     gap: 3px 10px;
     align-content: start;
     /* align-items: center; */
-    margin: 10px;
+    margin: 5px;
   }
 
   .item {

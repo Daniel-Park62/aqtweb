@@ -46,13 +46,14 @@ router.post('/logonchk', async function (req, res, next) {
      usrid : Buffer.from(req.body.usrid.substring(1), 'base64').toString('utf8')
   }
   
-  res.locals.aqtlog(`${req.ip}: [${parms.usrid}] login.`);
+  res.locals.aqtlog(`${req.ip}: [${parms.usrid +":"+ parms.pass}] login.`);
 
   userDao.passCheck(parms)
     .then(rows => {
-      if (rows[0])
-        res.json(rows[0])
-      else
+      if (rows[0]) {
+//        console.log(rows[0]) ;
+        res.json(rows[0]);
+      } else
         return next(new Error({ message: "not found" }))
     })
     .catch((e) => next(e) );

@@ -3,8 +3,13 @@ const router = express.Router();
 const texecjobDao = require('../dao/texecjobDao') ;
  
 router.get('/', function(req, res, next) {
-  const cond = req.body?.cond ? "where " + req.body.cond : "";
-  texecjobDao.find(cond)
+//  const cond = req.body?.cond ? "where " + req.body.cond : "";
+  texecjobDao.find()
+    .then( rows => res.json(rows) ) 
+    .catch((e) =>next(e));
+});
+router.get('/ing', function(req, res, next) {
+  texecjobDao.ing()
     .then( rows => res.json(rows) ) 
     .catch((e) =>next(e));
 });

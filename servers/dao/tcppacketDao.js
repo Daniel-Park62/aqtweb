@@ -26,10 +26,13 @@ module.exports = {
     await vcolSet() ;
     // console.log(`[${etcond}]`);
     const sqlval = `SELECT '' chk,t.pkey, cmpid id, tcode tid, o_stime, stime 송신시간, rtime, svctime 소요시간, method, uri, sflag, rcode status, 
-                    if(tport=0,dstport,tport) dstport, t.appid , tenv,if(sflag='2',errinfo,
-                    case tenv when 'euc-kr' then CAST( rdata AS CHAR(200) CHARSET euckr) else cast(rdata as char(200)) end ) 수신데이터, 
+                    if(tport=0,dstport,tport) dstport, t.appid , if(sflag='2',errinfo,
+                    case tenv when 'euc-kr' then CAST( rdata AS CHAR(200) CHARSET euckr) 
+                       else cast(rdata as char(200)) end ) 수신데이터, 
                     rlen 수신크기, date_format(cdate,'%Y-%m-%d %T') cdate ${vcol}
-                    FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) 
+                    FROM ttcppacket t ${parms.uri ? "force index (codesvc)":""} 
+                        join tmaster m on (m.code = t.tcode)
+                         left join tservice s on (t.uri = s.svcid and t.appid = s.appid) 
                     where t.tcode in (${tcodes.map(i => "'"+ i +"'").join()})  ${etcond} ${sortby} limit ?, ? ` ;
                 //  console.log(`[${sqlval}]`) ;
     return await aqtdb.query({
@@ -69,7 +72,7 @@ module.exports = {
     if (parms.cond) etcond += ` and (${parms.cond}) `;
 
     // console.log("enc:", senc);
-    return await aqtdb.query(` select count(1) tcnt 
+    return await aqtdb.query(`set statement max_statement_time=10 for select count(1) tcnt 
          FROM vtcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) 
          where tcode in ( ${tcodes.map(i => "'"+ i + "'").join()} )  ${etcond}`) ;
 

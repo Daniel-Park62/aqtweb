@@ -35,7 +35,7 @@ router.put('/redo', async function (req, res, next) {
 });
 router.post('/tcnt', async function (req, res, next) {
   tcppacketDao.tcount(req.body)
-  .then(rcnt => res.json(rcnt) )
+  .then(rcnt => res.json(rcnt)  )
   .catch (e => next(e)) ;
 });
 

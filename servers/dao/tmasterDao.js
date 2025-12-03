@@ -19,7 +19,7 @@ module.exports = {
     try {
       const r = await aqtdb.query(qstr, [parms.srccode, parms.dstcode, parms.cond, parms.cnt]);
       aqtdb.query('call sp_summary(?)', [parms.dstcode]);
-      console.log("ok2:", r[0]);
+//      console.log("ok2:", r[0]);
       return r[0];
     } catch (e) {
       throw e;
