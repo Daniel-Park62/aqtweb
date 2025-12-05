@@ -22,7 +22,7 @@ const tapphostDao = {
   },
   getHost: async (parms) => {
     return await aqtdb.query({ rowsAsArray: true , 
-      sql: "select pkey, appid,thost,tport from tapphosts where appid = ? "  },parms ) ;
+      sql: "select pkey, appid,thost,tport from tapphosts where appid = ? order by thost,tport"  },parms ) ;
   },
   appDelete: async (parms) => {
     await aqtdb.query('delete from tapphosts where appid in (?)', parms) ;

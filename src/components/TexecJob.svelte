@@ -35,6 +35,7 @@
     "Description",
     "작업개수",
     "작업요청일시",
+    "대상서버",
     "상태",
     "작업시작시간",
     "작업종료시간",
@@ -62,6 +63,7 @@
         if ( ! (curRow = rdata.find(a => a.pkey == 0)) ) {
         curRow = {
           pkey: 0,
+          ppkey: 0,
           tcode: tcodelist.sort((a,b) => a.enddate > b.enddate)[0].code ,
           tdesc: "",
           resultstat: 0,
@@ -259,6 +261,7 @@
                 <td class="tdesc" >{row.tdesc}</td>
                 <td class="tnum">{row.tnum}</td>
                 <td class="reqstartDt">{row.reqstartDt2}</td>
+                <td class="thost">{row.thost}</td>
                 <td class="resultstat">{statusnm[row.resultstat]}</td>
                 <td class="startDt">{row.startDt === null ? "" :row.startDt}</td>
                 <td class="endDt">{row.endDt === null ? "" : row.endDt }</td>
@@ -290,7 +293,7 @@
     {/if}
     <button on:click={getModal(copytr).open({}, "60", "60")}>전문생성</button>
   </div>
-  <div class="p-2 border-2 border-indigo-500 items basis-[250px] flex-none">
+  <div class="p-2 border-2 border-indigo-500 items basis-[100px] flex-none">
     <div class="item in_label">테스트ID:</div>
     <!-- <input class="item in_value" maxlength=10 style="width:200px"
           pattern="[A-Z0-9]{(3, 6)}"
@@ -321,10 +324,10 @@
         ><input
           type="radio"
           name="kind"
-          value={1}
+          value={2}
           bind:group={curRow.jobkind}
           readonly
-        /> import패킷</label
+        /> 패킷수집</label
       >
       <label
         ><input
@@ -385,19 +388,19 @@
       bind:value={curRow.reqstartDt}
     />
     <label for="thost" class="item in_label">Host:</label>
-    <input class="item in_value"  bind:value={curRow.thost} />
+    <input id="thost" class="item in_value"  bind:value={curRow.thost} />
     <label for="tport" class="item in_label" >Port:</label>
     <input class="item in_value" type="number" bind:value={curRow.tport} />
     <div class="item in_label">대상선택조건:</div>
-    <input class="item in_value " bind:value={curRow.etc} />
+    <input class="item in_value col-span-3" bind:value={curRow.etc} />
+    <label for="ppkey" class="item in_label">선행JobId:</label>
+    <input id="ppkey" class="item in_value" type="number" bind:value={curRow.ppkey} />
     <div class="item in_label">반복횟수:</div>
     <input class="item in_value" type="number" bind:value={curRow.repnum} />
+    <button disabled={curRow.jobkind != 2} on:click={getModal(copytr).open({}, "60", "60")}>패킷수집 조건입력:</button>
+    <textarea readonly class="item in_value" bind:value={curRow.jdata} />
     <div class="item in_label">작업메세지:</div>
-    <textarea
-      readonly
-      class="item in_value col-span-3"
-      bind:value={curRow.msg}
-    />
+    <textarea readonly class="item in_value col-span-5"  bind:value={curRow.msg}   />
   </div>
 </div>
 <Modal bind:id={copytr}>
@@ -437,7 +440,7 @@
   }
 
   textarea {
-    height: 100px;
+    height: 80px;
     font-size: 0.8em;
   }
 
