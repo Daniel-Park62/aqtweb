@@ -14,8 +14,8 @@
   let tcodelist = [] ;
 
   const jobkindnm = {
-    0: "패킷캡쳐",
     1: "import패킷",
+    2: "패킷수집",
     3: "전문생성",
     9: "테스트수행",
   };
@@ -55,9 +55,15 @@
       tick += 1
       }, t);
   }
-  
+  function stopIntv() {
+    intv ? (clearInterval(intv) , intv=null) : autoGet(5000) ;
+  }
   function newJob(){
-
+    if (jobsts == 1) {
+      getdata();
+      jobsts = 0;
+      return ;
+    }
         jobsts = 1;
         if (intv) { clearInterval(intv) , intv=null; }
         if ( ! (curRow = rdata.find(a => a.pkey == 0)) ) {
@@ -84,7 +90,7 @@
         };
         rdata = [curRow, ...rdata] ;
         }
-//        document.getElementsByTagName("table")[0].scrollIntoView() ;
+
   }
 
   function reExec() {
@@ -223,7 +229,7 @@
       <label class="rlabel"
         ><input type="radio" name="drone" bind:group={qselected} value={4} /> 모두보기</label
       >
-      <button title="5초마다 조회" on:click={()=>{intv ? (clearInterval(intv) , intv=null) : autoGet(5000) }}>{intv ? '조회중지':'자동조회시작'}</button>
+      <button title="5초마다 조회" on:click={stopIntv}>{intv ? '조회중지':'자동조회시작'}</button>
     </div>
   </div>
   <hr />
@@ -252,10 +258,10 @@
                     rdata[ii] = curRow ;
                   }
                   clickRow(e,row);
-                  jobsts = 0;
+                  // jobsts = 0;
                 }}
               >
-                <td class="pkey"><strong>{row.pkey}</strong></td>
+                <td class="pkey" tabindex="0"><strong>{row.pkey}</strong></td>
                 <td class="jobkind">{jobkindnm[row.jobkind]}</td>
                 <td class="tcode">{row.tcode}</td>
                 <td class="tdesc" >{row.tdesc}</td>
@@ -286,12 +292,12 @@
   <hr />
   <div class="flex pt-2 ">
     <button
-      on:click={newJob}>신규작업</button>
+      on:click={newJob}>{jobsts === 0 ? "신규작업": "신규취소"}</button>
     <button on:click={reExec}>{curRow.pkey > 0 ? "재" :""}실행요청</button>
     {#if curRow.pkey > 0}
-      <button on:click={() => deljob(curRow.pkey)}>작업삭제</button>
+      <button on:click={() => deljob(curRow.pkey)}>{curRow.resultstat == 1 ? "작업중지" : "작업삭제"}</button>
     {/if}
-    <button on:click={getModal(copytr).open({}, "60", "60")}>전문생성</button>
+    <button disabled={curRow.pkey == 0 } on:click={getModal(copytr).open({}, "60", "60")}>전문생성</button>
   </div>
   <div class="p-2 border-2 border-indigo-500 items basis-[100px] flex-none">
     <div class="item in_label">테스트ID:</div>
