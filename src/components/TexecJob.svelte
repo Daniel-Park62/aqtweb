@@ -104,6 +104,19 @@
     );
     if (result) updTcode();
   }
+  function reqStop() {
+    if (curRow.resultstat !== 1) {
+      return;
+    }
+
+    const result = confirm(
+      `[${curRow.tcode}] : ${curRow.tdesc} \n 작업 중단하시겠습니까?`
+    );
+    if (result) {
+      fetch("/texecjob/reqStop/"+curRow.pkey) ;
+    }
+  }
+
   function updTcode() {
     curRow.resultstat = 0;
 
@@ -127,6 +140,7 @@
   }
 
   function deljob(pkey) {
+    if (curRow.resultstat == 1)  return reqStop() ;
     if (
       !confirm(
         `JobNo:${curRow.pkey} [${curRow.tcode}]:${curRow.tdesc} 삭제하시겠습니까?`

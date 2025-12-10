@@ -24,6 +24,9 @@ module.exports = {
                                   parms.dbskip, parms.etc, parms.in_file, parms.reqstartDt,
                                   parms.exectype, parms.reqnum, parms.repnum,parms.thost, parms.tport, parms.limits,parms.ppkey]);
   },
+  async reqStop(jobid){
+    return await aqtdb.query("UPDATE texecing SET reqkill='1' where pkey = ?",[jobid]) ;
+  },
   async reRun (parms)  {
     const qstr = `UPDATE texecjob SET 
 	              tcode=?, tdesc=?, tnum=?, dbskip=?, etc=?, in_file=?, reqstartDt=if(? < now(),now(),?), exectype=?, 

@@ -14,6 +14,12 @@ router.get('/ing', function(req, res, next) {
     .catch((e) =>next(e));
 });
 
+router.get('/reqStop/:jobid', function(req, res, next) {
+  texecjobDao.reqStop(req.params.jobid)
+    .then( rows => res.json(rows) ) 
+    .catch((e) =>next(e));
+});
+
 router.post('/',async function(req, res, next) {
 
   texecjobDao.insert(req.body)
