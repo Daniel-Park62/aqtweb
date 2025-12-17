@@ -25,6 +25,7 @@ module.exports = {
                                   parms.exectype, parms.reqnum, parms.repnum,parms.thost, parms.tport, parms.limits,parms.ppkey]);
   },
   async reqStop(jobid){
+    // console.log("texecjobDao.reqStop:",jobid);
     return await aqtdb.query("UPDATE texecing SET reqkill='1' where pkey = ?",[jobid]) ;
   },
   async reRun (parms)  {

@@ -114,6 +114,7 @@
     );
     if (result) {
       fetch("/texecjob/reqStop/"+curRow.pkey) ;
+      getdata();
     }
   }
 
@@ -190,7 +191,7 @@
                     <p class='text-blue-700'>&nbsp;${(rw.ccnt/rw.tcnt*100).toFixed(2)}% 완료</p>
       `;
       } ) ;
-        
+      if (ring.length === 0 )  getdata() ;
     } else {
       throw new Error(res.statusText);
     }
