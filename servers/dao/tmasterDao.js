@@ -40,12 +40,12 @@ module.exports = {
   },
   deleteMaster: async (parms) => {
     const qstr = mapper.getStatement(NSPACE, 'tmaster_Del', parms);
-    console.log("deleteMaster:" ,qstr);
+    // console.log("deleteMaster:" ,qstr);
     return await aqtdb.query(qstr);
   },
   eraseTr: async (parms) => {
     const qstr = mapper.getStatement(NSPACE, 'ttcppacket_Erase', parms);
-    console.log("eraseTr:" ,qstr);
+    // console.log("eraseTr:" ,qstr);
     return await aqtdb.query(qstr);
   },
 

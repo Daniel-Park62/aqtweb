@@ -5,9 +5,7 @@
   import {  userid } from "../aqtstore" ;
 
   let tick = 0 ;
-  let intv = setInterval(() => {
-    tick += 1
-  }, 5000);
+  let intv = setInterval(() => tick += 1 , 5000) ;
 
   $: geting(tick) ;
 
@@ -293,7 +291,7 @@
                     <p class='text-blue-700'>&nbsp;{(row.ccnt/row.tcnt*100).toFixed(2)}% 완료</p>
                   </td>
                 {:else}
-                  <td class="msg max-w-[20%]" >{row.msg ? row.msg.split("\n")[0] : ""}</td>
+                  <td id={row.pkey} class="msg max-w-[20%]" >{row.msg ? row.msg.split("\n")[0] : ""}</td>
                 {/if}
               </tr>
             {/if}

@@ -30,10 +30,10 @@ module.exports = {
   },
   async reRun (parms)  {
     const qstr = `UPDATE texecjob SET 
-	              tcode=?, tdesc=?, tnum=?, dbskip=?, etc=?, in_file=?, reqstartDt=if(? < now(),now(),?), exectype=?, 
+	              tcode=?, tdesc=?, jobkind=?, tnum=?, dbskip=?, etc=?, in_file=?, reqstartDt=if(? < now(),now(),?), exectype=?, 
                 resultstat=0, reqnum=?, repnum=? , startDt=null, endDt=null ,msg='',thost=?,tport=?,limits=?,ppkey=?
                 WHERE pkey = ?`;
-    return await aqtdb.query(qstr, [   parms.tcode, parms.tdesc, parms.tnum, 
+    return await aqtdb.query(qstr, [   parms.tcode, parms.tdesc,parms.jobkind, parms.tnum, 
                 parms.dbskip, parms.etc, parms.in_file, parms.reqstartDt,parms.reqstartDt,
                 parms.exectype, parms.reqnum, parms.repnum,parms.thost, parms.tport,parms.limits,parms.ppkey,
                 parms.pkey  ]) ;
