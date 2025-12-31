@@ -78,13 +78,18 @@ module.exports = {
       return;
     }
     let etcond = makeCond(pcond) ;
+    let diffc = '0 diff';
+    await aqtdb.query("select diffc from tconfig  limit 1")
+      .then(rows => {
+        if (rows[0]?.diffc ) diffc = `if (${rows[0].diffc},1,0) diff` ;
+      });
     // console.log(etcond, pcond);
     return await aqtdb.query({
         dateStrings: true,
         sql: "SELECT '' chk, a.pkey, a.cmpid id, a.uri , a.stime `송신시간`, a.rtime `수신시간`, a.svctime `소요시간`, a.rcode , \
           case tenv when 'euc-kr' then CAST( a.sdata AS CHAR CHARSET euckr) else cast(a.sdata as char) end 송신,   \
           case tenv when 'euc-kr' then CAST( a.rdata AS CHAR CHARSET euckr) else cast(a.rdata as char) end 수신,   \
-          a.rlen `수신크기`, b.svctime `원소요시간` , \
+          a.rlen `수신크기`, b.svctime `원소요시간` , " + diffc + ", \
           case tenv when 'euc-kr' then CAST( b.rdata AS CHAR CHARSET euckr) else cast(b.rdata as char) end 원수신  \
           FROM vtcppacket a JOIN tloaddata B ON (a.cmpid = B.pkey)  \
           LEFT JOIN tservice s ON (a.appid = s.appid AND a.uri = s.svcid ) \

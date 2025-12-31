@@ -188,7 +188,6 @@
       {:then rows} -->
       {#each rdata as row , i (row.pkey)}
         <tr
-          class={row.sflag}
           on:dblclick={() => {
             pid = row.pkey;
             vid = "block";
@@ -199,13 +198,13 @@
 
           <td><input type="checkbox" bind:checked={row.chk} /></td>
 
-          <td class="cmpid"><strong><em>{row.id}</em></strong></td>
+          <td class="cmpid"><strong>{row.id}</strong></td>
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
           <td style="text-align:right" class="elapsed">{row.원소요시간}</td>
           <td class={row.소요시간 < row.원소요시간 ? "redt" : "bluet"}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
           <td style="text-align:right" class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
-          <td class="rhead">{row.수신 === null ? "" : row.수신  }</td>
+          <td class={"d"+row.diff} title={row.diff ? "원본의결과와 다름":""}>{row.수신 === null ? "" : row.수신  }</td>
           <td class="rhead">{row.원수신 === null ? "" : row.원수신 }</td>
           <td class="uri">{row.uri}</td>
           <td class="rcode">{row.rcode}</td>
@@ -275,6 +274,10 @@
     border-collapse: collapse;
     width: 100%;
   }
+  .d1 {
+    background-color: rgb(244,230,230)
+  }
+
   /*
   thead {
     max-height: 1.2em;

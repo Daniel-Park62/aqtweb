@@ -13,6 +13,7 @@
       col1,
       col2,
       diffc,
+      sflagc,
       encval,
       col1type,
       expr1,
@@ -20,7 +21,7 @@
       expr2
     } = curRow;
     
-console.log(curRow) ;
+    // console.log(curRow) ;
     fetch("/aqtSetup", {
       method: "PUT",
       headers: {
@@ -31,6 +32,7 @@ console.log(curRow) ;
         col1,
         col2,
         diffc,
+        sflagc,
         encval,
         expr1,
         col1type,
@@ -116,9 +118,6 @@ console.log(curRow) ;
     }
   }
 
-  let col1_flag = false;
-  let col2_flag = false;
-
   onMount(async () => {
     getdata();
   });
@@ -130,8 +129,10 @@ console.log(curRow) ;
     <input class="item in_value"  bind:value={curRow.pjtnm} />
     <div class="item in_label">기본 Encoding:</div>
     <input class="item in_value"  bind:value={curRow.encval} />
-    <div class="item in_label">실패조건:</div>
-    <textarea rows="4"  bind:value={curRow.diffc} />
+    <div title='결과값은 char(1)만 유효합니다.' class="item in_label">실패조건:</div>
+    <textarea rows="2"  bind:value={curRow.sflagc} />
+    <div class="item in_label">원본차이조건:</div>
+    <textarea rows="2"  bind:value={curRow.diffc} />
   </div>
   <div>
     <button on:click={updateConfig}>저장</button>
@@ -196,9 +197,9 @@ console.log(curRow) ;
     width : 100%;
   }
 
-  textarea {
-    height: 100px;
+  /* textarea {
+    height: 50px;
     font-size: 0.8em;
   }
-
+ */
 </style>

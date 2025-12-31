@@ -4,7 +4,7 @@ const tconfig = require('../dao/tconfigDao');
 router.get('/', async function (req, res, next) {
   try {
     const rdata = await tconfig.findAll();
-    let rows = { ...rdata[0][0], ...rdata[1][0], ...rdata[2][0] } ;
+    let rows = { ...rdata[0][0], ...rdata[1][0], ...rdata[2][0], ...rdata[3][0] } ;
     // console.log(rows);
     res.json(rows);
 
