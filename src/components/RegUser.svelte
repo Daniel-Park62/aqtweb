@@ -1,11 +1,11 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
 
   let rdata = [];
   let curRow = {};
   let ncount = 0 ;
   const cols = {
-    chk: 1,
+    chk: true,
     pkey: 0,
     usrid: "User",
     host: "Host",
@@ -14,7 +14,6 @@
     apps: "",
     regdt: new Date().toLocaleDateString(),
   };
-  let newRow = { ...cols };
   const columns = [
     " ",
     "UserId ",
@@ -95,7 +94,7 @@
     if (res.status === 200) {
       const rows = await res.json();
       rdata = rows.map((r) => {
-        r.chk = 0;
+        r.chk = false;
         return r;
       });
     } else {
@@ -104,25 +103,30 @@
   }
 
   onMount(getdata);
+  let tblbody ;
+  async function addRow() {
+      cols.regdt = (new Date()).toLocaleString('lt') ;
+      rdata = [...rdata,{...cols} ] ;
+
+      await tick() ;
+      if (tblbody) {
+        const lastRow = tblbody.lastElementChild;
+        lastRow.click() ;
+        // 필요 시 스크롤 이동
+        lastRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+  }
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button
-    on:click={() => {
-      newRow = {...cols};
-      newRow.regdt = (new Date()).toLocaleString('lt') ;
-      rdata = [{...newRow} ,...rdata] ;
-      console.log(rdata) ;
-      ncount++;
-    }}>추가</button
-  >
+  <button on:click={addRow}>추가</button>
   <button on:click={delUser}>선택삭제</button>
   <button on:click={updUser}>적용</button>
   <button on:click={getdata}>적용취소</button>
 </div>
 <hr />
 <div class="tList">
-  <table>
+  <table id='myTable'>
     <thead>
       <tr>
         {#each columns as column}
@@ -132,12 +136,12 @@
         {/each}
       </tr>
     </thead>
-    <tbody>
+    <tbody bind:this={tblbody}>
         {#each rdata as row}
           <tr on:click={() => (curRow = row)}> 
             <td><input type="checkbox" bind:checked={row.chk} /></td>
             {#if row.pkey === 0 }
-              <td
+              <td tabindex="0" 
                 class="usrid"
                 contenteditable="true"
                 style="width:10rem"

@@ -15,6 +15,8 @@ import RegUser from "./components/RegUser.svelte";
 import RegConfig from "./components/RegConfig.svelte";
 import CompareList from "./components/CompareList.svelte";
 import Tloaddata from "./components/Tloaddata.svelte";
+import RegMockSvr from "./components/RegMockSvr.svelte";
+
 // onMount(async () => {
 // 	const res = await fetch("/dashboard/testPassword");
 // 	const row = await res.json();
@@ -38,6 +40,7 @@ let mitems2 = [
     { nm: "서비스 등록", url: "regService", cnm: RegService },
     { nm: "테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
     { nm: "테스트 실행", url: "texecjob", cnm: TexecJob },
+    { nm: "모의서버 관리", url: "regMockSvr", cnm: RegMockSvr },
     { nm: "원본현황", url: "tloaddata", cnm: Tloaddata },
 ];
 $: chklabel = boxChecked ? "▶" : "◀";
