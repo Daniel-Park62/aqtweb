@@ -68,7 +68,7 @@ function select_item(item) {
 			</ul>
 			{#if $isLogged == 2}
 			<div>
-				<hr style="color:cornsilk" />
+				<hr class="bg-slate-50 h-1 my-5 border-0" />
 				<img src="/images/operating.png" alt="" />
 				<ul>
 					{#each mitems2 as item}
@@ -150,7 +150,7 @@ function select_item(item) {
 	}
 	.menu li {
 		cursor: pointer;
-		padding: 10px 20px;
+		padding: 5px 20px;
 	}
 	.menu li:hover {
 		text-decoration: underline;

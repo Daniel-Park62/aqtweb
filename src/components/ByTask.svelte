@@ -77,14 +77,23 @@
     <table>
       <thead>
         <tr >
-          <th id='svcid' class="cursor-pointer" on:click={sortdata}>서비스ID</th>
-          <th id='svckor' class="cursor-pointer" on:click={sortdata}>서비스명</th>
-          <th id='tcnt' class="cursor-pointer" on:click={sortdata}>패킷건수</th>
-          <th id='avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
-          <th id='avgt' class="cursor-pointer" on:click={sortdata}>표준편차</th>
+          <th rowspan="2" id='svcid' class="cursor-pointer" on:click={sortdata} >서비스ID</th>
+          <th rowspan="2" id='svckor' class="cursor-pointer" on:click={sortdata}>서비스명</th>
+          <th rowspan="2" id='tcnt' class="cursor-pointer" on:click={sortdata}>패킷건수</th>
+          <th colspan="4" >TOBE</th>
+          <th colspan="2" >ASIS</th>
+          <th colspan="2" >차이비교</th>
+          <th rowspan="2" >테스트ID</th>
+        </tr>
+        <tr >
           <th>성공건수</th>
           <th>실패건수</th>
-          <th>테스트ID</th>
+          <th id='avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
+          <th id='stdv' class="cursor-pointer" on:click={sortdata}>표준편차</th>
+          <th id='o_avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
+          <th id='o_stdv' class="cursor-pointer" on:click={sortdata}>표준편차</th>
+          <th >평균시간</th>
+          <th >표준편차</th>
         </tr>
       </thead>
       <tbody>
@@ -97,10 +106,14 @@
               <td >{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
-              <td align="right">{row.avgt}</td>
-              <td align="right">{row.stdv}</td>
               <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
               <td align="right">{row.fcnt.toLocaleString("ko-KR")}</td>
+              <td align="right">{row.avgt.toLocaleString("ko-KR")}</td>
+              <td align="right">{row.stdv.toLocaleString("ko-KR")}</td>
+              <td align="right" class="bg-gray-200">{row.o_avgt.toLocaleString("ko-KR")}</td>
+              <td align="right" class="bg-gray-200">{row.o_stdv.toLocaleString("ko-KR")}</td>
+              <td align="right" class={row.avgt > row.o_avgt ? "text-red-800": "text-blue-800"}>{(row.avgt - row.o_avgt).toLocaleString("ko-KR")}</td>
+              <td align="right">{(row.stdv - row.o_stdv).toLocaleString("ko-KR")}</td>
               <td>{row.tcode}</td>
             </tr>
           {/each}

@@ -43,9 +43,9 @@
     SELECT *, if(scnt+fcnt=0,0,round(scnt*100/(scnt+fcnt),2)) srate FROM TTASKSUM order by TASK,LVL
   </select>
   <select id="vtr_SumByService">
-    select group_concat(t.tcode) tcode, t.svcid, s.svckor , sum(tcnt) tcnt, round(avg(t.avgt),3) avgt,
-         round(avg(t.stdv),3) stdv,sum(scnt) scnt 
-        , sum(fcnt) fcnt , s.cumcnt 
+    select group_concat(t.tcode) tcode, t.svcid, s.svckor , sum(tcnt) tcnt ,s.cumcnt 
+        , round(avg(t.avgt),3) avgt, round(avg(t.stdv),3) stdv,sum(scnt) scnt  , sum(fcnt) fcnt 
+        , round(avg(t.o_avgt),3) o_avgt, round(avg(t.o_stdv),3) o_stdv,sum(o_scnt) o_scnt  , sum(o_fcnt) o_fcnt 
         from   tsvcsum t join tservice s on (t.svcid = s.svcid and t.appid = s.appid) 
               join (select code, lvl from tmaster ) m on (t.tcode = m.code) 
         WHERE tcnt != 0 

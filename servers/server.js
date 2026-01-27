@@ -19,7 +19,8 @@ const trlist = require('./controllers/trlist') ;
 const tmaster = require('./controllers/tmaster') ;
 const tservice = require('./controllers/tservice') ;
 const texecjob = require('./controllers/texecjob') ;
-// const logonchk = require('./controllers/logonchk') ;
+const tmocksvr = require('./controllers/tmocksvr') ;
+
 const tuser = require('./controllers/tuser') ;
 const trequest = require('./controllers/trequest') ;
 const tresult = require('./controllers/tresult') ;
@@ -45,6 +46,7 @@ app.use('/regapp', regapp) ;
 app.use('/trlist', trlist) ;
 app.use('/tmaster', tmaster) ;
 app.use('/tservice', tservice) ;
+app.use('/tmocksvr', tmocksvr) ;
 app.use('/texecjob', texecjob) ;
 app.use('/tuser', tuser) ;
 app.use('/trequest', trequest) ;

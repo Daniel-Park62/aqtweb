@@ -1,13 +1,12 @@
 <!-- 모의서버 관리 tmocksvr 테이블 등록 -->
 <script>
   import { tick } from "svelte";
-  const statusnm = { 0: "준비", 1: "실행중", 2: "오류"};
-  let selkind=0;
+  const statusnm = { 0: "정지", 1:"대기", 2: "실행중", 3: "오류"};
   let rcnt = 0 ;
   const cols = {
     chk: true,
     pkey: 0,
-    svrnm: "",
+    svrnm: "서버명입력",
     svrkind: 0,
     status: 0,
     portno: 9988,
@@ -15,46 +14,15 @@
     srcnm: "tcpsvr",
   };
   let rdata = [{...cols}];
-  let newRow = { ...cols };
-  const columns = [
-    " ",
-    "APID ",
-    "서비스(URI)",
-    "서비스명(한글)",
-    "서비스명(영문)",
-    "업무명",
-    "담당자",
-    "서비스종류",
-  ];
-  const conds = {
-    appid: "",
-    svcid: "",
-  };
-
-  let sv_row;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-//    curRow = row;
-  }
 
   function updService() {
-    const upds = rdata
-      .filter((r) => r.chk && r.pkey != 0)
-      .map((r) => {
-        delete r.chk;
-        return r;
-      });
-    const inss = rdata
-      .filter((r) => r.chk && r.pkey == 0)
-      .map((r) => {
-        delete r.chk;
-        delete r.pkey;
-        return r;
-      });
+    console.log("update", rdata);
+    const upds = rdata.filter((r) => r.chk && r.pkey != 0) ;
+
+    const inss = rdata.filter((r) => r.chk && r.pkey == 0) ;
+
     // console.log(inss)     ;
-    fetch("/tservice", {
+    fetch("/tmocksvr", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +51,7 @@
 
     if (delcodes.length == 0) return;
     // console.log("del code:", delcodes) ;
-    fetch("/tservice", {
+    fetch("/tmocksvr", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -104,22 +72,12 @@
       });
   }
   async function getdata() {
-    //    const res = await fetch("/tservice");
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    const res = await fetch("/tservice/part", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(conds),
-    });
+
+    const res = await fetch("/tmocksvr") ;
     if (res.status === 200) {
-      const rows = await res.json();
-      rcnt = rows.length ;
-      rdata = rows.map((r) => {
-        r.chk = 0;
-        return r;
-      });
+      rdata = await res.json();
+      rcnt = rdata.length ;
+
     } else {
       throw new Error(res.statusText);
     }
@@ -128,9 +86,9 @@
   let tblbody ;
   async function addRow() {
       cols.portno++ ;
-      rdata = [...rdata,{...cols} ] ;
+      rdata = [...rdata, {...cols} ] ;
       await tick() ;
-      if (sv_row) sv_row.classList.remove("bg-teal-100");
+      
       if (tblbody) {
         const lastRow = tblbody.lastElementChild;
 
@@ -139,6 +97,15 @@
         // 필요 시 스크롤 이동
         lastRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+  }
+
+  async function startsvr(row) {
+    const res = await fetch(`/tmocksvr/startsvr/${row.pkey}`) ;
+    if (res.status === 200) {
+      row.status = (row.status == 1 || row.status == 2 ? 0 : 1 );
+    } else {
+      alert(res.statusText);
+    }
   }
 
 </script>
@@ -172,7 +139,7 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row, ix}
-          <tr >
+          <tr tabindex="0" class="focus-within:bg-blue-100 focus-within:outline-none cursor-pointer">
             <td><input type="checkbox" bind:checked={row.chk} /></td>
             <td tabindex="0"
               contenteditable="true"
@@ -196,8 +163,8 @@
             />
             <td>{statusnm[row.status]}  </td>
             <td>
-              <button on:click={() => row.status=1 } class="px-4 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition">
-              {row.status ? '중지' : '시작'}
+              <button on:click={async () => await startsvr(row) } class="px-4 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition">
+              {( row.status == 1 ||  row.status == 2 )  ? '중지' : '시작'}
               </button> 
             </td>
           </tr>

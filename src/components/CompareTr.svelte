@@ -202,7 +202,7 @@
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
           <td style="text-align:right" class="elapsed">{row.원소요시간}</td>
-          <td class={row.소요시간 < row.원소요시간 ? "redt" : "bluet"}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
+          <td class={row.소요시간 > row.원소요시간 ? " text-red-700" : "text-blue-700"}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
           <td style="text-align:right" class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
           <td class={"d"+row.diff} title={row.diff ? "원본의결과와 다름":""}>{row.수신 === null ? "" : row.수신  }</td>
           <td class="rhead">{row.원수신 === null ? "" : row.원수신 }</td>
@@ -219,13 +219,6 @@
 <DetailTR bind:vid bind:pid bind:parr />
 
 <style>
-  .redt {
-    color: red;
-  }
-
-  .bluet {
-    color: blue;
-  }
   .elapsed,
   .rlen,
   .rcode,
