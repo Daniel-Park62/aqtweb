@@ -100,9 +100,11 @@
   }
 
   async function startsvr(row) {
-    const res = await fetch(`/tmocksvr/startsvr/${row.pkey}`) ;
+    const surl = ( (row.status == 2 || row.status == 1) ? "stopsvr" : "startsvr" ) + `/${row.pkey}` ;
+    const res = await fetch(`/tmocksvr/${surl}`) ;
     if (res.status === 200) {
-      row.status = (row.status == 1 || row.status == 2 ? 0 : 1 );
+      getdata();
+
     } else {
       alert(res.statusText);
     }
@@ -114,10 +116,9 @@
   <button
     on:click={addRow}>추가</button >
   <button on:click={delService}>선택삭제</button>
-  <button on:click={updService}>적용</button>
-  <button class="mr-auto" on:click={getdata}>적용취소</button>
-  <button on:click={getdata}>조회</button>
-  <span>{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
+  <button on:click={updService}>선택수정</button>
+  <button class="ml-auto" on:click={getdata}>조회</button>
+  <span class="ml-auto" >{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
 </div>
 <hr />
 <div class="tList">
@@ -140,13 +141,13 @@
       {:then rows}
         {#each rows as row, ix}
           <tr tabindex="0" class="focus-within:bg-blue-100 focus-within:outline-none cursor-pointer">
-            <td><input type="checkbox" bind:checked={row.chk} /></td>
+            <td><input readonly={row.pkey == 0} type="checkbox" bind:checked={row.chk} /></td>
             <td tabindex="0"
               contenteditable="true"
               class="svcnm w-[25%]"
               bind:textContent={row.svrnm}
             />
-            <td class="flex gap-4 items-center">
+            <td class="flex gap-4 justify-center items-center">
               <label class="m-0 p-0"><input type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} /> TCP</label>
               <label class="m-0 p-0"><input type="radio" name={ix.toString()} bind:group={row.svrkind} value={1} /> HTTP</label>
             </td>

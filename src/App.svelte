@@ -8,6 +8,7 @@ import RegApp from "./components/RegApp.svelte";
 import RegTcode from "./components/RegTcode.svelte";
 import TrList from "./components/TrList.svelte";
 import TexecJob from "./components/TexecJob.svelte";
+import TexecJob3 from "./components/TexecJob3.svelte";
 import LoginComp from "./components/LoginComp.svelte";
 import { isLogged, userid } from "./aqtstore";
 import RegService from "./components/RegService.svelte";
@@ -40,6 +41,7 @@ let mitems2 = [
     { nm: "서비스 등록", url: "regService", cnm: RegService },
     { nm: "테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
     { nm: "테스트 실행", url: "texecjob", cnm: TexecJob },
+    { nm: "실시간 테스트", url: "texecjob3", cnm: TexecJob3 },
     { nm: "모의서버 관리", url: "regMockSvr", cnm: RegMockSvr },
     { nm: "원본현황", url: "tloaddata", cnm: Tloaddata },
 ];

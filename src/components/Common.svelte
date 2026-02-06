@@ -1,6 +1,6 @@
 <script context="module">
   const lvlnm = { 0: "Origin", 1: "단위", 2: "통합", 3: "정합성" };
-  const typenm = { 0: "", 1: "배치", 2: "실시간" };
+  const typenm = { 0: "배치", 1: "실시간" };
   const proArr = {0:"tcp",1:"http",2:"udp",3:"tmax"};
   const appids = [];
   const appHist = {};

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="aqtdb">  
   <select id="tmaster_ListUid">
-    SELECT code, desc1 name, cmpcode,enddate, thost, tport  from tmaster m join 
+    SELECT code, desc1 name, cmpcode,enddate, lvl, thost, tport  from tmaster m join 
              (select apps from taqtuser where usrid = #{uid}) u 
       where m.appid rlike u.apps
   </select>

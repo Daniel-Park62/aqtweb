@@ -2,14 +2,12 @@ const express = require('express');
 const router = express.Router();
 const texecjobDao = require('../dao/texecjobDao') ;
  
-router.get('/', function(req, res, next) {
-//  const cond = req.body?.cond ? "where " + req.body.cond : "";
-  texecjobDao.find()
-    .then( rows => res.json(rows) ) 
-    .catch((e) =>next(e));
+router.get('/:kind', async function(req, res, next) {
+  const rows = await texecjobDao.find(req.params.kind) ;
+  res.json(rows);
 });
-router.get('/ing', function(req, res, next) {
-  texecjobDao.ing()
+router.get('/ing/:kind', function(req, res, next) {
+  texecjobDao.ing(req.params.kind)
     .then( rows => res.json(rows) ) 
     .catch((e) =>next(e));
 });
@@ -21,14 +19,15 @@ router.get('/reqStop/:jobid', function(req, res, next) {
 });
 
 router.post('/',async function(req, res, next) {
-
-  texecjobDao.insert(req.body)
+  const insfunc = req.body.jobkind === 8 ? texecjobDao.insertReal : texecjobDao.insert ;
+  insfunc(req.body)
   .then( res.json({message: `${req.body.tdesc} 등록되었습니다.`}) )
   .catch(e => next(e) ) ;           
 });
 
 router.put('/',function(req, res, next) {
-  texecjobDao.reRun(req.body)
+  const runfunc = req.body.jobkind === 8 ? texecjobDao.reRunReal : texecjobDao.reRun ;
+  runfunc(req.body)
   .then(r => res.json({message: `${req.body.tdesc}` + " 수정되었습니다."}) )
   .catch(e => next(e) ) ;           
 

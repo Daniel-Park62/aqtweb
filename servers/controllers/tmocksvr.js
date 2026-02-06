@@ -7,7 +7,11 @@ router.get('/', function (req, res, next) {
     .then(rows => res.json(rows))
     .catch((e) => next(e) );
 });
-
+router.get('/startsvr/:id', function(req,res,next){
+  tmocksvrDao.startsvr(req.params.id)
+    .then(rows => res.json(rows[0]))
+    .catch((e) => next(e) );
+});
 router.post('/', async function (req, res, next) {
   let msg = {message:''} ;
   try {

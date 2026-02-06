@@ -4,8 +4,6 @@
   import {
     getLvlnm,
     getLvls,
-    getTypenm,
-    getTypes,
     getPros,
     getProNm,
     getAppid,
@@ -19,21 +17,6 @@
   let copytr = "copytr";
   let curRow = {};
   let encv = false;
-
-  const columns = [
-    " ",
-    "테스트Id",
-    "테스트명",
-    "APPID",
-    "단계",
-    "테스트시작일",
-    "종료일",
-    "대상서버",
-    "대상Port",
-    "전문구분",
-    "encode",
-    "데이터건수",
-  ];
 
   let sv_row;
   function clickRow(e, row) {
@@ -171,11 +154,18 @@
   <table>
     <thead>
       <tr>
-        {#each columns as column}
-          <th>
-            {column}
-          </th>
-        {/each}
+        <th>&nbsp;</th>
+        <th>테스트Id</th>
+        <th>테스트명</th>
+        <th>APPID</th> 
+        <th>단계  </th>
+        <th>테스트시작일</th>
+        <th>종료일</th>
+        <th>대상서버</th>
+        <th>대상Port</th>
+        <th>전문구분</th>
+        <th>encode</th>
+        <th>데이터건수</th>
       </tr>
     </thead>
     <tbody>

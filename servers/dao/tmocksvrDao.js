@@ -19,6 +19,20 @@ const tmocksvrDao = {
   delete: async (parms) => {
     const qstr = `delete from tmocksvr where pkey in (?)`;
     return await aqtdb.query(qstr,[parms]);
+  },
+  startsvr: async (pkey) => {
+    try {
+      const row = (await aqtdb.query('select status from tmocksvr where pkey = ?',[pkey]))[0] ;
+      if ( row.status == 0 || row.status == 3 ) {
+        await aqtdb.query('update tmocksvr set status = 1 where pkey = ?',[pkey]) ;
+      } else {
+        await aqtdb.query('update tmocksvr set reqstop = 1 where pkey = ?',[pkey]) ;
+      }
+      return aqtdb.query('select status,reqstop,procid from tmocksvr where pkey = ?',[pkey]) ;
+    } catch (error) {
+      throw error ;
+    }
+
   }
 
 }
