@@ -7,7 +7,7 @@
 
   let tick = 0;
   let intv ;
-
+  let cmdl ;
   $: geting(tick);
 
   let tcodelist = [];
@@ -200,7 +200,13 @@
     }
   }
 
-  let selected;
+  function cmdcomp() {
+    let cmd = curRow.ctype == 0 ? 'tcpdump' : (curRow.ctype == 1 ? 'netti' : 'snoop' ) ;
+    cmd += ' -s0 '  + curRow.otherOpt +
+              ( curRow.aqttype == 'UDP' ? " 'udp " : " 'tcp && tcp[13]&16 != 0" );
+    console.log(cmd, curRow.otherOpt )          ;
+    return cmd  + ` && net ${curRow.dstip} ` + ( curRow.dstport > 0 ? `&& port ( ${curRow.dstport} ) '` : "'" ) ;
+  }
 
   onMount(async () => {
     getdata();
@@ -268,7 +274,7 @@
               <tr tabindex="0"
                 id={row.pkey ? row.pkey + "jajq" : "newrow"}
                 class={ `focus-within:bg-teal-100 focus-within:outline-none   ${row.resultstat === 2 ? 'text-red-600' : row.resultstat === 1 ? "text-blue-700" : "" }`} 
-                on:click={(e) => {curRow = row }}
+                on:click={(e) => {curRow = row ; cmdl=cmdcomp() }}
               >
                 <td class="pkey" tabindex="0"><strong>{row.pkey}</strong></td>
                 <td class="tcode">{row.tcode}</td>
@@ -310,7 +316,7 @@
     </table>
   </div>
   <hr />
-  <div class="flex pt-2">
+  <div class="flex pt-2 mt-auto">
     <button on:click={newJob}>{curRow.jobsts === 1 ?  "신규취소" : "작업추가" }</button>
     <button on:click={reExec}>실행요청</button>
     {#if curRow.pkey > 0}
@@ -319,8 +325,9 @@
       >
     {/if}
     <button  on:click={()=>{curRow.resultstat=0; updExec() }}>저장</button>
+    <p class="ml-auto text-slate-700 text-xs justify-end">{cmdl} </p>
   </div>
-  <div class="p-2 border-2 border-indigo-500 items basis-[100px] flex-none {curRow.pkey ? '': 'bg-lime-100'}">
+  <div class="mt-auto p-2 border-2 border-indigo-500 items basis-[100px] flex-none {curRow.pkey ? '': 'bg-lime-100'}">
     <div class="item in_label">테스트ID:</div>
     <!-- <input class="item in_value" maxlength=10 style="width:200px"
           pattern="[A-Z0-9]{(3, 6)}"
