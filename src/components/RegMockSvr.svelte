@@ -1,6 +1,6 @@
 <!-- 모의서버 관리 tmocksvr 테이블 등록 -->
 <script>
-  import { tick } from "svelte";
+  import { onMount, tick } from "svelte";
   const statusnm = { 0: "정지", 1:"대기", 2: "실행중", 3: "오류"};
   let rcnt = 0 ;
   const cols = {
@@ -109,6 +109,8 @@
       alert(res.statusText);
     }
   }
+
+  onMount(getdata);
 
 </script>
 

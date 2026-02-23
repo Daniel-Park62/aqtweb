@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const tmocksvrDao = require('../dao/tmocksvrDao');
+import tmocksvrDao from '../dao/tmocksvrDao.js';
 
 router.get('/', function (req, res, next) {
   tmocksvrDao.list()
@@ -38,4 +38,4 @@ router.delete('/', function (req, res, next) {
 
 });
 
-module.exports = router;
+export default router;

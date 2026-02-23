@@ -1,11 +1,11 @@
-const aqtdb = require('../db/dbconn');
-const path = require('path');
-const fs = require('fs');
-const mapper = require('mybatis-mapper');
+import aqtdb from '../db/dbconn.js';
+import path from 'path';
+import fs from 'fs';
+import mapper from 'mybatis-mapper';
 mapper.createMapper(['servers/mappers/aqtdb.xml']);
 const NSPACE = 'aqtdb';
 
-module.exports = {
+export default {
   tasksum: async () => {
     const sql = mapper.getStatement(NSPACE, 'tasksum_sel');
     return await aqtdb.query({dateStrings: true,sql:sql});

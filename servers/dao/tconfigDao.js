@@ -1,6 +1,6 @@
-const aqtdb = require('../db/dbconn') ;
+import aqtdb from '../db/dbconn.js' ;
 
-module.exports =  {
+export default {
  findAll : async () => {
     return await aqtdb.query(`	SELECT pjtnm, encval, diffc, col1, col2 from tconfig limit 1;
                   SELECT generation_expression sflagc FROM information_schema.COLUMNS

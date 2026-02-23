@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const tapphostDao = require('../dao/tapphostDao') ;
+import tapphostDao from '../dao/tapphostDao.js' ;
  
 router.get('/', async function(req, res, next) {
 
@@ -59,4 +59,4 @@ router.delete('/host',async function(req, res, next) {
 
 });
 
-module.exports = router;
+export default router;

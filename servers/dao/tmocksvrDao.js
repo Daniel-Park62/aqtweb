@@ -1,4 +1,4 @@
-const aqtdb = require('../db/dbconn');
+import aqtdb from '../db/dbconn.js';
 
 const tmocksvrDao = {
 
@@ -37,7 +37,7 @@ const tmocksvrDao = {
 
 }
 
-module.exports = tmocksvrDao;
+export default tmocksvrDao;
 
 
 

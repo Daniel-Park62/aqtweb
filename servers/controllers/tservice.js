@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const tserviceDao = require('../dao/tserviceDao');
+import tserviceDao from '../dao/tserviceDao.js';
 
 router.post('/part', function (req, res, next) {
   tserviceDao.list(req.body)
@@ -35,4 +35,4 @@ router.delete('/', function (req, res, next) {
 
 });
 
-module.exports = router;
+export default router;

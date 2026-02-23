@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const tmasterDao = require('../dao/tmasterDao') ;
+import tmasterDao from '../dao/tmasterDao.js' ;
 // uid 별 접근가능 app 에 해당하는 tmaster list 
 router.get('/tsellist/:uid', function(req, res, next) {
   let usrid = req.params.uid || '';
@@ -97,4 +97,4 @@ router.put('/erasetr',function(req, res, next) {
 
 });
 
-module.exports = router;
+export default router;

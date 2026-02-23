@@ -23,10 +23,11 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "mariadb": "^3.4.0",
+    "mariadb": "^3.4.5",
     "mybatis-mapper": "^0.8.0",
     "oracledb": "^6.7.0",
     "svelte-chartjs": "^3.1.5",
-    "svelte-table": "^0.6.3"
+    "svelte-table": "^0.6.3",
+    "ws": "^8.19.0"
   }
 }

@@ -1,6 +1,6 @@
-const router = require('express').Router();
-const tloaddataDao = require('../dao/tloaddataDao');
-
+import express from 'express';
+import tloaddataDao from '../dao/tloaddataDao.js';
+const router = express.Router();
 router.get('/summary', async function (req, res, next) {
   try {
     const rdata = await tloaddataDao.summary();
@@ -61,4 +61,4 @@ router.get('/:id', async function (req, res, next) {
 });
 
 
-module.exports = router;
+export default router;

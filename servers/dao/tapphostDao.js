@@ -1,4 +1,4 @@
-const aqtdb = require('../db/dbconn');
+import aqtdb from '../db/dbconn.js';
 
 const tapphostDao = {
   appList : async () => {
@@ -35,7 +35,7 @@ const tapphostDao = {
 
 }
 
-module.exports = tapphostDao;
+export default tapphostDao;
 
 
 

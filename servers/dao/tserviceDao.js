@@ -1,5 +1,5 @@
-const aqtdb = require('../db/dbconn');
-const mapper = require('mybatis-mapper');
+import aqtdb from '../db/dbconn.js';
+import mapper from 'mybatis-mapper';
 mapper.createMapper(['servers/mappers/aqtdb.xml']);
 const NSPACE = 'aqtdb';
 
@@ -24,7 +24,7 @@ const tserviceDao = {
 
 }
 
-module.exports = tserviceDao;
+export default tserviceDao;
 
 
 

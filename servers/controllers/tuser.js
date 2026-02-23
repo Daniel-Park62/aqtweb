@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const userDao = require('../dao/taqtuserDao');
+import userDao from '../dao/taqtuserDao.js';
 
 router.get('/', function (req, res, next) {
   userDao.listAll()
@@ -77,4 +77,4 @@ router.post('/logonchk/cp', async function (req, res, next) {
   
 }) ;
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const texecjobDao = require('../dao/texecjobDao') ;
+import texecjobDao from '../dao/texecjobDao.js' ;
  
 router.get('/:kind', async function(req, res, next) {
   const rows = await texecjobDao.find(req.params.kind) ;
@@ -39,4 +39,4 @@ router.delete('/',function(req, res, next) {
   .catch(e => next(e)) ;
 });
 
-module.exports = router;
+export default router;

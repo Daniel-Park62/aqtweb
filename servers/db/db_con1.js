@@ -1,15 +1,16 @@
-const mariadb = require('mariadb');
-const config = require('./dbinfo').real;
+import mariadb from 'mariadb';
+import config from './dbinfo' ;
 const connection = {
   supportBigNumbers: true,
-  host: config.host,
-  port: config.port,
+  // host: config.host,
+  // port: config.port,
+  socketPath: '\\\\.\\pipe.\\MySQL',
   user: config.user,
   dateStrings : true ,
   password: config.password,
   database: config.database
 } ;
 
-module.exports = mariadb.createConnection(connection) ;
+export default mariadb.createConnection(connection) ;
   
 

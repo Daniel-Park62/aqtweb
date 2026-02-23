@@ -1,7 +1,7 @@
-const mariadb = require('mariadb');
-const config = require('./dbinfo').real;
+import {createPool} from 'mariadb';
+import config from './dbinfo.js';
 
-const pool = mariadb.createPool({
+const pool = createPool({
 //      host: config.host,
 //      port: config.port,
       socketPath: '\\\\.\\pipe.\\MySQL',
@@ -20,4 +20,4 @@ const pool = mariadb.createPool({
     
 }) ;
 
-module.exports = pool ;
+export default pool ;

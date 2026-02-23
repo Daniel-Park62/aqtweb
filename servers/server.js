@@ -1,31 +1,38 @@
-const express    = require('express');
+#!/usr/bin/env node
+import { fileURLToPath } from 'url'; 
+import { dirname } from 'path'; 
 
+const __filename = fileURLToPath(import.meta.url); 
+const __dirname = dirname(__filename); 
+
+import express from 'express';
+import { WebSocketServer } from 'ws';
 const app        = express();
 const port = process.argv[2] ?? process.env.AQTWPORT ?? 5972;
-const cors = require('cors');
+import cors from 'cors';
 app.set('trust proxy', true);
 app.use(express.json()); 
 app.use(express.urlencoded( {extended : false } ));
 app.use(cors());
 
-const path = require('path');
-const { notFound, errorHandler } = require('./middle/errors');
-// const aqtdb = require('./db/dbconn') ;
-const dashboard = require('./controllers/dashBoard') ;
+import path from 'path';
+import { notFound, errorHandler  }  from './middle/errors.js';
+// import aqtdb from './db/dbconn' ;
+import dashboard from './controllers/dashBoard.js' ;
 
-const byservice = require('./controllers/byservice') ;
-const regapp = require('./controllers/regapp') ;
-const trlist = require('./controllers/trlist') ;
-const tmaster = require('./controllers/tmaster') ;
-const tservice = require('./controllers/tservice') ;
-const texecjob = require('./controllers/texecjob') ;
-const tmocksvr = require('./controllers/tmocksvr') ;
+import byservice from './controllers/byservice.js' ;
+import regapp from './controllers/regapp.js' ;
+import trlist from './controllers/trlist.js' ;
+import tmaster from './controllers/tmaster.js' ;
+import tservice from './controllers/tservice.js' ;
+import texecjob from './controllers/texecjob.js' ;
+import tmocksvr from './controllers/tmocksvr.js' ;
 
-const tuser = require('./controllers/tuser') ;
-const trequest = require('./controllers/trequest') ;
-const tresult = require('./controllers/tresult') ;
-const basicSetup = require('./controllers/basicSetup') ;
-const tloadData = require('./controllers/tloadData') ;
+import tuser from './controllers/tuser.js' ;
+import trequest from './controllers/trequest.js' ;
+import tresult from './controllers/tresult.js' ;
+import basicSetup from './controllers/basicSetup.js' ;
+import tloadData from './controllers/tloadData.js' ;
 
 app.use(express.static(path.join(__dirname, "../public")));
 
@@ -54,16 +61,19 @@ app.use('/tresult', tresult) ;
 app.use('/aqtSetup', basicSetup) ;
 app.use('/tloaddata', tloadData) ;
 
-app.listen(port,'0.0.0.0', () => {
+const server = app.listen(port,'0.0.0.0', () => {
    console.log((new Date()).toLocaleString('lt'), `Server is up at port ${port}`);
 });
 
 app.use(notFound);
 app.use(errorHandler);
 
-// (async () => {
-//   const conn = await aqtdb.getConn() ;
-//   conn.query("select * from tconfig").then( row => console.log(row[0]) )
-//   .catch(console.log) 
-//   .finally(conn.release);
-// })() ;
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', (ws) => {
+  console.log('클라이언트 연결 성공');
+  ws.on('message', (message) => {
+    console.log(`받은 메시지: ${message}`);
+    ws.send(`서버 응답: ${message}`); // 에코
+  });
+});

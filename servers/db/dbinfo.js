@@ -1,4 +1,4 @@
-module.exports = {
+const configs = {
     local: { // localhost
       host: process.env.AQTDBIP  ?? 'localhost',
       port: process.env.AQTDBPORT  ||'3306',
@@ -21,3 +21,4 @@ module.exports = {
       database: process.env.AQTDBNAME || 'aqtdb'
     }
   };
+export default configs.real;

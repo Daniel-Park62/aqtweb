@@ -1,4 +1,4 @@
-const aqtdb = require('../db/dbconn');
+import aqtdb from '../db/dbconn.js';
 
 let senc = '';
 let vcol = '' ;
@@ -12,7 +12,7 @@ async function vcolSet() {
 }
 // aqtdb.query("SET character_set_connection = 'euckr';");
 
-module.exports = {
+export default {
   /** @param {*} parms */
   async find(parms) {
     let etcond = '';
