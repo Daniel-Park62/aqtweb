@@ -1,6 +1,6 @@
-const router = require('express').Router();
-const tconfig = require('../dao/tconfigDao');
-
+import express from 'express';
+import tconfig from '../dao/tconfigDao.js';
+const router = express.Router() ;
 router.get('/', async function (req, res, next) {
   try {
     const rdata = await tconfig.findAll();
@@ -33,4 +33,4 @@ router.put('/altercol2',function(req, res, next) {
 
 });
 
-module.exports = router;
+export default router;

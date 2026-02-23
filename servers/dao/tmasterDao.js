@@ -1,9 +1,9 @@
-const aqtdb = require('../db/dbconn');
-const mapper = require('mybatis-mapper');
+import aqtdb from '../db/dbconn.js';
+import mapper from 'mybatis-mapper';
 mapper.createMapper(['servers/mappers/aqtdb.xml']);
 const NSPACE = 'aqtdb';
 
-module.exports = {
+export default {
   listByUid: async (uid) => {
     const sql = mapper.getStatement(NSPACE, 'tmaster_ListUid', { uid });
     return await aqtdb.query(sql);

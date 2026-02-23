@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const tconfigDao = require('../dao/tconfigDao') ;
-const tcppacketDao = require('../dao/tcppacketDao') ;
-const tloaddataDao = require('../dao/tloaddataDao') ;
+import tconfigDao from '../dao/tconfigDao.js' ;
+import tcppacketDao from '../dao/tcppacketDao.js' ;
+import tloaddataDao from '../dao/tloaddataDao.js' ;
 
 let senc = '';
 let col1 = false ;
@@ -65,4 +65,4 @@ router.post('/orig', async function (req, res, next) {
 
 });
 
-module.exports = router;
+export default router;

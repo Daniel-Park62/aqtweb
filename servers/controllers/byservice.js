@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const trDao = require('../dao/trDao');
+import trDao from '../dao/trDao.js';
 
 router.get('/', async function (req, res, next) {
 
@@ -22,4 +22,4 @@ router.post('/', async function(req, res, next) {
 
 });
 
-module.exports = router;
+export default router;

@@ -1,4 +1,4 @@
-const aqtdb = require('../db/dbconn');
+import aqtdb from '../db/dbconn.js';
 function makeCond(pcond) {
   if (!pcond.psize) {
     return "" ;
@@ -10,7 +10,7 @@ function makeCond(pcond) {
   return etcond ;
 }
 
-module.exports = {
+export default {
   find: async (args) => {
     // console.log(args);
     if (!args.enc) args.enc = '';

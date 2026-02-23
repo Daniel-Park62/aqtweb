@@ -1,6 +1,6 @@
-const aqtdb = require('../db/dbconn') ;
+import aqtdb from '../db/dbconn.js' ;
  
-module.exports = {
+export default {
   find : async (kind) => {
       const rows = await aqtdb.query(`	SELECT a.pkey, ppkey, jobkind, tcode, tdesc, tnum, dbskip, etc, in_file, limits,  tuser, tdir, tenv, 
                 thost, tport,  reqstartDt reqstartDt2, left(date_format(reqstartDt,'%Y-%m-%dT%T'),16) reqstartDt,
