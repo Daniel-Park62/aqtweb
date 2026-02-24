@@ -19,6 +19,5 @@ const configs = {
       user: process.env.AQTDBUSER || 'aqtusr',
       password: process.env.AQTDBPASS || 'Dawinit1!',
       database: process.env.AQTDBNAME || 'aqtdb'
-    }
   };
 export default configs.real;
