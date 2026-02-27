@@ -4,11 +4,12 @@
 */
   import { onMount, getContext } from "svelte";
   import { userid } from "../aqtstore";
+    // import res from "express/lib/response";
 
   let tick = 0;
   let intv ;
 
-  $: geting(tick);
+  // $: geting(tick);
 
   let tcodelist = [];
 
@@ -137,17 +138,25 @@
     const res = await fetch("/texecjob/9" );
     if (res.status === 200) {
       rdata = await res.json();
-      stopIntv();
-      intv = autoGet(5000);
+      // stopIntv();
+      // intv = autoGet(5000);
     } else {
       throw new Error(res.statusText);
     }
   }
 
-  async function geting(x) {
-    const res = await fetch("/texecjob/ing?" + x);
-    if (res.ok) {
-      const ring = await res.json();
+  function geting() {
+    const socket = new WebSocket('ws://' + window.location.host);
+
+    socket.onopen = function(e) {
+      socket.send('{"type":2, "payload":{"kind":9 }}'); // 데이터 전송
+    };
+
+    socket.onmessage = async function(event) {
+    // const res = await fetch("/texecjob/ing?" + x);
+    // if (res.ok) {
+    //   const ring = await res.json();
+      const ring = JSON.parse(event.data) ;
 
       for await (const rw of ring) {
         const ii = rdata.findIndex((a) => a.pkey == rw.pkey);
@@ -175,39 +184,34 @@
         }
       }
       // if (ring.length === 0)  setTimeout(getdata,0) ;
-    } else {
-      throw new Error(res.statusText);
+
     }
+    socket.onerror = function(error) {
+      console.log(`[error] ${error.message}`);
+    };
+    return () => { socket.close() };
   }
 
   let selected;
 
-  onMount(async () => {
+  onMount(() => {
     getdata();
-    const res = await fetch("/tmaster/tsellist/" + $userid);
-    const tlist = await res.json();
-    tcodelist = tlist.filter( r => (r.lvl != 0 && r.enddate == null )) ;
-    const selEl = document.getElementById("tcode");
-    selEl.addEventListener("change", (e) => {
-      const fcode = tcodelist.find((r) => r.code == e.target.value);
-      // console.log(fcode);
-      if (fcode) {
-        curRow.thost = fcode.thost;
-        curRow.tport = fcode.tport;
-      }
-    });
+    (async () => {
+      const res = await fetch("/tmaster/tsellist/" + $userid);
+      const tlist = await res.json();
+      tcodelist = tlist.filter( r => (r.lvl != 0 && r.enddate == null )) ;
+      const selEl = document.getElementById("tcode");
+      selEl.addEventListener("change", (e) => {
+        const fcode = tcodelist.find((r) => r.code == e.target.value);
+        // console.log(fcode);
+        if (fcode) {
+          curRow.thost = fcode.thost;
+          curRow.tport = fcode.tport;
+        }
+      });
+    })() ;
+    return geting() ;
 
-    /*     
-	  const el = document.querySelector("#processing");
-    el?.animate([
-          { left: "0%", transform: "rotate(0deg)" },
-          { left: "50%", transform: "rotate(360deg)" }
-      ], {
-          duration: 2000,
-          fill: "forwards",
-          iterations : Infinity
-      });         
- */
   });
 </script>
 

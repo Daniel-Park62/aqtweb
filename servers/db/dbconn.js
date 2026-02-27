@@ -14,10 +14,7 @@ const pool = createPool({
       insertIdAsNumber : true,
       decimalAsNumber : true,
       multipleStatements:true,
-      validationQuery : 'select 1',
-      testWhileIdle : true,
-      timeBetweenEvictionRunsMillis: 1800000
-    
+      debugLen : 1024,
 }) ;
 
 export default pool ;

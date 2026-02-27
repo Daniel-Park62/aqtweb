@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename); 
 
 import express from 'express';
-import { WebSocketServer } from 'ws';
+import wsocket  from './wsocket.js';
 const app        = express();
 const port = process.argv[2] ?? process.env.AQTWPORT ?? 5972;
 import cors from 'cors';
@@ -68,12 +68,4 @@ const server = app.listen(port,'0.0.0.0', () => {
 app.use(notFound);
 app.use(errorHandler);
 
-const wss = new WebSocketServer({ server });
-
-wss.on('connection', (ws) => {
-  console.log('클라이언트 연결 성공');
-  ws.on('message', (message) => {
-    console.log(`받은 메시지: ${message}`);
-    ws.send(`서버 응답: ${message}`); // 에코
-  });
-});
+wsocket( server );

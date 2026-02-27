@@ -134,7 +134,7 @@
   options2.plugins.datalabels.formatter = formatf;
 
   let tick = 0;
-  $: getdata(tick);
+  // $: getdata(tick);
 
   let tcode;
   let svccnt = 999;
@@ -146,12 +146,21 @@
     ],
   };
 
-  async function getdata(x = 0) {
+  function getdata(x = 0) {
     datas = {svccnt: 0, rows:[]};
-    const res = await fetch($rooturl + "/dashboard/summary");
-    datas = await res.json();
+    // const res = await fetch($rooturl + "/dashboard/summary");
+    
+    const socket = new WebSocket('ws://' + window.location.host);
 
-    if (res.ok) {
+    socket.onopen = function(e) {
+      socket.send('{"type":1}'); // 데이터 전송
+    };
+
+    socket.onmessage = function(event) {
+      datas = JSON.parse(event.data);
+      console.log(datas) ;
+
+    // if (res.ok) {
       data.datasets[0].data[0] = datas.rows[0].svc_cnt * 1;
       data.datasets[0].data[1] = datas.svccnt - datas.rows[0].svc_cnt * 1;
 
@@ -163,18 +172,14 @@
       data4.datasets[0].data[0] = datas.rows[1].scnt * 1;
       data4.datasets[0].data[1] =
       datas.rows[1].data_cnt * 1 - datas.rows[1].scnt * 1;
-    } else {
-      throw new Error(res.statusText);
     }
-
-    //  } catch (e) {
-    //    console.log("call /dashboard/summary error", e) ;
-    //  }
+    socket.onerror = function(error) {
+      console.log(`[error] ${error.message}`);
+    };
+    return () => { socket.close() };
   }
 
-  onMount(() => {
-    getdata();
-  });
+  onMount(getdata);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

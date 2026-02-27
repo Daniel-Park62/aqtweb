@@ -8,7 +8,9 @@ const connection = {
   user: config.user,
   dateStrings : true ,
   password: config.password,
-  database: config.database
+  database: config.database,
+  multipleStatements:true,
+  debugLen : 1024,
 } ;
 
 export default mariadb.createConnection(connection) ;
