@@ -14,7 +14,7 @@
     srcnm: "tcpsvr",
   };
   let rdata = [{...cols}];
-
+  let wsocket;
   function updService() {
     console.log("update", rdata);
     const upds = rdata.filter((r) => r.chk && r.pkey != 0) ;
@@ -99,18 +99,36 @@
       }
   }
 
-  async function startsvr(row) {
-    const surl = ( (row.status == 2 || row.status == 1) ? "stopsvr" : "startsvr" ) + `/${row.pkey}` ;
-    const res = await fetch(`/tmocksvr/${surl}`) ;
-    if (res.status === 200) {
-      getdata();
+  function startsvr(row) {
 
-    } else {
-      alert(res.statusText);
-    }
+    if (wsocket) {
+      const sdata = {type:8,payload:{}};
+      if (row.status === 2 )  { 
+        sdata.type = 9;
+        sdata.payload = {pkey:row.pkey, pid : row.procid };
+      } else {
+        sdata.payload = {srcnm:row.srcnm, port:row.portno,pkey:row.pkey } ;
+        
+      }
+      wsocket.send(JSON.stringify(sdata)); // 데이터 전송
+    };
+
   }
 
-  onMount(getdata);
+  onMount(() => {
+    getdata();
+    const socket = new WebSocket('ws://' + window.location.host);
+
+    socket.onopen = (e) => { wsocket = socket }
+    socket.onmessage = async function(event) {
+      alert(event.data);
+      setTimeout(getdata, 2000) ;
+    }
+    socket.onerror = function(error) {
+      console.log(`[error] ${error.message}`);
+    };
+    return () => socket.close() ;
+  });
 
 </script>
 
@@ -166,7 +184,7 @@
             />
             <td>{statusnm[row.status]}  </td>
             <td>
-              <button on:click={async () => await startsvr(row) } class="px-4 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition">
+              <button disabled='{row.status == 1}' on:click={ () => {startsvr({...row}); row.status = 1;} } class={`${row.status == 2 ? 'hover:bg-red-700 bg-red-600' : 'hover:bg-blue-700 bg-blue-600'} px-4 py-1 text-white text-xs rounded-md transition`}>
               {( row.status == 1 ||  row.status == 2 )  ? '중지' : '시작'}
               </button> 
             </td>

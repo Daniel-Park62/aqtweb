@@ -1,14 +1,20 @@
 import { WebSocketServer } from 'ws';
 import trDao from './dao/trDao.js';
 import texecjobDao from './dao/texecjobDao.js';
-import { exec } from 'child_process';
-import { stderr } from 'process';
+import tmocksvrDao from './dao/tmocksvrDao.js';
+import { fork } from 'child_process';
+import { platform } from 'os';
+const osname = platform() ;
 /**
  * type 1: 대쉬보드의 테스트현황건수 
  * type 2: 실행중인 작업의 진행건수 { kind : [8 or 9]}
  * type 8: 모의서버 시작 exec 수행 { pkey, port }
  * type 9: 모의서버 종료 { procid }
  */
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function dashboard() {
  const rows = await trDao.summary() ;
@@ -19,18 +25,16 @@ async function jobing(kind) {
  return JSON.stringify(rows) ;
 }
 
-function mocksvr(body) {
-  exec('npm ls',{cwd : 'F:/AQTAPP/aqtsvr/jsbin'}, (error, stdout, stderr) => {
-    if (error) {
-      console.error(error) ;
-      return;
-    }
-    console.log('stdout:',stdout) ;
-  }) ;
+async function mocksvrStart(body) {
+  const mockhome = process.env.AQTHOME + '/jsbin/mocksvr';
 
+  const child = fork(`aqt_${body.srcnm}`,[body.port,body.pkey ],{cwd : mockhome, detached: true,stdio: 'ignore'}) ;
+  child.unref();
+  await sleep(3000);
+  return `${body.port} port pid:${child.pid} 시작됨`;
 }
 
-function reqProcess(ws, msg) {
+async function reqProcess(ws, msg) {
   switch ( msg.type ) {
     case 1:
       ws.intl = setInterval( async () => { 
@@ -45,8 +49,18 @@ function reqProcess(ws, msg) {
         ws.send(rdata);
       } , 3000);
       break;
+    case 8:
+      ws.send( await mocksvrStart(msg.payload) );
+      break;
     case 9:
-      mocksvr(msg.payload);
+      try {
+        process.kill(msg.payload.pid, 'SIGINT') ;
+        await sleep(1000);
+        ws.send(`${msg.payload.pid} killed !!`)
+      } catch (error) {
+        tmocksvrDao.statusUpd(msg.payload.pkey,0) ;
+        ws.send(error.message)  ;      
+      }
       break;
     default:
       console.log(msg) ;
@@ -63,7 +77,11 @@ export default (server) => {
 
     ws.on('message', (message) => {
       const msg = JSON.parse(message);
-      console.log(`받은 메시지: ${message} -> ${msg}`);
+      console.log(`받은 메시지: ${message} `);
+      if (! msg.type) {
+        console.error('type 지정 오류');
+        return ;
+      }
       reqProcess(ws, msg) ;
       // ws.send(`서버 응답: ${message}`); // 에코
     });

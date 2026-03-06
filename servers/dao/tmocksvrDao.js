@@ -2,6 +2,9 @@ import aqtdb from '../db/dbconn.js';
 
 const tmocksvrDao = {
 
+  one: async (pkey) => {
+    return await aqtdb.query('SELECT a.* from tmocksvr a where pkey=?',[pkey]);
+  },
   list: async () => {
     return await aqtdb.query('SELECT 0 chk, a.* from tmocksvr a');
   },
@@ -20,19 +23,13 @@ const tmocksvrDao = {
     const qstr = `delete from tmocksvr where pkey in (?)`;
     return await aqtdb.query(qstr,[parms]);
   },
-  startsvr: async (pkey) => {
+  statusUpd: async (pkey,sts) => {
     try {
-      const row = (await aqtdb.query('select status from tmocksvr where pkey = ?',[pkey]))[0] ;
-      if ( row.status == 0 || row.status == 3 ) {
-        await aqtdb.query('update tmocksvr set status = 1 where pkey = ?',[pkey]) ;
-      } else {
-        await aqtdb.query('update tmocksvr set reqstop = 1 where pkey = ?',[pkey]) ;
-      }
-      return aqtdb.query('select status,reqstop,procid from tmocksvr where pkey = ?',[pkey]) ;
+      await aqtdb.query('update tmocksvr set status = ? where pkey = ?',[sts,pkey]) ;
+      return await aqtdb.query('select status,procid from tmocksvr where pkey = ?',[pkey]) ;
     } catch (error) {
       throw error ;
     }
-
   }
 
 }
