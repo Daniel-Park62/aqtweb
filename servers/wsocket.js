@@ -1,10 +1,12 @@
 import { WebSocketServer } from 'ws';
+import path from 'path';
 import trDao from './dao/trDao.js';
 import texecjobDao from './dao/texecjobDao.js';
 import tmocksvrDao from './dao/tmocksvrDao.js';
 import { fork } from 'child_process';
 import { platform } from 'os';
 const osname = platform() ;
+
 /**
  * type 1: 대쉬보드의 테스트현황건수 
  * type 2: 실행중인 작업의 진행건수 { kind : [8 or 9]}
@@ -26,9 +28,12 @@ async function jobing(kind) {
 }
 
 async function mocksvrStart(body) {
-  const mockhome = process.env.AQTHOME + '/jsbin/mocksvr';
+  const mockhome = path.join(import.meta.dirname, 'mocksvr');
 
-  const child = fork(`aqt_${body.srcnm}`,[body.port,body.pkey ],{cwd : mockhome, detached: true,stdio: 'ignore'}) ;
+  const child = fork(`aqt_${body.srcnm}`,[body.port,body.pkey ],{cwd : mockhome, detached: true,stdio: 'pipe'}) ;
+  child.stdout.on('data', (data) => {
+    console.log(data.toString().trim());
+  });
   child.unref();
   await sleep(3000);
   return `${body.port} port pid:${child.pid} 시작됨`;
@@ -45,7 +50,7 @@ async function reqProcess(ws, msg) {
     case 2:
       ws.intl = setInterval( async () => { 
         const rdata = await jobing(msg.payload?.kind) ;
-        console.log("send data");
+        // console.log("send data");
         ws.send(rdata);
       } , 3000);
       break;
@@ -69,8 +74,9 @@ async function reqProcess(ws, msg) {
 export default (server) => {
   const wss = new WebSocketServer({ server });
 
-  wss.on('connection', (ws) => {
-    console.log('클라이언트 연결 ');
+  wss.on('connection', (ws, req) => {
+    console.log(`클라이언트 연결 ${req.socket.remoteAddress} ${req.url}`);
+    // console.log(`req:${JSON.stringify(req)}`)
     ws.isAlive = true;
     ws.on('error', console.error);
     ws.on('pong', () => ws.isAlive = true );

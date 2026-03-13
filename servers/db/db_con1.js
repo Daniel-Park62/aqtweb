@@ -1,5 +1,5 @@
-import mariadb from 'mariadb';
-import config from './dbinfo' ;
+import {createConnection} from 'mariadb';
+import config from './dbinfo.js' ;
 const connection = {
   supportBigNumbers: true,
   host: config.host,
@@ -13,6 +13,6 @@ const connection = {
   debugLen : 1024,
 } ;
 
-export default mariadb.createConnection(connection) ;
+export default createConnection(connection) ;
   
 

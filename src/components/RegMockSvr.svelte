@@ -99,37 +99,48 @@
       }
   }
 
-  function startsvr(row) {
+  function startsvr(ix) {
 
     if (wsocket) {
       const sdata = {type:8,payload:{}};
-      if (row.status === 2 )  { 
+      if (rdata[ix].status === 2 )  { 
         sdata.type = 9;
-        sdata.payload = {pkey:row.pkey, pid : row.procid };
+        sdata.payload = {pkey:rdata[ix].pkey, pid : rdata[ix].procid };
       } else {
-        sdata.payload = {srcnm:row.srcnm, port:row.portno,pkey:row.pkey } ;
-        
+        sdata.payload = {srcnm:rdata[ix].srcnm, port:rdata[ix].portno,pkey:rdata[ix].pkey } ;
+        rdata[ix].status = 1;
       }
       wsocket.send(JSON.stringify(sdata)); // 데이터 전송
     };
 
   }
 
-  onMount(() => {
-    getdata();
-    const socket = new WebSocket('ws://' + window.location.host);
-
+  function wconnect() {
+    const socket = new WebSocket('ws://' + window.location.host + '/mock');
     socket.onopen = (e) => { wsocket = socket }
-    socket.onmessage = async function(event) {
+    socket.onmessage = function(event) {
       alert(event.data);
-      setTimeout(getdata, 2000) ;
+      setTimeout(getdata, 3000) ;
     }
     socket.onerror = function(error) {
       console.log(`[error] ${error.message}`);
     };
+    socket.onclose = (e) => {
+      wsocket=null;
+      // setTimeout(wconnect,3000);
+    }
+
     return () => socket.close() ;
+  }
+
+  onMount(() => {
+    getdata();
+    return wconnect() ;
   });
 
+  function chHdle(ix) {
+    rdata[ix].srcnm = rdata[ix].svrkind === 0 ? 'tcpsvr' : 'httpsvr';
+  }
 </script>
 
 <div id="btns" class="flex">
@@ -161,30 +172,26 @@
       {:then rows}
         {#each rows as row, ix}
           <tr tabindex="0" class="focus-within:bg-blue-100 focus-within:outline-none cursor-pointer">
-            <td><input readonly={row.pkey == 0} type="checkbox" bind:checked={row.chk} /></td>
-            <td tabindex="0"
-              contenteditable="true"
-              class="svcnm w-[25%]"
-              bind:textContent={row.svrnm}
-            />
-            <td class="flex gap-4 justify-center items-center">
-              <label class="m-0 p-0"><input type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} /> TCP</label>
-              <label class="m-0 p-0"><input type="radio" name={ix.toString()} bind:group={row.svrkind} value={1} /> HTTP</label>
+            <td class="align-middle"><input disabled={row.pkey == 0} type="checkbox" bind:checked={row.chk} /></td>
+            <td class="svcnm w-[25%]">
+              <input class="my-0 bg-transparent border-none" bind:value={row.svrnm}>
             </td>
-            <td class="p-0 w-[4em]"><input class="my-0 bg-transparent border-none" type=number bind:value={row.portno} max=65535></td>
-            <td
-              contenteditable="true"
-              class="allowip w-[25%]"
-              bind:textContent={row.allowip}
-            />
-            <td
-              contenteditable="false"
-              class="srcnm"
-              bind:textContent={row.srcnm}
-            />
-            <td>{statusnm[row.status]}  </td>
-            <td>
-              <button disabled='{row.status == 1}' on:click={ () => {startsvr({...row}); row.status = 1;} } class={`${row.status == 2 ? 'hover:bg-red-700 bg-red-600' : 'hover:bg-blue-700 bg-blue-600'} px-4 py-1 text-white text-xs rounded-md transition`}>
+            <td class="border align-middle">
+              <div class="flex gap-4 justify-center items-center border-0">
+                <label ><input class=" border-0" type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} on:change={() => chHdle(ix)}/> TCP</label>
+                <label ><input class=" border-0" type="radio" name={ix.toString()} bind:group={row.svrkind} value={1} on:change={() => chHdle(ix)}/> HTTP</label>
+              </div>
+            </td>
+            <td class=" w-[4em]"><input disabled={row.status==2} class="my-0 bg-transparent border-none" type=number bind:value={row.portno} max=65535></td>
+            <td class=" allowip w-[25%]">
+              <input disabled={row.status==2} class="my-0 bg-transparent border-none" bind:value={row.allowip}>
+            </td>
+            <td   class=" srcnm">
+              <input disabled={row.status==2} class="my-0 bg-transparent border-none" bind:value={row.srcnm}>
+            </td>
+            <td class="align-middle">{statusnm[row.status]}  </td>
+            <td class="align-middle">
+              <button disabled={row.status == 1} on:click={ () => {startsvr(ix);} } class={`${row.status == 2 ? 'hover:bg-red-700 bg-red-600' : 'hover:bg-blue-700 bg-blue-600'} px-4 py-1 text-white text-xs rounded-md transition`}>
               {( row.status == 1 ||  row.status == 2 )  ? '중지' : '시작'}
               </button> 
             </td>

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --port 5972",
     "prebuild": "del /q public\\assets\\* ",
-    "build": "vite build & npm run start",
+    "build": "vite build",
     "start": "nodemon --watch servers/ servers/server.js",
     "preview": "vite preview"
   },
@@ -28,6 +28,8 @@
     "oracledb": "^6.7.0",
     "svelte-chartjs": "^3.1.5",
     "svelte-table": "^0.6.3",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "ws": "^8.19.0"
   }
 }

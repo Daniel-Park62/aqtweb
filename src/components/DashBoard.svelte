@@ -146,11 +146,11 @@
     ],
   };
 
-  function getdata(x = 0) {
+  function getdata() {
     datas = {svccnt: 0, rows:[]};
     // const res = await fetch($rooturl + "/dashboard/summary");
     
-    const socket = new WebSocket('ws://' + window.location.host);
+    const socket = new WebSocket('ws://' + window.location.host + '/dashboard');
 
     socket.onopen = function(e) {
       socket.send('{"type":1}'); // 데이터 전송

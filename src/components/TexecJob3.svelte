@@ -166,7 +166,7 @@
   }
 
   function geting() {
-      const socket = new WebSocket('ws://' + window.location.host);
+      const socket = new WebSocket('ws://' + window.location.host + '/execjob3');
 
     socket.onopen = function(e) {
       socket.send('{"type":2, "payload":{"kind":8 }}'); // 데이터 전송

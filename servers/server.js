@@ -1,9 +1,4 @@
 #!/usr/bin/env node
-import { fileURLToPath } from 'url'; 
-import { dirname } from 'path'; 
-
-const __filename = fileURLToPath(import.meta.url); 
-const __dirname = dirname(__filename); 
 
 import express from 'express';
 import wsocket  from './wsocket.js';
@@ -34,7 +29,7 @@ import tresult from './controllers/tresult.js' ;
 import basicSetup from './controllers/basicSetup.js' ;
 import tloadData from './controllers/tloadData.js' ;
 
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(import.meta.dirname, "../public")));
 
 app.use((req,res,next) => {
    res.locals.aqtlog = (...a) => { console.log((new Date()).toLocaleString('lt'),...a )} ;
@@ -43,7 +38,7 @@ app.use((req,res,next) => {
 });
 
 app.get('/', (req, res) => {
-   res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
+   res.sendFile(path.resolve(import.meta.dirname, '../public', 'index.html'));
 });
 
 app.use('/dashboard', dashboard) ;

@@ -8,4 +8,5 @@ export default defineConfig({
     outDir:'public',
     emptyOutDir:false
   },
+  // compilerOptions: { "forceConsistentCasingInFileNames": false } 
 })
