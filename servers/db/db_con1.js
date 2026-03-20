@@ -13,6 +13,8 @@ const connection = {
   debugLen : 1024,
 } ;
 
+export const getCon = () => createConnection(connection) ;
 export default createConnection(connection) ;
+
   
 

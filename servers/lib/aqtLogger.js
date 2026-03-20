@@ -26,7 +26,7 @@ const logger = createLogger({
       level: 'info',
       datePattern: 'YYYYMMDD',
       dirname: logDir,
-      filename: "aqt%DATE%.log",
+      filename: "aqtW%DATE%.log",
       maxFiles: 30,  // 30일치 로그 파일 저장
       maxSize:"10m",
 //      zippedArchive: true, 
@@ -36,7 +36,7 @@ const logger = createLogger({
       level: 'error',
       datePattern: 'YYYYMMDD',
       dirname: logDir ,  // error.log 파일은 /logs/error 하위에 저장 
-      filename: "aqt%DATE%.error.log",
+      filename: "aqtW%DATE%.error.log",
       maxSize:"10m",
       maxFiles: 30,
 //      zippedArchive: true,
@@ -47,7 +47,7 @@ const logger = createLogger({
       level: 'error',
       datePattern: 'YYYYMMDD',
       dirname: logDir ,  // error.log 파일은 /logs/error 하위에 저장 
-      filename: "aqt%DATE%.exception.log",
+      filename: "aqtW%DATE%.exception.log",
       maxSize:"10m",
       maxFiles: 30,
 //      zippedArchive: true,

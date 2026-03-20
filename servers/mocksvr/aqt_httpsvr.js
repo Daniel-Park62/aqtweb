@@ -6,7 +6,7 @@ import cors from 'cors';
 import mLog from '../lib/aqtLogger.js';
 const logger = mLog.child({ label: "httpsvr" });
 
-import mdb from '../db/db_con1.js';
+import {getCon} from '../db/db_con1.js';
 const port = process.argv[2] ?? 10003;
 const svrno = process.argv[3] ?? 0;
 
@@ -50,24 +50,35 @@ app.listen(port, () => {
 });
 
 async function update_status(svrno) {
-    con = await mdb;
-    const rows = await con.query(`select svrnm from tmocksvr where pkey=?; update tmocksvr set status=2,procid=? where pkey=?`,[svrno,process.pid, svrno]) ;
-    if (rows[0][0]?.svrnm) {
-        svrnm = rows[0][0].svrnm 
-        logger.info(`${svrnm} 서버 port:${port} start`) ;
+    try {
+            const con = await getCon();
+            const rows = await con.query(`select svrnm from tmocksvr where pkey=?; update tmocksvr set status=2,procid=? where pkey=?`,[svrno,process.pid, svrno]) ;
+            if (rows[0][0]?.svrnm) {
+                svrnm = rows[0][0].svrnm 
+                logger.info(`${svrnm} 서버 port:${port} start`) ;
+            }
+            con.end();
+        
+    } catch (error) {
+        logger.error(error.message);
     }
-    // con.end();
 }
 async function endfunc() {
     if (svrno > 0) {
-        await con.ping() ;
-        await con.query(`update tmocksvr set status=0 where pkey=?`,[svrno]) ;
-        logger.info(`${svrnm} 서버종료`);
+        try {
+            const con = await getCon() ;
+            await con.query(`update tmocksvr set status=0 where pkey=?`,[svrno]) ;
+            logger.info(`${svrnm} 서버종료`);
+    
+        } catch (error) {
+            logger.error(error.message);
+        }
     } else {
         logger.info(`Port:${port} 서버종료`);
     }
     process.exit(0);
 }
+
 process.on('SIGINT', endfunc);
 process.on('SIGTERM', endfunc);
 process.on('uncaughtException', (err) => { endfunc(); logger.error(err.message) });

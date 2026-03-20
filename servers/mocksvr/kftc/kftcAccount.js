@@ -3,7 +3,7 @@ import { getYmd } from '../../lib/aqtComm.js';
 
 const router = express.Router() ;
 
-/* 잔액조회 */
+/* 잔액조회 /v2.0/account/balance/fin_num */
 router.get('/balance/fin_num', async function (req, res, next) {
   const rsps = {
     "api_tran_id": "2ffd133a-d17a-431d-a6a5",
@@ -26,6 +26,7 @@ router.get('/balance/fin_num', async function (req, res, next) {
     "last_tran_date": "20191010",    
   }
   const toymd = getYmd(new Date()) ;
+  rsps.api_tran_dtm = toymd;
   rsps.last_tran_date = toymd.substring(0,8);
   rsps.fintech_use_num = req.params.fintech_use_num ;
   res.json(rsps) ;

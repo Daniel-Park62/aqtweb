@@ -23,15 +23,27 @@ const tmocksvrDao = {
     const qstr = `delete from tmocksvr where pkey in (?)`;
     return await aqtdb.query(qstr,[parms]);
   },
-  statusUpd: async (pkey,sts) => {
+  statusUpd: async (pkey,sts, pid=0) => {
     try {
-      await aqtdb.query('update tmocksvr set status = ? where pkey = ?',[sts,pkey]) ;
-      return await aqtdb.query('select status,procid from tmocksvr where pkey = ?',[pkey]) ;
+      await aqtdb.query('update tmocksvr set status = ?,procid=? where pkey = ?',[sts,pid,pkey]) ;
+      return await aqtdb.query('select status,procid,svrnm from tmocksvr where pkey = ?',[pkey]) ;
     } catch (error) {
       throw error ;
     }
-  }
+  },
+  getLogs: async (pkey) => {
+    return await aqtdb.query('SELECT logs from tmocksvrlog a where pkey=?',[pkey]);
+  },
 
+  saveLogs: async (pkey,ldata) => {
+    const row = await tmocksvrDao.getLogs(pkey);
+    const logs = row.length ? row[0].logs.split("\n") : [] ;
+    
+    const cnt = logs.push(ldata.trimEnd()) ;
+    if (cnt > 200) logs.splice(0, 1);
+    const nlogs = logs.join("\n") ;
+    return await aqtdb.query('insert into tmocksvrlog (pkey,logs) values (?,?) on duplicate key update logs=? ',[pkey,nlogs,nlogs]) ;
+  }
 }
 
 export default tmocksvrDao;
