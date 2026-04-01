@@ -6,31 +6,33 @@
 // import DetailTr from "./DetailTR.svelte";
 import CompareTr from "./CompareTr.svelte";
 
-  let vid = 'none';
+  let vid = $state('none');
   let pid ;
-  let mycond = {
+  let mycond = $state({
     rcode: '',
     cond: "",
     uri: ""
-  };
+  });
   
-  let conds = {
+  let conds = $state({
     tcode: "",
     rcode: '',
     page: 0,
     psize: 20,
     cond: "",
     uri: "",
+    valchk: false,
+    valiance: 0,
     apps:""
-  };
+  });
 
-  let tcodelist = [];
-  let selected ;
-  let tcnt = '';
+  let tcodelist = $state([]);
+  let selected = $state() ;
+  let tcnt = $state('');
 
   async function getTRlistm() {
     Object.assign(conds, mycond) ; // [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
-    conds.tcode = selected.code ;
+    conds.tcode = selected.tcode ;
     const res = await fetch("/tloaddata/compareTcnt", {
       method: "POST",
       headers: {
@@ -56,7 +58,7 @@ import CompareTr from "./CompareTr.svelte";
   onMount(async () => {
     const res = await fetch( "/tmaster/tsellist/"+$userid ) ;
     tcodelist = await res.json(); 
-    tcodelist.push({code:'%',name:'ALL'});
+    tcodelist.push({tcode:'%',name:'ALL'});
     selected = tcodelist[0];
 //    conds.tcode = selected.code ;
     // promise = Promise.resolve(tcodelist) ;
@@ -64,26 +66,28 @@ import CompareTr from "./CompareTr.svelte";
   
 </script>
 
-<div class="main" on:mouseenter={() => vid = 'none' }>
-  <div class="cond fitem" on:keyup={enterkey}>
+<!-- svelte-ignore a11y_interactive_supports_focus -->
+<div class="main" role="button" onmouseenter={() => vid = 'none'}>
+  <div class="cond fitem" role="button"  onkeyup={enterkey}>
     <p>* 테스트ID : </p> 
-    <select bind:value={selected} on:change={()=> {conds.tcode = ''; conds.page=0}} >
+    <select bind:value={selected} onchange={()=> {conds.tcode = ''; conds.page=0}} >
         
       {#each tcodelist as tc}
       <option value={tc}>
-        {tc.code + ' : ' + tc.name}
+        {tc.tcode + ' : ' + tc.name}
       </option>
       {/each}
     </select>
     <span>URI : <input type="text" bind:value={mycond.uri} /></span>
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
     <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} placeholder=" tobe:a.* , 원본:b.*"/></span>
-    <button on:click={getTRlistm}>조회</button>
+    <button onclick={getTRlistm}>조회</button>
     <span>{tcnt}</span>
 
   </div>
+
   <div class="fitem">
-    <CompareTr bind:conds/>
+    <CompareTr bind:conds />
   </div>
 </div>
 

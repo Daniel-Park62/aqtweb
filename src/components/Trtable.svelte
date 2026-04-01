@@ -2,7 +2,8 @@
   import { authApps, userid } from "../aqtstore.js";
   import DetailTR from "./DetailTR.svelte";
   import { onMount } from "svelte";
-
+  import ParamInput from "./ParamInput.svelte";
+  let showParam = $state(false);
   const columns = [
     "ID",
     "송신시간",
@@ -17,11 +18,14 @@
     "",
     "",
   ];
-  let vid = "none";
-  let pid;
-  let parr ;
-  let pidx = 0;
-  export let conds = {
+  let vid = $state("none");
+  let pid = $state(0);
+  let parr = $state([]) ;
+  let pidx = $state(0);
+  let params = $state("") ;
+
+  /** @type {{conds?: any}} */
+  let { conds = $bindable({
     tcode: "",
     rcode: "",
     page: 0,
@@ -29,25 +33,22 @@
     cond: "",
     uri: "",
     task: "",
-    apps: "",
-    
-  };
+    apps: ""
+  }) } = $props();
 
-  let sortby = ""
-  let rdata = [];
-  let achk = '□';
-  let pg = conds.page + 1;
+  let sortby = $state("")
+  let rdata = $state([]);
+  let pg = $derived(conds.page + 1);
 
   let sv_row ;
   function clickRow(e, row) {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
     sv_row = e.target.parentElement;
     sv_row.classList.toggle("bg-teal-100");
+    params = row.params ?? "";
+    pid = row.pkey ;  
   }
 
-  $: if (conds.tcode > " ") {
-    getTRlist();
-  }
 
   async function reSend() {
     const datas = rdata
@@ -89,7 +90,7 @@
   });
   async function getTRlist() {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
-    pg = conds.page + 1;
+    // pg = conds.page + 1;
     conds.apps = $authApps;
     conds.sortby = sortby ?? '';
     document.body.style.cursor = "wait";
@@ -139,9 +140,15 @@
       throw new Error(res.statusText);
     }
   }
-
+  
+  $effect(() => {
+  
+    if (conds.tcode > " ") {
+      getTRlist();
+    }
+  });
 </script>
-
+<ParamInput bind:showModal={showParam} bind:resultStr={params} pkey={pid} />
 <div class="fitem pgset">
   <span class="number-in">
     Page :<input
@@ -149,7 +156,7 @@
       min="1"
       style="text-align:center;"
       bind:value={pg}
-      on:change={() => {
+      onchange={() => {
         conds.page = pg - 1;
       }}
     />
@@ -162,7 +169,7 @@
   </span>
 
   <button
-    on:click={() => {
+    onclick={() => {
       conds.page++;
     }}
   >
@@ -170,17 +177,18 @@
   >
   {#if pg > 1}
     <button
-      on:click={() => {
+      onclick={() => {
         conds.page--;
       }}
     >
       &lt; Prev
     </button>
   {/if}
-  <span> 정렬 : <input on:keyup={(e) => {if(e.key == 'Enter') getTRlist()}} placeholder="o_stime" class="w-[20rem]" type="text" bind:value={sortby} /></span>
+  <span> 정렬 : <input onkeyup={(e) => {if(e.key == 'Enter') getTRlist()}} placeholder="o_stime" class="w-[20rem]" type="text" bind:value={sortby} /></span>
   <div style="margin-left: auto">
-    <button on:click={reSend}>재전송</button>
-    <button on:click={getDownLoad}>CSV</button>
+    <button onclick={reSend}>재전송</button>
+    <button onclick={getDownLoad}>CSV</button>
+    <button onclick={() => { showParam = true; }}>파라미터</button>
   </div>
 </div>
 <div class="fitem tbl">
@@ -190,15 +198,13 @@
       <p> </p>
       {:then rs}
       <tr>
-        <th  on:click={() => {
-          const clist = document.querySelectorAll(".chkb");
-          const chk = achk === '□' ;
-          for(let i=0; i<clist.length; i++) {
-              clist[i].checked = chk;
-              rdata[i].chk = chk ;
+        <th><input type="checkbox" onchange={
+          (e) => {
+            for(let i=0; i < rdata.length; ++i) {
+                rdata[i].chk = e.target.checked ;
+            }
           }
-          achk = ((chk) ? '▣' : '□') ;
-        }}>{achk}</th>
+        }></th>
         {#each columns as column }
           <th>
             {column}
@@ -214,8 +220,8 @@
       {#each rdata as row , i (row.pkey)}
         <tr
           class={row.sflag}
-          on:dblclick={(e) => {
-            pid = row.pkey;
+          onclick={(e)=>{clickRow(e,row);} }
+          ondblclick={(e) => {
             vid = "block";
             pidx = i ;
             parr = rdata.map( k => k.pkey ) ;
@@ -246,7 +252,7 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid bind:pid bind:parr bind:pidx />
+<DetailTR bind:vid bind:pid bind:parr bind:pidx onParam={()=> showParam = true} />
 
 <style>
   .elapsed,
@@ -282,7 +288,7 @@
     border-radius: 6px;
   }
   .pgset button {
-    width: 4em;
+    width: 5em;
   }
   .number-in input {
     max-width: 60px;

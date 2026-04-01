@@ -1,4 +1,6 @@
 <script>
+  import { run } from 'svelte/legacy';
+
   import { authApps, userid } from "../aqtstore.js";
   import DetailTR from "./DetailTR.svelte";
   import { onMount } from "svelte";
@@ -15,11 +17,12 @@
     "URI",
     "Status",
   ];
-  let vid = "none";
-  let pid;
-  let parr ;
-  let pidx = 0;
-  export let conds = {
+  let vid = $state("none");
+  let pid = $state(0);
+  let parr = $state([]) ;
+  let pidx = $state(0);
+  /** @type {{conds?: any}} */
+  let { conds = $bindable({
     tcode: "",
     rcode: "",
     page: 0,
@@ -29,18 +32,15 @@
     valchk: false,
     valiance: 0,
     apps: "",
-  };
+  }) } = $props();
 
   //  let rdata = Promise.resolve([]);
-  let rdata = [];
+  let rdata = $state([]);
 
   let sortColumn = null;
   let sortDirection = null;
-  let pg = conds.page + 1;
+  let pg = $state(conds.page + 1);
 
-  $: if (conds.tcode > " ") {
-    getTRlist();
-  }
 
   async function reSend() {
     const datas = rdata
@@ -114,7 +114,13 @@
       throw new Error(res.statusText);
     }
   }
+  
+  $effect( () => {
+     if (conds.tcode > " ") {
+      getTRlist();
+     }
 
+  });
 </script>
 
 <div class="fitem pgset">
@@ -124,7 +130,7 @@
       min="1"
       style="text-align:center;"
       bind:value={pg}
-      on:change={() => {
+      onchange={() => {
         conds.page = pg - 1;
       }}
     />
@@ -137,7 +143,7 @@
   </span>
 
   <button
-    on:click={() => {
+    onclick={() => {
       conds.page++;
     }}
   >
@@ -145,7 +151,7 @@
   >
   {#if pg > 1}
     <button
-      on:click={() => {
+      onclick={() => {
         conds.page--;
       }}
     >
@@ -163,15 +169,15 @@
       bind:value={conds.valiance}
     />이상
   <div style="margin-left: auto">
-    <button on:click={reSend}>재전송</button>
-    <button on:click={getDownLoad}>CSV</button>
+    <button onclick={reSend}>재전송</button>
+    <button onclick={getDownLoad}>CSV</button>
   </div>
 </div>
 <div class="fitem tbl">
   <table>
     <thead>
       <tr>
-        <th  on:click={() => {
+        <th  onclick={() => {
 //          rdata.forEach(r => r.chk = !r.chk ) ;
         }}>c</th>
         {#each columns as column }
@@ -188,7 +194,7 @@
       {:then rows} -->
       {#each rdata as row , i (row.pkey)}
         <tr
-          on:dblclick={() => {
+          ondblclick={() => {
             pid = row.pkey;
             vid = "block";
             pidx = i ;
@@ -216,7 +222,7 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid bind:pid bind:parr />
+<DetailTR bind:vid bind:pid bind:parr bind:pidx onParam=undefined />
 
 <style>
   .elapsed,

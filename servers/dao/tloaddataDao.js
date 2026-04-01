@@ -18,9 +18,9 @@ export default {
       return [];
     }
 
-    await aqtdb.query("select tenv from tmaster where code = ? limit 1", [args.tcode])
+    await aqtdb.query("select encval from vtcase where tcode = ? limit 1", [args.tcode])
       .then(rows => {
-        if (rows[0]?.tenv == 'euc-kr') args.enc = ' charset euckr'
+        if (rows[0]?.encval == 'euc-kr') args.enc = ' charset euckr'
         else args.enc = '';
       });
     let etcond = '';
@@ -30,7 +30,7 @@ export default {
       const rows = await aqtdb.query({
         dateStrings: true,
         sql: "	SELECT pkey,  tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  \
-                 '' appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, \
+                 '' appid, uri, seqno, ackno, rcode,params, headers, errinfo, sflag, rhead, slen, rlen, \
                  cast(sdata AS CHAR(250) " + args.enc + ") sdata , cast(rdata AS CHAR(250) " + args.enc + ") rdata,\
                  date_format(cdate,'%Y-%m-%d %T') cdate \
                  FROM tloaddata t  where tcode  = ? and t.uri rlike ? " + etcond + " order by o_stime limit ?, ?  "
@@ -44,12 +44,12 @@ export default {
   findById: async (id) => {
       return await aqtdb.query({
         dateStrings: true,
-        sql: `SELECT pkey, pkey cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, 
-        dstip, dstport, ifnull(method,'') method,'' appid, uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, 
-          case tenv when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,
-          case tenv when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,
+        sql: `SELECT pkey, pkey cmpid, t.tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, 
+        dstip, dstport, ifnull(method,'') method,'' appid, uri, seqno, ackno, rcode,params, headers, errinfo, sflag, rhead, slen, rlen, 
+          case encval when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,
+          case encval when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,
       date_format(cdate,'%Y-%m-%d %T') cdate 
-      FROM tloaddata t left join tmaster m on (t.tcode = m.code) where pkey  = ? limit 1`  }
+      FROM tloaddata t left join vtcase m on (t.tcode = m.tcode) where pkey  = ? limit 1`  }
         , [id]);
 
   },
@@ -83,14 +83,15 @@ export default {
       .then(rows => {
         if (rows[0]?.diffc ) diffc = `if (${rows[0].diffc},1,0) diff` ;
       });
-    // console.log(etcond, pcond);
+    process.env.AQTDEBUG &&  console.log(etcond, pcond);
+    
     return await aqtdb.query({
         dateStrings: true,
         sql: "SELECT '' chk, a.pkey, a.cmpid id, a.uri , a.stime `송신시간`, a.rtime `수신시간`, a.svctime `소요시간`, a.rcode , \
-          case tenv when 'euc-kr' then CAST( a.sdata AS CHAR CHARSET euckr) else cast(a.sdata as char) end 송신,   \
-          case tenv when 'euc-kr' then CAST( a.rdata AS CHAR CHARSET euckr) else cast(a.rdata as char) end 수신,   \
+          case encval when 'euc-kr' then CAST( a.sdata AS CHAR CHARSET euckr) else cast(a.sdata as char) end 송신,   \
+          case encval when 'euc-kr' then CAST( a.rdata AS CHAR CHARSET euckr) else cast(a.rdata as char) end 수신,   \
           a.rlen `수신크기`, b.svctime `원소요시간` , " + diffc + ", \
-          case tenv when 'euc-kr' then CAST( b.rdata AS CHAR CHARSET euckr) else cast(b.rdata as char) end 원수신  \
+          case encval when 'euc-kr' then CAST( b.rdata AS CHAR CHARSET euckr) else cast(b.rdata as char) end 원수신  \
           FROM vtcppacket a JOIN tloaddata B ON (a.cmpid = B.pkey)  \
           LEFT JOIN tservice s ON (a.appid = s.appid AND a.uri = s.svcid ) \
           WHERE a.tcode = ? and a.appid rlike ? " + etcond + " order by a.o_stime limit ?, ? "

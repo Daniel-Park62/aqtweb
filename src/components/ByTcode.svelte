@@ -1,9 +1,10 @@
 <script>
+
   import TidList from "./TidList.svelte";
   import Trtable from "./Trtable.svelte";
-  import Modal,{getModal} from "./Modal.svelte";
+  import Modal,{getModal} from "../lib/Modal.svelte";
 
-  let conds = {
+  let conds = $state({
     tcode: "",
     rcode: "",
     page: 0,
@@ -12,9 +13,10 @@
     uri: "",
     task: "",
     apps: "",
-  };
-  let dtls = [];
-  let tcode = "";
+  });
+  let dtls = $state([]);
+  let tcode = $state("");
+  
   let sv_row ;
   function clickRow(e, row) {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
@@ -22,7 +24,6 @@
     sv_row.classList.toggle("bg-teal-100");
   }
     
-  $:  getDetail(tcode);
   
   const sortBy = { col: "", ascending: 1 };
 
@@ -63,6 +64,9 @@
     else
       throw new Error(res.statusText);
   }
+  $effect(() => {
+    getDetail(tcode);
+  });
 </script>
 
 <div class="main">
@@ -76,10 +80,10 @@
     <table class="tbl-svc">
       <thead>
         <tr>
-          <th rowspan="2" class="cursor-pointer" id="svcid" on:click={sortdata}>서비스ID</th>
-          <th rowspan="2" class="cursor-pointer" id="svckor" on:click={sortdata}>서비스명</th>
-          <th rowspan="2" class="cursor-pointer" id="cumcnt" on:click={sortdata}>누적건수</th>
-          <th rowspan="2" class="cursor-pointer" id="tcnt" on:click={sortdata}>패킷건수</th>
+          <th rowspan="2" class="cursor-pointer" id="svcid" onclick={sortdata}>서비스ID</th>
+          <th rowspan="2" class="cursor-pointer" id="svckor" onclick={sortdata}>서비스명</th>
+          <th rowspan="2" class="cursor-pointer" id="cumcnt" onclick={sortdata}>누적건수</th>
+          <th rowspan="2" class="cursor-pointer" id="tcnt" onclick={sortdata}>패킷건수</th>
           <th colspan="4" >TOBE</th>
           <th colspan="2" >ASIS</th>
           <th colspan="2" >차이비교</th>
@@ -100,7 +104,7 @@
           <p>...waiting</p>
         {:then rows} -->
           {#each dtls as row}
-            <tr on:click={(e)=>clickRow(e,row)} on:dblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}>
+            <tr onclick={(e)=>clickRow(e,row)} ondblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal('bytcode').open({}) }}>
               <td style="text-align:left; max-width:30%">{row.svcid}</td>
               <td style="text-align:left">{row.svckor}</td>
               <td>{row.cumcnt.toLocaleString("ko-KR")}</td>
@@ -122,9 +126,14 @@
     </table>
   </div>
   <div class="fff">
-    <Modal>
+<!--   <Modal3 bind:isOpen={showModal} 
+  title={'testmodal3'} 
+  contentComponent={Trtable} 
+  contentProps={conds} />
+ -->    
+  <Modal id='bytcode' >
       <Trtable bind:conds />
-    </Modal>
+  </Modal> 
   </div>
 </div>
 <style>

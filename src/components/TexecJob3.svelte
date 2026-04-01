@@ -7,17 +7,17 @@
 
   let tick = 0;
   let intv ;
-  let cmdl ;
+  let cmdl = $state() ;
   // $: geting(tick);
 
-  let tcodelist = [];
+  let tcodelist = $state([]);
 
   const statusnm = { 0: "등록", 1: "실행대기", 2: "실행중", 3: "수행오류", 9:"작업완료" };
 
-  let rdata = []; // Promise.resolve([]);
-  let qselected = 4;
+  let rdata = $state([]); // Promise.resolve([]);
+  let qselected = $state(4);
 
-  let curRow ={} ;
+  let curRow =$state({}) ;
 
   function autoGet(t) {
     return setInterval(() => { tick += 1; }, t);
@@ -185,7 +185,7 @@
           rdata[ii].startDt = rw.startDt;
           rdata[ii].endDt = rw.endDt;
         }
-        const [hh,mm,ss] = rw.elapsed.split(':').map(Number);
+        const [hh,mm,ss] = rw.elapsed ? rw.elapsed.split(':').map(Number) : [0, 0, 0];
         rw.elaps = hh * 3600 + mm * 60 + ss ;
         const elm = document.getElementById(rw.pkey);
         if (elm) {
@@ -228,7 +228,7 @@
       tcodelist = tlist.filter( r => (r.lvl != 0 && r.enddate == null )) ;
       const selEl = document.getElementById("tcode");
       selEl.addEventListener("change", (e) => {
-        const fcode = tcodelist.find((r) => r.code == e.target.value);
+        const fcode = tcodelist.find((r) => r.tcode == e.target.value);
         // console.log(fcode);
         if (fcode) {
           curRow.thost = fcode.thost;
@@ -251,7 +251,7 @@
       <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={9} /> 작업완료</label >
       <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={4} /> 모두보기</label >
     </div>
-    <button on:click={getdata}>조회</button>
+    <button onclick={getdata}>조회</button>
   </div>
   <hr />
   <div class="max-h-[45vh] overflow-auto grow">
@@ -278,7 +278,7 @@
               <tr tabindex="0"
                 id={row.pkey ? row.pkey + "jajq" : "newrow"}
                 class={ `focus-within:bg-teal-100 focus-within:outline-none   ${row.resultstat === 2 ? 'text-red-600' : row.resultstat === 1 ? "text-blue-700" : "" }`} 
-                on:click={(e) => {curRow = row ; cmdl=cmdcomp() }}
+                onclick={(e) => {curRow = row ; cmdl=cmdcomp() }}
               >
                 <td class="pkey" tabindex="0"><strong>{row.pkey}</strong></td>
                 <td class="tcode">{row.tcode}</td>
@@ -321,14 +321,14 @@
   </div>
   <hr />
   <div class="flex pt-2 mt-auto">
-    <button on:click={newJob}>{curRow.jobsts === 1 ?  "신규취소" : "작업추가" }</button>
-    <button on:click={reExec}>실행요청</button>
+    <button onclick={newJob}>{curRow.jobsts === 1 ?  "신규취소" : "작업추가" }</button>
+    <button onclick={reExec}>실행요청</button>
     {#if curRow.pkey > 0}
-      <button on:click={() => deljob(curRow.pkey)}
+      <button onclick={() => deljob(curRow.pkey)}
         >{curRow.resultstat == 2 ? "작업중지" : "작업삭제"}</button
       >
     {/if}
-    <button  on:click={()=>{curRow.resultstat=0; updExec() }}>저장</button>
+    <button  onclick={()=>{curRow.resultstat=0; updExec() }}>저장</button>
     <p class="ml-auto text-slate-700 text-xs justify-end">{cmdl} </p>
   </div>
   <div class="mt-auto p-2 border-2 border-indigo-500 items basis-[100px] flex-none {curRow.pkey ? '': 'bg-lime-100'}">
@@ -339,7 +339,7 @@
         /> -->
     <select id="tcode" class="item in_value " bind:value={curRow.tcode}>
       {#each tcodelist as t}
-        <option value={t.code}>{t.code + " : " + t.name}</option>
+        <option value={t.tcode}>{t.tcode + " : " + t.name}</option>
       {/each}
     </select>
 
@@ -412,7 +412,7 @@
       readonly
       class="item border-gray-500 text-sm col-span-3 mb-0"
       bind:value={curRow.msg}
-    />
+></textarea>
   </div>
 </div>
 

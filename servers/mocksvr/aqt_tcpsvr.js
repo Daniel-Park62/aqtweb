@@ -4,9 +4,19 @@ import Net from 'net';
 import mLog from '../lib/aqtLogger.js';
 const logger = mLog.child({ label: "tcpsvr" });
 import {getCon} from '../db/db_con1.js';
+import tmocksvrDao from '../dao/tmocksvrDao.js';
 const port = process.argv[2] ?? 10002;
 const svrno = process.argv[3] ?? 0;
 
+if (svrno) {
+    const originalWrite = process.stdout.write;
+
+    // stdout.write 가로채기
+    process.stdout.write = process.stderr.write = function (chunk, encoding, callback) {
+        tmocksvrDao.saveLogs(svrno, chunk.toString());
+        return originalWrite.apply(process.stdout, arguments);
+    };
+}
 const server = new Net.Server();
 let con, svrnm ;
 

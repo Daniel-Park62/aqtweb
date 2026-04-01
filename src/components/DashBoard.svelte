@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
   import TidList from "./TidList.svelte";
-  import { rooturl } from "../aqtstore";
   import { Doughnut } from "svelte-chartjs";
   import ChartDataLabels from "chartjs-plugin-datalabels";
   import {
@@ -32,7 +31,7 @@
       ctx.restore();
       ctx.font = "14px sans-serif";
       ctx.textBaseline = "top";
-      ctx.fillStyle = "#6a40ff";
+      ctx.fillStyle = "#6a40ff" ;
       const ltext =
         "총 " +
         (
@@ -158,7 +157,7 @@
 
     socket.onmessage = function(event) {
       datas = JSON.parse(event.data);
-      console.log(datas) ;
+      // console.log(datas) ;
 
     // if (res.ok) {
       data.datasets[0].data[0] = datas.rows[0].svc_cnt * 1;
@@ -182,8 +181,8 @@
   onMount(getdata);
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="main" >
   <div class="container">
     <div class="subm">
@@ -208,7 +207,7 @@
         </div>
       </div>
     </div>
-    <img class='w-[80%] cursor-pointer' on:click={()=>tick+=1} src="/images/refresh.svg" title="다시조회" />
+    <img class='w-10 cursor-pointer' onclick={()=>tick+=1} src="/images/refresh.svg" title="다시조회" />
     <div class="subm">
       <div class="cap">통합테스트</div>
       <div class="items">

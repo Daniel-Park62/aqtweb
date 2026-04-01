@@ -15,10 +15,10 @@
   }
  */
 	const imgUrl = new URL("/images/Logo.png", import.meta.url).href;
-	let showModal = false;
-	let password = "";
-	let usrid = "";
-	let error = "";
+	let showModal = $state(false);
+	let password = $state("");
+	let usrid = $state("");
+	let error = $state("");
 
 	async function login3() {
 		if (password === "aqtuser") {
@@ -66,7 +66,7 @@
 
 <div class="login-wrapper">
 	<img src={imgUrl} alt="" />
-	<form on:submit|preventDefault={() => {}} id="login-form">
+	<form id="login-form">
 		<h2>사용자ID</h2>
 		<input class="form-control" bind:value={usrid} />
 
@@ -78,8 +78,8 @@
 			bind:value={password}
 		/>
 		<div class="btns">
-			<button on:click={login3} class="btn1">로그인</button>
-			<button on:click={() => (showModal = true)} class="btn2"
+			<button type='button' onclick={login3} class="btn1">로그인</button>
+			<button type='button' onclick={() => (showModal = true)} class="btn2"
 				>비밀번호변경</button
 			>
 		</div>

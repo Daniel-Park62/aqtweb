@@ -2,30 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="aqtdb">  
   <select id="tmaster_ListUid">
-    SELECT code, desc1 name, cmpcode,enddate, lvl, thost, tport  from tmaster m join 
+    SELECT tcode, desc1 name, enddate, lvl, thost, tport  from vtcase m join 
              (select apps from taqtuser where usrid = #{uid}) u 
       where m.appid rlike u.apps
   </select>
   <select id="tmaster_ListAll">
-    SELECT a.*, a.desc1 name, 0 as chk from tmaster a 
+    SELECT a.*, a.desc1 name, 0 as chk from vtcase a 
   </select>
   <insert id="tmaster_Ins">
-    INSERT INTO tmaster  (code, appid, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv,pro) 
-                VALUES (#{code}, #{appid}, #{lvl}, #{desc1},
-                        #{cmpCode}, #{tdate}, #{endDate}, #{tdir}, 
-                        #{tuser}, #{thost}, #{tport}, #{tenv},#{pro})
+    INSERT INTO vtcase  (tcode, appid, lvl, desc1,  tdate, endDate, tdir, tuser, thost, tport, encval,pro) 
+                VALUES (#{tcode}, #{appid}, #{lvl}, #{desc1},
+                        #{tdate}, #{endDate}, #{tdir}, 
+                        #{tuser}, #{thost}, #{tport}, #{encval},#{pro})
   </insert>
   <update id="tmaster_Upd">
-    UPDATE tmaster SET 
-	          appid=#{appid}, lvl=#{lvl}, desc1=#{desc1}, cmpCode=#{cmpCode}, tdate=#{tdate}, endDate=#{endDate}, 
-            tdir=#{tdir}, tuser=#{tuser}, thost=#{thost}, tport=#{tport}, tenv=#{tenv},pro=#{pro}
-       WHERE CODE = #{code} 
+    UPDATE vtcase SET 
+	          appid=#{appid}, lvl=#{lvl}, desc1=#{desc1}, tdate=#{tdate}, endDate=#{endDate}, 
+            tdir=#{tdir}, tuser=#{tuser}, thost=#{thost}, tport=#{tport}, encval=#{encval},pro=#{pro}
+       WHERE TCODE = #{tcode} 
   </update>
   <delete id="tmaster_Del">
-    delete from tmaster 
+    delete from vtcase 
     <where>
       <foreach item="item" collection="list"
-          open="code in (" separator="," close=")" >
+          open="tcode in (" separator="," close=")" >
             #{item}
       </foreach>
     </where>
@@ -47,7 +47,7 @@
         , round(avg(t.avgt),3) avgt, round(avg(t.stdv),3) stdv,sum(scnt) scnt  , sum(fcnt) fcnt 
         , round(avg(t.o_avgt),3) o_avgt, round(avg(t.o_stdv),3) o_stdv,sum(o_scnt) o_scnt  , sum(o_fcnt) o_fcnt 
         from   tsvcsum t join tservice s on (t.svcid = s.svcid and t.appid = s.appid) 
-              join (select code, lvl from tmaster ) m on (t.tcode = m.code) 
+              join (select tcode, lvl from vtcase ) m on (t.tcode = m.tcode) 
         WHERE tcnt != 0 
          <if test="tcode != null"> and t.tcode = #{tcode} </if>
          <if test="task != null"> and s.task = #{task} </if>
@@ -55,8 +55,8 @@
          group by t.svcid ORDER BY t.svcid
   </select>
   <select id="vtrxlist_sel">
-    SELECT code, type, lvl, desc1, cmpCode, tdate, endDate, 
-        tdir, tuser, thost, tport, tenv, appid, svc_cnt, fsvc_cnt, 
+    SELECT tcode, type, lvl, desc1, tdate, endDate, 
+        tdir, tuser, thost, tport, encval, appid, svc_cnt, fsvc_cnt, 
         data_cnt, scnt, fcnt, spct, tot_svccnt 
     FROM vtrxlist WHERE appid rlike #{appid} and data_cnt != 0 order by tdate desc
   </select>

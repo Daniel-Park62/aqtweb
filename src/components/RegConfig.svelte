@@ -5,7 +5,7 @@
   let rdata = Promise.resolve([]);
   let jobsts = 0;
 
-  let curRow = {};
+  let curRow = $state({});
 
   function updateConfig() {
     let {
@@ -130,12 +130,12 @@
     <div class="item in_label">기본 Encoding:</div>
     <input class="item in_value"  bind:value={curRow.encval} />
     <div title='결과값은 char(1)만 유효합니다.' class="item in_label">실패조건:</div>
-    <textarea rows="2"  bind:value={curRow.sflagc} />
+    <textarea rows="2"  bind:value={curRow.sflagc}></textarea>
     <div class="item in_label">원본차이조건:</div>
-    <textarea rows="2"  bind:value={curRow.diffc} />
+    <textarea rows="2"  bind:value={curRow.diffc}></textarea>
   </div>
   <div>
-    <button on:click={updateConfig}>저장</button>
+    <button onclick={updateConfig}>저장</button>
   </div>
   <hr />
   <div class="items">
@@ -144,14 +144,14 @@
       <input class="item in_value" style="float:left" bind:value={curRow.col1} />
       <input class="item in_value"  bind:value={curRow.col1type} />
       <input class="item in_value"  bind:value={curRow.expr1} />
-      <button class="item" on:click={altercol1}>적용</button>
+      <button class="item" onclick={altercol1}>적용</button>
     </div>
     <div class="item in_label "> 가상칼럼2: </div>
     <div class="item grp" >
       <input class="item in_value" style="float:left" bind:value={curRow.col2} />
       <input class="item in_value"  bind:value={curRow.col2type} />
       <input class="item in_value"  bind:value={curRow.expr2} />
-      <button class="item" on:click={altercol2}>적용</button>
+      <button class="item" onclick={altercol2}>적용</button>
     </div>
   </div>
   <hr />

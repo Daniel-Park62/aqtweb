@@ -42,6 +42,7 @@ router.post('/compareTcnt', async function (req, res, next) {
 router.post('/compareData', async function (req, res, next) {
   try {
     const rdata = await tloaddataDao.compareData(req.body);
+    res.locals.aqtlog(rdata[0]);
     res.send(rdata);
   } catch (err) {
     console.error(err);

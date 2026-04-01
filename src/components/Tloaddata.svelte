@@ -2,8 +2,8 @@
   import { onMount } from "svelte";
   import Tloadtable from "./Tloadtable.svelte";
 
-  let rdata = [];
-  let tcode = "";
+  let rdata = $state([]);
+  let tcode = $state("");
 
   const columns = [
     "TID",
@@ -26,6 +26,7 @@
       const res = await fetch("/tloaddata/summary");
       if (res.ok) {
         rdata = await res.json();
+        tcode=rdata[0]?.tcode ?? "" ;
       } else {
         if (res.status === 404) throw new Error("404, Not found");
         if (res.status === 500) throw new Error("500, internal server error");
@@ -55,7 +56,7 @@
         {#each rdata as row}
           <tr
             class={row.sflag}
-            on:click={(e) => clickRow(e,row)}
+            onclick={(e) => clickRow(e,row)}
           >
             <td class="tcode">{row.tcode}</td>
             <td class="stimef">{row.stimef}</td>
@@ -69,7 +70,7 @@
     </table>
   </div>
   <div class="item">
-    <Tloadtable bind:tcode />
+    <Tloadtable tcode={tcode} />
   </div>
 </div>
 

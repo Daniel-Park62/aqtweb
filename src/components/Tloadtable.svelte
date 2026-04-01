@@ -1,4 +1,5 @@
 <script>
+
   import DetailTR from "./DetailTR.svelte";
 
   const columns = [
@@ -35,19 +36,19 @@
       title: "Port",
     },
   ];
-  let vid = "none";
-  let pid;
-  let parr = [];
-  let pidx = 0;
-  let origin = 'org';
-  export let tcode = "";
-  let conds = {
+  let vid = $state("none");
+  let pid = $state(0);
+  let parr = $state([]);
+  let pidx = $state(0);
+  /** @type {{tcode?: string}} */
+  let { tcode = "" } = $props();
+  let conds = $state({
     tcode: "",
     page: 0,
     psize: 20,
     cond: "",
     uri: "",
-  };
+  });
 
   let sv_row ;
   function clickRow(e, row) {
@@ -57,17 +58,10 @@
   }
 
   //  let rdata = Promise.resolve([]);
-  let rdata = [];
+  let rdata = $state([]);
 
-  let pg = conds.page + 1;
+  let pg = $state(conds.page + 1);
 
-  $: if (tcode ) {
-    conds.page = 0 ;
-    getTRlist();
-  }
-  $: if (conds ) {
-    getTRlist();
-  }
 
   let selectedRowIds = [];
 
@@ -81,6 +75,7 @@
   }
   async function getTRlist() {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
+    if (conds.tcode !== tcode) conds.page = 0;
     conds.tcode = tcode;
     if (conds.tcode == undefined) return [];
     pg = conds.page + 1;
@@ -100,6 +95,8 @@
       throw new Error(res.statusText);
     }
   }
+
+  $effect(() => { getTRlist() } );
 
 </script>
 
@@ -123,7 +120,7 @@
         {#each rdata as row, i (row.pkey)}
           <tr
             class={row.sflag}
-            on:dblclick={(e) => {
+            ondblclick={(e) => {
               pid = row.pkey;
               parr = rdata.map(e => e.pkey) ;
               pidx = i ;
@@ -157,7 +154,7 @@
         min="1"
         style="text-align:center;"
         bind:value={pg}
-        on:change={() => {
+        onchange={() => {
           conds.page = pg - 1;
         }}
       />
@@ -170,7 +167,7 @@
     </span>
 
     <button
-      on:click={() => {
+      onclick={() => {
         conds.page++;
       }}
     >
@@ -178,17 +175,18 @@
     >
     {#if pg > 1}
       <button
-        on:click={() => {
+        onclick={() => {
           conds.page--;
         }}
       >
         &lt; Prev
+
       </button>
     {/if}
   </div>
 
 </div>
-<DetailTR bind:vid bind:pid bind:parr bind:pidx bind:origin />
+<DetailTR bind:vid bind:pid bind:parr bind:pidx origin="org"/>
 
 <style>
   .container {

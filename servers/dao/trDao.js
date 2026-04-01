@@ -52,11 +52,11 @@ export default {
   async findToFile(parms) {
     let senc = '' ;
     let db_tmpdir = '/tmp'
-  await aqtdb.query(`select case tenv when 'euc-kr' then 'charset euckr' else '' end tenv,
-                           variable_value from tmaster, information_schema.global_variables 
-                     where variable_name = 'tmpdir' AND code = ? limit 1`,[parms.tcode])
+  await aqtdb.query(`select case encval when 'euc-kr' then 'charset euckr' else '' end encval,
+                           variable_value from vtcase, information_schema.global_variables 
+                     where variable_name = 'tmpdir' AND tcode = ? limit 1`,[parms.tcode])
   .then(rows => {
-    senc = rows[0].tenv ;
+    senc = rows[0].encval ;
     db_tmpdir = rows[0].variable_value ;
   })
   .catch( e => {throw e}) ;
@@ -79,7 +79,7 @@ export default {
           FIELDS TERMINATED BY '\\t'  
           LINES TERMINATED BY '\\n'  ` ;
 
-  const fff =  path.join( __dirname , tfile );
+  const fff =  path.join( import.meta.dirname , tfile );
   
   try {
     const rst = await aqtdb.query({dateStrings:true, 

@@ -1,33 +1,30 @@
+<!-- @migration-task Error while migrating Svelte code: `<tr>` is invalid inside `<table>` -->
 <script>
- import { isLogged, userid } from "../aqtstore.js";
-  export let vid = "none";
-  export let pid = 0;
-  export let parr = [] ;
-  export let pidx = 0;
-  export let origin ='';
+  import { isLogged, userid } from "../aqtstore.js";
 
+  let { vid = $bindable('none'), pid = $bindable(0), parr = $bindable([]),
+       pidx = $bindable(0), origin = "", onParam = {} } = $props() ;
   let modal;
-  let cdata = [];
-  let odata = { ok: false, display: "none" };
+  let cdata = $state([]);
+  let odata = $state({ ok: false, display: "none" });
 
-  let encd = 'UTF-8' ;
+  $effect(() => {
+    if (modal) modal.style.display = vid;
+  });
 
-  $: if (modal) modal.style.display = vid;
-  $: getDetail(pid);
+  $effect(() => {
+    getDetail(pid);
+  });
 
   async function reSend(row) {
-    
     fetch("/trequest", {
-      method: "POST" ,
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ insdata : [
-        row.pkey,
-        row.cmpid,
-        row.tcode,
-        $userid
-      ]})
+      body: JSON.stringify({
+        insdata: [[row.pkey, row.cmpid, row.tcode, $userid]],
+      }),
     })
       .then(async (res) => {
         let rmsg = await res.json();
@@ -39,12 +36,12 @@
   }
 
   async function getDetail(pid) {
-//    const array = new Uint32Array(1);
+    //    const array = new Uint32Array(1);
     // console.log("isLogged:", $isLogged);
-//    const nnn = window.crypto.getRandomValues(array)[0] ;
-    let urlv="/trlist/" + pid ; //+ `?v=${nnn}`; 
-    if (origin) urlv="/tloaddata/" + pid  ; // + `?v=${nnn}`
-    
+    //    const nnn = window.crypto.getRandomValues(array)[0] ;
+    let urlv = "/trlist/" + pid; //+ `?v=${nnn}`;
+    if (origin) urlv = "/tloaddata/" + pid; // + `?v=${nnn}`
+
     const res = await fetch(urlv);
     cdata = await res.json();
     odata.ok = false;
@@ -53,13 +50,13 @@
   }
 
   async function getNext() {
-    if (pidx >= parr.length -1) {
-      window.alert('다음자료가 없습니다.');
-      return ;
+    if (pidx >= parr.length - 1) {
+      window.alert("다음자료가 없습니다.");
+      return;
     }
-    pid = parr[++pidx] ;
+    pid = parr[++pidx];
     // await getDetail(parr[++pidx]);
-/* 
+    /* 
     const res = await fetch("/trlist/" + parr[++pidx]);
     if (res.ok) cdata = await res.json();
     else {
@@ -69,18 +66,18 @@
     odata.ok = false;
     if (document.getElementById("odata").style.display == "block")
     getOrig(cdata[0]);
-    */    
+    */
   }
 
   async function getPrev() {
     if (pidx < 1) {
-      window.alert('이전자료가 없습니다.');
-      return ;
+      window.alert("이전자료가 없습니다.");
+      return;
     }
     // await getDetail(parr[--pidx]);
-    pid = parr[--pidx] ;
+    pid = parr[--pidx];
 
-/*     const res = await fetch("/trlist/" + parr[--pidx]);
+    /*     const res = await fetch("/trlist/" + parr[--pidx]);
     if (res.ok) cdata = await res.json();
     else {
       const err = await res.json();
@@ -100,29 +97,31 @@
   async function viewOrig(row) {
     if (odata.display == "none") {
       odata.display = "block";
-      odata.ok = false ;
+      odata.ok = false;
       await getOrig(row);
     } else {
       odata.display = "none";
     }
-    document.getElementById("odata").style.display = odata.display;
+    const odiv = document.getElementById("odata");
+    odiv.style.display = odata.display;
+    console.log("viewOrig", odiv.style.display, odata );
   }
 
   async function getOrig(qdata) {
     let cdata;
     if (!odata.ok) {
-      const res = await fetch("/trlist/orig" ,
-      { method: "POST" ,
+      const res = await fetch("/trlist/orig", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          'id': qdata.cmpid,
-          'tcode':qdata.tcode,
-          'userid':$userid
-        })
+        body: JSON.stringify({
+          id: qdata.cmpid,
+          tcode: qdata.tcode,
+          userid: $userid,
+        }),
       });
-    
+
       if (res.ok) cdata = await res.json();
       else {
         const err = await res.json();
@@ -130,9 +129,8 @@
         return;
       }
       odata.ok = true;
-      for (let row of cdata) {
-        odata.row = row;
-      }
+      odata.row = cdata[0];
+      
     }
   }
 
@@ -142,7 +140,7 @@
       vid = "none";
     }
   };
-
+ 
   function trChange(row) {
     fetch("/trlist/change", {
       method: "PUT",
@@ -151,7 +149,8 @@
       },
       body: JSON.stringify({
         pkey: row.pkey,
-        sdata: row.sdata
+        sdata: row.sdata,
+        gubun: "sdata",
       }),
     })
       .then(async (res) => {
@@ -164,7 +163,7 @@
   }
   function handleReload() {
     window.location.reload(true); // Reloads page from server
-    getDetail(pid) ;
+    getDetail(pid);
   }
   function trRedo(row) {
     fetch("/trlist/redo", {
@@ -173,7 +172,7 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        pkey: row.pkey
+        pkey: row.pkey,
       }),
     })
       .then(async (res) => {
@@ -184,143 +183,166 @@
         alert("error:" + err.message);
       });
   }
-
 </script>
 
 <!-- The Modal -->
-<div id="myModal" class="modal">
+<div id="myModal" bind:this={modal} >
   <!-- Modal content -->
   <div class="modal-content">
-      {#if cdata.length > 0}
-        <div class="ny1">
-          <span class="title">{" 전문ID : " + cdata[0].cmpid} </span>
-          <nav>
-            {#if !origin} <button on:click={async () => reSend(cdata[0])}>재전송</button> {/if}
-            <button on:click={async () => getDetail(cdata[0].pkey)}>새로고침</button>
-            <button on:click={async () => getNext()}>다음</button>
-            <button on:click={async () => getPrev()}>이전</button>
-            {#if !origin} 
+    {#if cdata.length > 0}
+      <div class="ny1">
+        <span class="title">{` 전문ID : ${cdata[0].pkey} ( ${cdata[0].cmpid} )`} </span>
+        <nav>
+          {#if !origin}
+            <button onclick={async () => reSend(cdata[0])}>재전송</button>
+          {/if}
+          <button onclick={async () => getDetail(cdata[0].pkey)}
+            >새로고침</button
+          >
+          <button onclick={async () => getNext()}>다음</button>
+          <button onclick={async () => getPrev()}>이전</button>
+          {#if !origin}
             <button
-              on:click={async () => {
+              onclick={async () => {
                 viewOrig(cdata[0]);
               }}>원본보기</button
             >
-            {/if}
-            <button on:click={closedtl}>Close</button>
-          </nav>
-        </div>
+          {/if}
+          <button onclick={closedtl}>Close</button>
+        </nav>
+      </div>
 
-        <div class="data">
-            <div class="cdata">
-              <div class="ny2">
-                <table>
-                  <tr>
-                    <td class="lbl">테스트ID</td><td>{cdata[0].tcode}</td>
-                    <td class="lbl">ID</td><td>{cdata[0].pkey}</td>
-                    <td class="lbl">Source</td><td
-                      >{cdata[0].srcip + ":" + cdata[0].srcport}</td
-                    >
-                  </tr>
-                  <tr>
-                    <td class="lbl">송수신</td><td
-                      >{cdata[0].stime + " ~ " + cdata[0].rtime.substring(11)}</td
-                    >
-                    <td class="lbl">소요시간</td><td>{cdata[0].svctime}</td>
-                    <td class="lbl">Destination</td>
-                    <td>{cdata[0].dstip + ":" + cdata[0].dstport}</td
-                    >
-                  </tr>
-                  <!-- <tr>
+      <div class="data">
+        <div class="cdata">
+          <div class="ny2">
+            <table>
+            <tbody>
+              <tr>
+                <td class="lbl">테스트ID</td><td>{cdata[0].tcode}</td>
+                <td class="lbl">URI(SvcID)</td><td>{`${cdata[0].method || ''} ${cdata[0].uri}`}</td>
+                <td class="lbl">Source</td><td
+                  >{cdata[0].srcip + ":" + cdata[0].srcport}</td
+                >
+              </tr>
+              <tr>
+                <td class="lbl">송수신</td><td
+                  >{cdata[0].stime + " ~ " + cdata[0].rtime.substring(11)}</td
+                >
+                <td class="lbl">소요시간</td><td>{cdata[0].svctime}</td>
+                <td class="lbl">Destination</td>
+                <td>{cdata[0].dstip + ":" + cdata[0].dstport}</td>
+              </tr>
+              <!-- <tr>
               <td class="lbl">URI</td><td colspan="3">{row.uri}</td>
               <td class="lbl">Method</td><td>{row.method}</td>
               <td class="lbl">작업일시</td><td>{row.cdate}</td>
               <td class="lbl">수신코드</td><td>{row.rcode}</td>
             </tr> -->
-                </table>
-              </div>
-              <div class="ny3">
-                <br /><span
-                  >{"송신데이터 : " + cdata[0].slen.toLocaleString("ko-KR")}
-                </span>
-                {#if $isLogged == 2}
-                <button on:click={ () => trChange(cdata[0])}>송신저장</button>
-                <button on:click={ () => trRedo(cdata[0])}>송신원복</button>
-                {/if}
-                 <br />
-                <textarea  rows="8" cols="120" bind:value={cdata[0].sdata} />
-              </div>
-              <div class="ny3">
-                <span>수신헤더</span> <br />
-                <textarea readonly rows="5">{cdata[0].rhead}</textarea>
-              </div>
-              <div class="ny3">
-                <span>{"수신데이터 : " + cdata[0].rlen.toLocaleString("ko-KR")}</span
-                ><br />
-                <textarea readonly rows="8" cols="120">{cdata[0].rdata.toString()}</textarea>
-              </div>
-            </div>
-          <div id="odata">
-            {#if odata.ok}
-              <div class="ny2">
-                <table>
-                  <tr>
-                    <td class="lbl">테스트ID</td><td>{odata.row.tcode}</td>
-                    <td class="lbl">ID</td><td>{odata.row.pkey}</td>
-                    <td class="lbl">Source</td><td
-                      >{odata.row.srcip + ":" + odata.row.srcport}</td
-                    >
-                  </tr>
-                  <tr>
-                    <td class="lbl">송수신</td><td
-                      >{odata.row.stime +
-                        " ~ " +
-                        odata.row.rtime.substring(11)}</td
-                    >
-                    <td class="lbl">소요시간</td><td>{odata.row.svctime}</td>
-                    <td class="lbl">Destination</td><td
-                      >{odata.row.dstip + ":" + odata.row.dstport}
-                    </td
-                    >
-                  </tr>
-                </table>
-              </div>
-              <div class="ny3">
-                <br /><span
-                  >{"송신데이터 : " + odata.row.slen.toLocaleString("ko-KR")}
-                </span> <br />
-                <textarea readonly rows="8" cols="120"
-                  >{odata.row.sdata}</textarea
-                >
-              </div>
-              <div class="ny3">
-                <span>수신헤더</span> <br />
-                <textarea readonly rows="5">{odata.row.rhead}</textarea>
-              </div>
-              <div class="ny3">
-                <span
-                  >{"수신데이터 : " +
-                    odata.row.rlen.toLocaleString("ko-KR")}</span
-                ><br />
-                <textarea readonly rows="8" cols="120"
-                  >{odata.row.rdata}</textarea
-                >
-              </div>
+            </tbody>
+            </table>
+          </div>
+         {#if cdata[0].method >''}
+          <div class="ny3">
+            <span>송신헤더</span> <br />
+            <textarea readonly rows="4">{cdata[0].headers}</textarea>
+          </div>
+          {/if}
+          <div class="ny3">
+            <br />
+            <span>{"송신데이터 : " + cdata[0].slen.toLocaleString("ko-KR")}
+            </span>
+            {#if $isLogged == 2}
+              <button onclick={() => trChange(cdata[0])}>송신저장</button>
+              <button onclick={() => trRedo(cdata[0])}>송신원복</button>
+              <button onclick={onParam}>Param</button>
             {/if}
+            <br />
+            <textarea rows={cdata[0].method >'' ? 6 : 10} cols="120" bind:value={cdata[0].sdata}></textarea>
+          </div>
+          {#if cdata[0].method >''}
+          <div class="ny3">
+            <span>수신헤더</span> <br />
+            <textarea readonly rows="4">{cdata[0].rhead}</textarea>
+          </div>
+          {/if}
+          <div class="ny3">
+            <span
+              >{"수신데이터 : " + cdata[0].rlen.toLocaleString("ko-KR")}</span
+            ><br />
+            <textarea readonly rows={cdata[0].method >'' ? 6 : 10} cols="120"
+              >{cdata[0].rdata.toString()}</textarea
+            >
           </div>
         </div>
-      {/if}
+        <div id="odata">
+          {#if odata.ok}
+            <div class="ny2">
+              <table>
+              <tbody>
+                <tr>
+                  <td class="lbl">테스트ID</td><td>{odata.row.tcode}</td>
+                  <td class="lbl">URI(SvcID)</td><td>{`${odata.row.method || ''} ${odata.row.uri}`}</td>
+                  <td class="lbl">Source</td><td
+                    >{odata.row.srcip + ":" + odata.row.srcport}</td
+                  >
+                </tr>
+                <tr>
+                  <td class="lbl">송수신</td><td
+                    >{odata.row.stime +
+                      " ~ " +
+                      odata.row.rtime.substring(11)}</td
+                  >
+                  <td class="lbl">소요시간</td><td>{odata.row.svctime}</td>
+                  <td class="lbl">Destination</td><td
+                    >{odata.row.dstip + ":" + odata.row.dstport}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          {#if odata.row.method >''}
+            <div class="ny3">
+              <span>송신헤더</span> <br />
+              <textarea readonly rows="4">{odata.row.headers}</textarea>
+            </div>
+            {/if}
+            <div class="ny3">
+              <br /><span
+                >{"송신데이터 : " + odata.row.slen.toLocaleString("ko-KR")}
+              </span> <br />
+              <textarea readonly rows={odata.row.method >'' ? 6 : 10}  cols="120" value={odata.row.sdata}></textarea>
+            </div>
+            {#if odata.row.method >''}
+            <div class="ny3">
+              <span>수신헤더</span> <br />
+              <textarea readonly rows="4">{odata.row.rhead}</textarea>
+            </div>
+            {/if}
+            <div class="ny3">
+              <span
+                >{"수신데이터 : " +
+                  odata.row.rlen.toLocaleString("ko-KR")}</span
+              ><br />
+              <textarea readonly rows={odata.row.method >'' ? 6 : 10} cols="120">{odata.row.rdata}</textarea
+              >
+            </div>
+          {/if}
+        </div>
+      </div>
+    {/if}
   </div>
 </div>
 
 <style>
   /* The Modal (background) */
-  .modal {
+  #myModal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
     right: 0;
     top: 0;
+    font-family:  Tahoma, Geneva, Verdana, sans-serif,'Segoe UI';
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
@@ -339,12 +361,14 @@
 
   .data {
     display: flex;
+    font-size: medium;
   }
   #odata {
     display: none;
     border-left: 2px solid darkblue;
   }
-  .cdata, #odata {
+  .cdata,
+  #odata {
     flex: 1 1 0;
   }
   /* .modal-content > div  {
@@ -382,16 +406,19 @@
     width: 6em;
     margin: 0 0.2em;
     border-radius: 6px;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2),
+    box-shadow:
+      0 8px 16px 0 rgba(0, 0, 0, 0.2),
       0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
 
   .ny1 button:hover {
-    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+    box-shadow:
+      0 12px 16px 0 rgba(0, 0, 0, 0.24),
       0 17px 50px 0 rgba(0, 0, 0, 0.19);
   }
   .ny1 .title {
-    font-size: 2em;
+    font-size: 1.2rem;
+    color:blue ;
   }
   .ny1 nav {
     float: right;

@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	let onTop   //keeping track of which open modal is on top
 	const modals={}  //all modals get registered here for easy future access
 	
@@ -9,16 +9,22 @@
 </script>
 
 <script lang="ts">
+
 import {onDestroy} from 'svelte'
 	
-let topDiv
-let visible=false
+let topDiv = $state()
+let visible=$state(false)
 let prevOnTop
 let closeCallback = null;
-let w = 95;
-let h = 95;
+let w = $state(95);
+let h = $state(95);
 
-export let id='' ;
+	interface Props {
+		id?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let { id = '', children }: Props = $props();
 
 function keyPress(ev){
 	//only respond if the current modal is the top one
@@ -65,14 +71,14 @@ onDestroy(()=>{
 </script>
 
 <div id="topModal" class:visible bind:this={topDiv} >
-	<div id='modal' style='--w:{w};--h:{h} ' on:click|stopPropagation={()=>{}}>
-		<svg id="close" on:click={()=> close()} viewBox="0 0 12 12">
+	<div id='modal' style='--w:{w};--h:{h} ' >
+		<svg id="close" onclick={()=> close()} viewBox="0 0 12 12">
 			<circle cx=6 cy=6 r=6 />
 			<line x1=3 y1=3 x2=9 y2=9 />
 			<line x1=9 y1=3 x2=3 y2=9 />
 		</svg>
 		<div id='modal-content'>
-			<slot></slot>
+			{@render children?.()}
 		</div>
 	</div>
 </div>

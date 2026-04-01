@@ -9,14 +9,14 @@
     getAppid,
     getFirst
   } from "./Common.svelte";
-  import Modal, { getModal } from "./Modal.svelte";
+  import Modal, { getModal } from "../lib/Modal.svelte";
   import CopyTr from "./CopyTr.svelte";
-  let rdata = Promise.resolve([]);
+  let rdata = $state(Promise.resolve([]));
   let tcode;
-  let jobnm = "등록";
-  let copytr = "copytr";
-  let curRow = {};
-  let encv = false;
+  let jobnm = $state("등록");
+  let copytr = $state("copytr");
+  let curRow = $state({});
+  let encv = $state(false);
 
   let sv_row;
   function clickRow(e, row) {
@@ -33,16 +33,15 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        code: curRow.code.toUpperCase(),
+        tcode: curRow.tcode.toUpperCase(),
         lvl: curRow.lvl,
         appid: curRow.appid,
         desc1: curRow.desc1,
-        cmpCode: curRow.cmpCode,
         tdate: curRow.tdate,
         endDate: curRow.endDate,
         thost: curRow.thost ?? "",
         tport: curRow.tport ?? 0,
-        tenv: encv ? "euc-kr" : "",
+        encval: encv ? "euc-kr" : "",
         tdir: curRow.tdir ?? "",
         pro: curRow.pro ?? "0",
         tuser: curRow.tuser ?? "",
@@ -62,7 +61,7 @@
   }
 
   function eraseTr() {
-    let codes = rdata.filter((r) => r.chk).map((r) => r.code);
+    let codes = rdata.filter((r) => r.chk).map((r) => r.tcode);
 
     if (codes.length == 0) return;
     if ( ! confirm( codes + " 전문삭제 진행할까요? ") ) return ;
@@ -88,7 +87,7 @@
   }
 
   function delTcode() {
-    const delcodes = rdata.filter((r) => r.chk).map((r) => r.code);
+    const delcodes = rdata.filter((r) => r.chk).map((r) => r.tcode);
 
     if (delcodes.length == 0) return;
     if (! confirm( delcodes + " 삭제하시겠습니까?") ) return ;
@@ -129,25 +128,24 @@
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
   <button
-    on:click={() => {
+    onclick={() => {
       (jobnm = "등록"),
-        (curRow.code = ""),
+        (curRow.tcode = ""),
         (curRow.type = "1"),
         (curRow.lvl = "1"),
         (curRow.endDate = null),
-        (curRow.cmpCode = null),
         (curRow.tdate = new Date().toISOString().slice(0, 10));
-      getModal().open(undefined, "50", "70");
+      getModal().open({}, "50", "70");
     }}>신규등록</button
   >
-  <button on:click={delTcode}>선택삭제</button>
+  <button onclick={delTcode}>선택삭제</button>
   <button
-    on:click={() => {
-      gtcode.update((v) => curRow.code);
-      getModal(copytr).open(null, "60", "60");
+    onclick={() => {
+      gtcode.update((v) => curRow.tcode);
+      getModal('copytr').open({}, "60", "60");
     }}>전문생성</button
   >
-  <button on:click={eraseTr}>전문삭제</button>
+  <button onclick={eraseTr}>전문삭제</button>
 </div>
 <hr />
 <div class="tmasterList">
@@ -172,19 +170,19 @@
       {#await rdata}
         <p>...waiting</p>
       {:then rows}
-        {#each rows as row (row.code)}
+        {#each rows as row (row.tcode)}
           <tr
-            on:click={(e) => clickRow(e, row)}
-            on:dblclick={() => {
+            onclick={(e) => clickRow(e, row)}
+            ondblclick={() => {
               // copyRow(row) ;
               curRow = row;
-              encv = curRow.tenv === "euc-kr";
+              encv = curRow.encval === "euc-kr";
               jobnm = "수정";
               getModal().open({}, "40", "70");
             }}
           >
             <td><input type="checkbox" bind:checked={row.chk} /></td>
-            <td class="tcode"><strong>{row.code}</strong></td>
+            <td class="tcode"><strong>{row.tcode}</strong></td>
             <td class="desc1" style="width:10rem">{row.desc1}</td>
             <td class="appid">{row.appid}</td>
             <td class="lvl">{getLvlnm(row.lvl)}</td>
@@ -193,7 +191,7 @@
             <td class="thost">{row.thost}</td>
             <td class="tport">{row.tport}</td>
             <td class="pro">{getProNm(row.pro)}</td>
-            <td class="tenv">{row.tenv}</td>
+            <td class="encval">{row.encval}</td>
             <td class="cnt" style="text-align:right"
               >{row.data_cnt.toLocaleString("ko-KR")}</td
             >
@@ -207,15 +205,15 @@
 </div>
 <Modal>
   <div class="hero from-amber-100 via-sky-300 to-sky-500 bg-gradient-to-br">
-    <h2 class="mx-auto my-5 text-center sm:text-4xl text-3xl text-blue-800 font-bold">{curRow.code} 테스트코드 {jobnm}</h2>
+    <h2 class="mx-auto my-5 text-center sm:text-4xl text-3xl text-blue-800 font-bold">{curRow.tcode} 테스트코드 {jobnm}</h2>
     <hr />
     <div class="items p-5">
       <div class="item in_label">테스트코드:</div>
       <div>
         <input
           class="item in_value"
-          pattern="[A-Z0-9]{(3, 6)}"
-          bind:value={curRow.code}
+          pattern="[A-Z0-9]{3, 6}"
+          bind:value={curRow.tcode}
         />
       </div>
       <div class="item in_label">테스트명:</div>
@@ -268,13 +266,13 @@
     </div>
     <hr />
     <div class='m-2'>
-      <button type="button" class="bg-blue-600 rounded-md text-white" on:click={updTcode}>저장</button>
-      <button type="button" class="bg-blue-600 rounded-md text-white" on:click={() => getModal().close()}>닫기</button>
+      <button type="button" class="bg-blue-600 rounded-md text-white" onclick={updTcode}>저장</button>
+      <button type="button" class="bg-blue-600 rounded-md text-white" onclick={() => getModal().close()}>닫기</button>
     </div>
   </div>
 </Modal>
-<Modal bind:id={copytr}>
-  <CopyTr tlist={rdata} on:click={() => getModal(copytr).close()} />
+<Modal id="copytr" >
+  <CopyTr tlist={rdata} oncls={() => getModal('copytr').close()} />
 </Modal>
 
 <style>

@@ -1,3 +1,4 @@
+<!-- @migration-task Error while migrating Svelte code: `<tr>` is invalid inside `<table>` -->
 <script>
   import { onMount } from "svelte";
 
@@ -178,6 +179,7 @@
     <!-- {#await promise}
       <p>...waiting</p>
     {:then rows} -->
+    <tbody>
       {#each data as row}
         <tr on:click={() => (appid = row[1])}>
           <td><input type="checkbox" bind:checked={row[0]} /></td>
@@ -188,7 +190,7 @@
         </tr>
       {/each}
     <!-- {/await} -->
-    <tr style="color: grey">
+    <tr>
       {#each newRow as col, i}
         {#if i == 0 }
           <td><input type="checkbox" bind:checked={col} /></td>
@@ -198,6 +200,7 @@
       {/each}
       <td><button on:click={addRow}>add</button></td>
     </tr>
+    </tbody>
     <!-- <pre style="background: #eee">{JSON.stringify(data, null, 2)}</pre> -->
   </table>
   <table class="apphost item">
@@ -212,6 +215,7 @@
     <!-- {#await promise_dtl}
       <p>searching...</p>
     {:then rows} -->
+    <tbody>
       {#each datadtl as row}
         <tr>
           <td contenteditable="false" bind:textContent={row[1]} />
@@ -229,6 +233,7 @@
       <td contenteditable="true" bind:textContent={newRow_dtl[3]} />
       <td><button on:click={addRow_dtl}>add</button></td>
     </tr>
+    </tbody>
   </table>
 </div>
 

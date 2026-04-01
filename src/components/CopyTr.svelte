@@ -1,19 +1,20 @@
 
 <script>
-  import { onMount,onDestroy, afterUpdate } from "svelte";
+  import { onMount,onDestroy, } from "svelte";
   import { gtcode, userid } from "../aqtstore" ;
   
-  let tlist_org = [];
-  export let tlist ;
-  let conds = {
+  let tlist_org = $state([]);
+  /** @type {{tlist: any}} */
+  let { tlist, oncls={} } = $props();
+  let conds = $state({
     srccode: "",
     dstcode: "",
     uri: "",
     cnt: 0,
     cond: ""
-  };
+  });
   let rdata = Promise.resolve([]);
-  let rmsg="↓ 데이터생성 버튼을 누르면 작업이 시작됩니다."
+  let rmsg=$state("↓ 데이터생성 버튼을 누르면 작업이 시작됩니다.")
   let ltcode ;
   const unsubs = gtcode.subscribe((data) => {
     ltcode = data;
@@ -73,21 +74,21 @@
   <span class="in_label">대상:</span><span>
     <select  class="in_value" bind:value={conds.dstcode} >
       {#each tlist as t }
-        <option value={t.code}>{t.code + ' : ' + t.name}</option>
+        <option value={t.tcode}>{t.tcode + ' : ' + t.name}</option>
       {/each}
     </select>
   </span>
-  <!-- svelte-ignore a11y-label-has-associated-control -->
+  <!-- svelte-ignore a11y_label_has_associated_control -->
   <label class="item in_label">URI or 서비스:</label><input class="item in_value" bind:value={conds.uri}/>
   <div class="item in_label">서비스별 건수:</div><input class="item in_value" type="number" bind:value={conds.cnt}/>
-  <div class="item in_label">기타조건:</div><textarea rows="3" class="item in_value" style="grid-column: 2 / span 2;" bind:value={conds.cond}/>
+  <div class="item in_label">기타조건:</div><textarea rows="3" class="item in_value" style="grid-column: 2 / span 2;" bind:value={conds.cond}></textarea>
 </div>
 <p>** 작업정보 **</p>
 <p> {rmsg}</p>
 <hr>
 <div>
-  <button on:click={createTr}>데이터생성</button>
-  <button on:click>닫기</button>
+  <button onclick={createTr}>데이터생성</button>
+  <button onclick={oncls}>닫기</button>
 </div>
 
 <style>

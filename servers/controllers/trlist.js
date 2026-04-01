@@ -1,42 +1,56 @@
 import express from 'express';
 const router = express.Router();
-import tconfigDao from '../dao/tconfigDao.js' ;
-import tcppacketDao from '../dao/tcppacketDao.js' ;
-import tloaddataDao from '../dao/tloaddataDao.js' ;
+import tconfigDao from '../dao/tconfigDao.js';
+import tcppacketDao from '../dao/tcppacketDao.js';
+import tloaddataDao from '../dao/tloaddataDao.js';
 
 let senc = '';
-let col1 = false ;
-let col2 = false ;
-const configCol = {} ;
+let col1 = false;
+let col2 = false;
+const configCol = {};
 tconfigDao.findAll()
-.then( r => {
+  .then(r => {
     if (r[0][0].encval == 'MS949' || r[0][0].encval.encval == 'EUCKR') senc = ' character set euckr';
     if (r[0][0].col1) { col1 = true; configCol.col1 = r[0][0].col1 }
     if (r[0][0].col2) { col2 = true; configCol.col2 = r[0][0].col2 }
-})
-.catch(e => console.log );
+  })
+  .catch(e => console.log);
 
 router.get('/config', async function (req, res, next) {
-    res.json(configCol) ;
+  res.json(configCol);
 });
 
 router.put('/change', async function (req, res, next) {
-  tcppacketDao.changeSdata([req.body.sdata , req.body.pkey])
-    .then( res.json({ message: `${req.body.pkey} 수정되었습니다.` }))
-    .catch(e => next(e) );
+  let result;
+  try {
+    if (req.body.gubun == 'sdata') {
+      result = await tcppacketDao.changeSdata([req.body.sdata, req.body.pkey]);
+    } else if (req.body.gubun == 'params') {
+      result = await tcppacketDao.changeParams([req.body.params, req.body.pkey]);
+    } else if (req.body.gubun == 'headers') {
+      result = await tcppacketDao.changeHeaders([req.body.headers, req.body.pkey]);
+    } else {
+      return res.status(400).json({ message: "변경할 항목이 없습니다." });
+    }
+
+  } catch (e) {
+    next(e);
+  }
+  res.json({ message: `${req.body.pkey} 수정되었습니다.` });
+
 });
 
 router.put('/redo', async function (req, res, next) {
   tcppacketDao.redoSdata([req.body.pkey])
     .then(r => {
-      res.json({ message: r[0].affectedRows > 0 ? "원복 되었습니다.": "변경되지 않았습니다." });
+      res.json({ message: r[0].affectedRows > 0 ? "원복 되었습니다." : "변경되지 않았습니다." });
     })
-    .catch(e => next(e) );
+    .catch(e => next(e));
 });
 router.post('/tcnt', async function (req, res, next) {
   tcppacketDao.tcount(req.body)
-  .then(rcnt => res.json(rcnt)  )
-  .catch (e => next(e)) ;
+    .then(rcnt => res.json(rcnt))
+    .catch(e => next(e));
 });
 
 router.post('/', async function (req, res, next) {
@@ -44,8 +58,8 @@ router.post('/', async function (req, res, next) {
     return res.send([]);
   };
   tcppacketDao.find(req.body)
-  .then(rows =>  res.json(rows) )
-  .catch((e) => next(e) );
+    .then(rows => res.json(rows))
+    .catch((e) => next(e));
 
 });
 
@@ -58,7 +72,7 @@ router.get('/:id', async function (req, res, next) {
 });
 
 router.post('/orig', async function (req, res, next) {
-  if (!req.body.id) throw new Error('조회할 origin id값이 없습니다.') ;
+  if (!req.body.id) throw new Error('조회할 origin id값이 없습니다.');
   tloaddataDao.findById(req.body.id)
     .then(rows => { return res.json(rows) })
     .catch((e) => { console.error(e); return next(e) });

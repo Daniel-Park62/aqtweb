@@ -19,14 +19,14 @@ import pays from './kftc/kftcPays.js';
 import insurances from './kftc/kftcInsurances.js';
 import loans from './kftc/kftcLoans.js';
 
-const originalWrite = process.stdout.write;
-
-// stdout.write 가로채기
-process.stdout.write = function (chunk, encoding, callback) {
-  if (svrno > 0)  tmocksvrDao.saveLogs(svrno, chunk.toString());
-  // 원래의 write 함수를 호출하여 화면에도 출력되게 함
-  return originalWrite.apply(process.stdout, arguments);
-};
+if (svrno) {
+    const originalWrite = process.stdout.write;
+    // stdout.write 가로채기
+    process.stdout.write = process.stderr.write = function (chunk, encoding, callback) {
+        tmocksvrDao.saveLogs(svrno, chunk.toString());
+        return originalWrite.apply(process.stdout, arguments);
+    };
+}
 
 app.use(cors());
 app.set('trust proxy', true);

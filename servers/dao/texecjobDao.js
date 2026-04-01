@@ -20,8 +20,8 @@ export default {
   ing : async (kind) => {
       return await aqtdb.query(` select a.pkey, startDt,endDt, timediff(ifnull(endDt,now()),startdt) elapsed,
             ifnull(b.tcnt,0) tcnt,ifnull(b.ccnt,0) ccnt,b.qcnt , a.resultstat
-        FROM texecjob a join texecing b on(a.pkey = b.pkey)  
-        where a.jobkind = ?`,[kind]);
+        FROM texecjob a join texecing b on(a.pkey = b.pkey )  
+        where a.jobkind = ? and a.resultstat = 2`,[kind]);
 
   },
   insert: async (parms) => {

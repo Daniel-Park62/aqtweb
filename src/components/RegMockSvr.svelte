@@ -2,7 +2,7 @@
 <script>
   import { onMount, tick } from "svelte";
   const statusnm = { 0: "정지", 1:"대기", 2: "실행중", 3: "오류"};
-  let rcnt = 0 ;
+  let rcnt = $state(0) ;
   const cols = {
     chk: true,
     pkey: 0,
@@ -13,7 +13,7 @@
     allowip: "",
     srcnm: "tcpsvr",
   };
-  let rdata = [{...cols}];
+  let rdata = $state([{...cols}]);
   let wsocket;
   function updService() {
     console.log("update", rdata);
@@ -83,7 +83,7 @@
     }
   }
 
-  let tblbody ;
+  let tblbody = $state() ;
   async function addRow() {
       cols.portno++ ;
       rdata = [...rdata, {...cols} ] ;
@@ -156,10 +156,10 @@
 
 <div id="btns" class="flex">
   <button
-    on:click={addRow}>추가</button >
-  <button on:click={delService}>선택삭제</button>
-  <button on:click={updService}>선택수정</button>
-  <button class="ml-auto" on:click={getdata}>조회</button>
+    onclick={addRow}>추가</button >
+  <button onclick={delService}>선택삭제</button>
+  <button onclick={updService}>선택수정</button>
+  <button class="ml-auto" onclick={getdata}>조회</button>
   <span class="ml-auto" >{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
 </div>
 <hr />
@@ -185,25 +185,25 @@
           <tr tabindex="0" class="focus-within:bg-blue-100 focus-within:outline-none cursor-pointer">
             <td class="align-middle"><input  disabled={row.pkey == 0} type="checkbox" bind:checked={row.chk} /></td>
             <td>
-              <input class="w-[100%] my-0 bg-transparent border-none" on:change={() => row.chk=true} bind:value={row.svrnm}>
+              <input class="w-[100%] my-0 bg-transparent border-none" onchange={() => row.chk=true} bind:value={row.svrnm}>
             </td>
             <td class="border align-middle">
               <div class="w-[100%] flex gap-4 items-center border-0 ">
-                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={2} on:change={() => chHdle(ix)}/> OpenAPI</label>
-                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} on:change={() => chHdle(ix)}/> TCP</label>
-                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={1} on:change={() => chHdle(ix)}/> HTTP</label>
+                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={2} onchange={() => chHdle(ix)}/> OpenAPI</label>
+                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} onchange={() => chHdle(ix)}/> TCP</label>
+                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={1} onchange={() => chHdle(ix)}/> HTTP</label>
               </div>
             </td>
-            <td><input disabled={row.status==2} class="w-[100%] my-0 bg-transparent border-none" type=number on:change={() => row.chk=true} bind:value={row.portno} max=65535></td>
+            <td><input disabled={row.status==2} class="w-[100%] my-0 bg-transparent border-none" type=number onchange={() => row.chk=true} bind:value={row.portno} max=65535></td>
             <td>
-              <input disabled={row.status==2} class="w-[100%] my-0 bg-transparent border-none" on:change={() => row.chk=true} bind:value={row.allowip}>
+              <input disabled={row.status==2} class="w-[100%] my-0 bg-transparent border-none" onchange={() => row.chk=true} bind:value={row.allowip}>
             </td>
             <td   class=" srcnm">
-              <input disabled={row.status==2} class="my-0 bg-transparent border-none" on:change={() => row.chk=true} bind:value={row.srcnm}>
+              <input disabled={row.status==2} class="my-0 bg-transparent border-none" onchange={() => row.chk=true} bind:value={row.srcnm}>
             </td>
             <td class="align-middle">{statusnm[row.status]}</td>
             <td class="align-middle ">
-              <button disabled={row.status == 1} on:click={ () => {startsvr(ix);} } class={`${row.status == 2 ? 'hover:bg-red-700 bg-red-600' : 'hover:bg-blue-700 bg-blue-600'} px-4 py-1 text-white text-xs rounded-md transition`}>
+              <button disabled={row.status == 1} onclick={() => {startsvr(ix);}} class={`${row.status == 2 ? 'hover:bg-red-700 bg-red-600' : 'hover:bg-blue-700 bg-blue-600'} px-4 py-1 text-white text-xs rounded-md transition`}>
               {( row.status == 1 ||  row.status == 2 )  ? '중지' : '시작'}
               </button> 
             </td>

@@ -4,9 +4,9 @@
   import { getLvlnm } from "./Common.svelte";
   import TaskList from "./TaskList.svelte";
   import Trtable from "./Trtable.svelte";
-  import Modal,{getModal} from "./Modal.svelte";
+  import Modal,{getModal} from "../lib/Modal.svelte";
 
-  let conds = {
+  let conds = $state({
     tcode: "",
     page: 0,
     psize: 20,
@@ -14,13 +14,10 @@
     uri: "",
     task:"",
     apps:""
-  };
+  });
 
-  let task, lvl ,ischg = 0;
-  let dtls = [];
-  // let promise = Promise.resolve([]);
-  
-  $: if(ischg) getDetail(task,lvl);
+  let task = $state(""), lvl = $state("") ,ischg = $state(0);
+  let dtls = $state([]);
 
   let sv_row ;
   function clickRow(e, row) {
@@ -64,6 +61,11 @@
     else
       throw new Error(res.statusText);
   }
+  // let promise = Promise.resolve([]);
+  
+  $effect(() => {
+    if(ischg) getDetail(task,lvl);
+  });
 </script>
 
 <div class="main">
@@ -77,9 +79,9 @@
     <table>
       <thead>
         <tr >
-          <th rowspan="2" id='svcid' class="cursor-pointer" on:click={sortdata} >서비스ID</th>
-          <th rowspan="2" id='svckor' class="cursor-pointer" on:click={sortdata}>서비스명</th>
-          <th rowspan="2" id='tcnt' class="cursor-pointer" on:click={sortdata}>패킷건수</th>
+          <th rowspan="2" id='svcid' class="cursor-pointer" onclick={sortdata} >서비스ID</th>
+          <th rowspan="2" id='svckor' class="cursor-pointer" onclick={sortdata}>서비스명</th>
+          <th rowspan="2" id='tcnt' class="cursor-pointer" onclick={sortdata}>패킷건수</th>
           <th colspan="4" >TOBE</th>
           <th colspan="2" >ASIS</th>
           <th colspan="2" >차이비교</th>
@@ -88,10 +90,10 @@
         <tr >
           <th>성공건수</th>
           <th>실패건수</th>
-          <th id='avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
-          <th id='stdv' class="cursor-pointer" on:click={sortdata}>표준편차</th>
-          <th id='o_avgt' class="cursor-pointer" on:click={sortdata}>평균시간</th>
-          <th id='o_stdv' class="cursor-pointer" on:click={sortdata}>표준편차</th>
+          <th id='avgt' class="cursor-pointer" onclick={sortdata}>평균시간</th>
+          <th id='stdv' class="cursor-pointer" onclick={sortdata}>표준편차</th>
+          <th id='o_avgt' class="cursor-pointer" onclick={sortdata}>평균시간</th>
+          <th id='o_stdv' class="cursor-pointer" onclick={sortdata}>표준편차</th>
           <th >평균시간</th>
           <th >표준편차</th>
         </tr>
@@ -101,8 +103,8 @@
           <p>...waiting</p>
         {:then rows} -->
           {#each dtls as row}
-            <tr on:click={(e)=>clickRow(e,row)}
-                on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
+            <tr onclick={(e)=>clickRow(e,row)}
+                ondblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal('bytask').open({}) }}>
               <td >{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
@@ -125,7 +127,7 @@
   </div>
 </div>
 <div>
-<Modal>
+<Modal id='bytask'>
 	<Trtable bind:conds/>
 </Modal>
 </div>

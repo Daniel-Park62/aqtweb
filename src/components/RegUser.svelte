@@ -1,8 +1,8 @@
 <script>
   import { onMount, tick } from "svelte";
 
-  let rdata = [];
-  let curRow = {};
+  let rdata = $state([]);
+  let curRow = $state({});
   let ncount = 0 ;
   const cols = {
     chk: true,
@@ -103,7 +103,7 @@
   }
 
   onMount(getdata);
-  let tblbody ;
+  let tblbody = $state() ;
   async function addRow() {
       cols.regdt = (new Date()).toLocaleString('lt') ;
       rdata = [...rdata,{...cols} ] ;
@@ -119,10 +119,10 @@
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button on:click={addRow}>추가</button>
-  <button on:click={delUser}>선택삭제</button>
-  <button on:click={updUser}>적용</button>
-  <button on:click={getdata}>적용취소</button>
+  <button onclick={addRow}>추가</button>
+  <button onclick={delUser}>선택삭제</button>
+  <button onclick={updUser}>적용</button>
+  <button onclick={getdata}>적용취소</button>
 </div>
 <hr />
 <div class="tList">
@@ -138,7 +138,7 @@
     </thead>
     <tbody bind:this={tblbody}>
         {#each rdata as row}
-          <tr on:click={() => (curRow = row)}> 
+          <tr onclick={() => (curRow = row)}> 
             <td><input type="checkbox" bind:checked={row.chk} /></td>
             {#if row.pkey === 0 }
               <td tabindex="0" 
@@ -146,7 +146,7 @@
                 contenteditable="true"
                 style="width:10rem"
                 bind:textContent={row.usrid}
-              />
+></td>
             {:else}
               <td class="usrid" style="width:10rem">{row.usrid}</td>
             {/if}
@@ -155,19 +155,19 @@
               contenteditable
               style="width:15rem"
               bind:textContent={row.host}
-            />
+></td>
             <td
               contenteditable
               class="usrdesc"
               style="width:20%"
               bind:textContent={row.usrdesc}
-            />
+></td>
             <td><input type="checkbox" bind:checked={row.admin} /></td>
             <td
               contenteditable="true"
               class="apps"
               bind:textContent={row.apps}
-            />
+></td>
             <td>{row.regdt}</td>
             {#if curRow === row}
               <td>◀</td>

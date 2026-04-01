@@ -3,14 +3,14 @@
   import { userid,authApps } from "../aqtstore.js";
   import Trtable from "./Trtable.svelte";
 
-  let vid = 'none';
-  let mycond = {
+  let vid = $state('none');
+  let mycond = $state({
     rcode: '',
     cond: "",
     uri: ""
-  };
+  });
   
-  let conds = {
+  let conds = $state({
     tcode: "",
     rcode: '',
     page: 0,
@@ -18,16 +18,17 @@
     cond: "",
     uri: "",
     apps:"",
-  };
+  });
 
-  let tcodelist = [];
-  let selected ;
-  let tcnt = 0;
-
+  let tcodelist = $state([]);
+  let selected = $state() ;
+  
+  let tcntx =  $state('') ;
   async function getTRlistm() {
     // [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
     Object.assign(conds,mycond);
-    conds.tcode = selected.code ;
+    conds.tcode = selected.tcode ;
+    tcntx = '조회중' ;
     const res = await fetch("/trlist/tcnt", {
       method: "POST",
       headers: {
@@ -37,10 +38,12 @@
     });
     if (res.ok) {
       const rdata = await res.json();
-      tcnt = rdata[0].tcnt ;
+      const tcnt = rdata[0].tcnt ;
+      tcntx = Number(tcnt).toLocaleString() +' 건';
       // conds.page = Math.min( Math.trunc(Number(tcnt) / conds.psize), conds.page ) ;
     } else {
       // rdata = Promise.resolve([]);
+      tcntx = '';
       throw new Error(res.statusText);
     }
   }
@@ -61,24 +64,22 @@
   }
 </script>
 
-<div class="main" on:mouseenter={() => vid = 'none' }>
-  <div class="cond fitem" on:keyup={enterkey} >
+<div class="main" onmouseenter={() => vid = 'none'}>
+  <div class="cond fitem" onkeyup={enterkey} >
     <p>* 테스트ID : </p> 
-    <select bind:value={selected} on:change={()=> {conds.tcode = ''; conds.page=0}} >
+    <select bind:value={selected} onchange={()=> {conds.tcode = ''; conds.page=0}} >
         
       {#each tcodelist as tc}
       <option value={tc}>
-        {tc.code + ' : ' + tc.name}
+        {tc.tcode + ' : ' + tc.name}
       </option>
       {/each}
     </select>
     <span>URI : <input type="text" bind:value={mycond.uri} /></span>
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
     <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} /></span>
-    <button  on:click={getTRlistm}>조회</button>
-    {#if tcnt > 0}
-    <span>{Number(tcnt).toLocaleString()} 건</span>
-    {/if}
+    <button  onclick={getTRlistm}>조회</button>
+    <span>{tcntx}</span>
 
   </div>
   <div class="fitem">

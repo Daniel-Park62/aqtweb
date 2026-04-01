@@ -1,10 +1,13 @@
 <script>
-  export let column = "";
-  export let sortBy = null;
-  export let sortColumn = "";
-  export let sortDirection = "";
+  /** @type {{column?: string, sortBy?: any, sortColumn?: string, sortDirection?: string}} */
+  let {
+    column = "",
+    sortBy = $bindable(null),
+    sortColumn = "",
+    sortDirection = ""
+  } = $props();
 
-  $: sort = column === sortColumn ? sortDirection : null;
+  let sort = $derived(column === sortColumn ? sortDirection : null);
 </script>
 
 <style>
@@ -40,6 +43,6 @@
   }
 </style>
 
-<button on:click={() => sortBy=column} data-sort={sort}>
+<button onclick={() => sortBy=column} data-sort={sort}>
   {column}
 </button>

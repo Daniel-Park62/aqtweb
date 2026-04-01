@@ -2,9 +2,8 @@
   import { onMount } from "svelte";
   import { getLvlnm } from "./Common.svelte" ;
 
-  export let task = "";
-  export let lvl = '';
-  export let ischg = 1;
+  /** @type {{task?: string, lvl?: string, ischg?: number}} */
+  let { task = $bindable(""), lvl = $bindable(''), ischg = $bindable(1) } = $props();
   let sv_row ;
   function clickRow(e, row) {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
@@ -12,7 +11,7 @@
     sv_row.classList.toggle("bg-teal-100");
   }
 
-  let promise = Promise.resolve([]);
+  let promise = $state([]);
   onMount(async () => {
     const res = await fetch( "/byservice");
     promise = await res.json();
@@ -40,7 +39,7 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={(e) => {
+          <tr onclick={(e) => {
               ischg=0;
               if (task != row.task || lvl != row.lvl) {
                 ischg=1;

@@ -1,9 +1,9 @@
 <script>
   import { onMount } from "svelte";
 
-  let rdata = [];
-  let curRow = {};
-  let rcnt = 0 ;
+  let rdata = $state([]);
+  let curRow = $state({});
+  let rcnt = $state(0) ;
   let cols = {
     chk: 1,
     pkey: 0,
@@ -15,7 +15,7 @@
     manager: "",
     svckind: "0",
   };
-  let newRow = { ...cols };
+  let newRow = $state({ ...cols });
   const columns = [
     " ",
     "APID ",
@@ -26,10 +26,10 @@
     "담당자",
     "서비스종류",
   ];
-  const conds = {
+  const conds = $state({
     appid: "",
     svcid: "",
-  };
+  });
 
   let sv_row;
   function clickRow(e, row) {
@@ -130,19 +130,19 @@
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
   <button
-    on:click={() => {
+    onclick={() => {
       newRow.appid = curRow.appid;
       rdata = [{ ...newRow }, ...rdata];
       newRow = { ...cols };
       newRow.appid = curRow.appid;
     }}>추가</button
   >
-  <button on:click={delService}>선택삭제</button>
-  <button on:click={updService}>적용</button>
-  <button on:click={getdata}>적용취소</button>
+  <button onclick={delService}>선택삭제</button>
+  <button onclick={updService}>적용</button>
+  <button onclick={getdata}>적용취소</button>
   <span>APPID : <input type="text" bind:value={conds.appid} /></span>
   <span>서비스(URI) : <input type="text" bind:value={conds.svcid} /></span>
-  <button style="margin-left: auto" on:click={getdata}>조회</button>
+  <button style="margin-left: auto" onclick={getdata}>조회</button>
   <span>{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
 </div>
 <hr />
@@ -162,20 +162,20 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={(e) => clickRow(e, row)}>
+          <tr onclick={(e) => clickRow(e, row)}>
             <td><input type="checkbox" bind:checked={row.chk} /></td>
             {#if row.pkey === 0}
               <td
                 class="appid"
                 contenteditable="true"
                 bind:textContent={row.appid}
-              />
+></td>
               <td
                 class="svcid"
                 contenteditable="true"
                 style="width:20rem ;text-align:left"
                 bind:textContent={row.svcid}
-              />
+></td>
             {:else}
               <td class="appid">{row.appid}</td>
               <td class="svcid" style="width:20rem">{row.svcid}</td>
@@ -185,28 +185,28 @@
               class="svckor"
               style="width:20%"
               bind:textContent={row.svckor}
-            />
+></td>
             <td
               contenteditable="true"
               bind:textContent={row.svceng}
               class="svceng"
               style="width:20%"
-            />
+></td>
             <td
               contenteditable="false"
               class="task"
               bind:textContent={row.task}
-            />
+></td>
             <td
               contenteditable="true"
               class="manager"
               bind:textContent={row.manager}
-            />
+></td>
             <td
               contenteditable="true"
               class="svckind"
               bind:textContent={row.svckind}
-            />
+></td>
           </tr>
         {/each}
       {:catch err}

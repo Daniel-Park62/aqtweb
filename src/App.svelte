@@ -35,7 +35,7 @@
 	];
 
 	let mitems2 = [
-		{ nm: "기초정보", url: "regConfig", cnm: RegConfig },
+		{ nm: "기본정보관리", url: "regConfig", cnm: RegConfig },
 		{ nm: "App 등록", url: "regapp", cnm: RegApp },
 		{ nm: "사용자 등록", url: "regUser", cnm: RegUser },
 		{ nm: "서비스 등록", url: "regService", cnm: RegService },
@@ -45,15 +45,15 @@
 		{ nm: "모의서버 관리", url: "regMockSvr", cnm: RegMockSvr },
 		{ nm: "원본현황", url: "tloaddata", cnm: Tloaddata },
 	];
-	$: chklabel = boxChecked ? "▶" : "◀";
-	let boxChecked = false;
-	let selected = mitems[0];
+	let boxChecked = $state(false);
+	let selected = $state(mitems[0]);
 	function select_item(item) {
 		selected = item;
 		// console.log(selected) ;
 	}
 
 	// onMount( () => console.log(window.location.host)) ;
+	let chklabel = $derived(boxChecked ? "▶" : "◀");
 </script>
 
 {#if !$isLogged}
@@ -68,13 +68,13 @@
 		/>
 		<label for="checkbtn" class="text-blue-500 cursor-pointer">{chklabel}</label
 		>
-		<div class="column menu">
+		<div class="column menu" role="none">
 			<img src="/images/Logo.png" alt="" />
 			<p></p>
 			<img src="/images/result.png" alt="" />
 			<ul>
 				{#each mitems as item}
-					<li on:click={() => select_item(item)}>◽ {item.nm}</li>
+					<li onclick={() => select_item(item)}>◽ {item.nm}</li>
 				{/each}
 			</ul>
 			{#if $isLogged == 2}
@@ -83,17 +83,17 @@
 					<img src="/images/operating.png" alt="" />
 					<ul>
 						{#each mitems2 as item}
-							<li on:click={() => select_item(item)}>◽ {item.nm}</li>
+							<li onclick={() => select_item(item)}>◽ {item.nm}</li>
 						{/each}
 					</ul>
 				</div>
 			{/if}
 		</div>
 
-		<div class="column right">
-			<div class="job_name">🔸 {selected.nm}</div>
+		<div class="column right" role="none">
+			<div class="job_name"> {selected.nm}</div>
 			<div class="main-scr">
-				<svelte:component this={selected.cnm}></svelte:component>
+				<selected.cnm></selected.cnm>
 			</div>
 		</div>
 	</main>
@@ -170,7 +170,7 @@
 
 	.job_name {
 		text-align: left;
-		color: orangered;
+		color: black ; /* orangered; */
 		text-transform: uppercase;
 		text-shadow: 1px 1px 0px #bdbdbd;
 		font-size: 1.4em;

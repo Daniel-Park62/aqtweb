@@ -38,44 +38,42 @@ router.post('/copyTr', function(req, res, next) {
 router.post('/',async function(req, res, next) {
 
   const parms = {
-    code: req.body.code,
+    tcode: req.body.tcode,
     appid: req.body.appid,
     lvl: req.body.lvl,
     desc1: req.body.desc1,
-    cmpCode: req.body.cmpCode,
     tdate: req.body.tdate,
     endDate: req.body.endDate,
     tdir: req.body.tdir,
     tuser: req.body.tuser,
     thost: req.body.thost,
     tport: req.body.tport,
-    tenv: req.body.tenv,
+    encval: req.body.encval,
     pro: req.body.pro
    } ;
   tmasterDao.insertMaster(parms)
-  .then(r => res.status(201).send({message: `${req.body.code}` + " 등록되었습니다."}) )
+  .then(r => res.status(201).send({message: `${req.body.tcode}` + " 등록되었습니다."}) )
   .catch(e => next( e ) ) ;           
 
 });
 
 router.put('/',function(req, res, next) {
   const parms = {
-    code: req.body.code,
+    tcode: req.body.tcode,
     appid: req.body.appid,
     lvl: req.body.lvl,
     desc1: req.body.desc1,
-    cmpCode: req.body.cmpCode,
     tdate: req.body.tdate,
     endDate: req.body.endDate,
     tdir: req.body.tdir,
     tuser: req.body.tuser,
     thost: req.body.thost,
     tport: req.body.tport,
-    tenv: req.body.tenv,
+    encval: req.body.encval,
     pro: req.body.pro
    } ;
   tmasterDao.updateMaster(parms)
-  .then(r => res.status(201).send({message: `${req.body.code}` + " 수정되었습니다."}) )
+  .then(r => res.status(201).send({message: `${req.body.tcode}` + " 수정되었습니다."}) )
   .catch(e =>  next( e )  ) ;           
 
 });

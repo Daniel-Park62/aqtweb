@@ -7,8 +7,19 @@ import mLog from '../lib/aqtLogger.js';
 const logger = mLog.child({ label: "httpsvr" });
 
 import {getCon} from '../db/db_con1.js';
+import tmocksvrDao from '../dao/tmocksvrDao.js';
+
 const port = process.argv[2] ?? 10003;
 const svrno = process.argv[3] ?? 0;
+
+if (svrno) {
+    const originalWrite = process.stdout.write;
+    // stdout.write 가로채기
+    process.stdout.write = process.stderr.write = function (chunk, encoding, callback) {
+        tmocksvrDao.saveLogs(svrno, chunk.toString());
+        return originalWrite.apply(process.stdout, arguments);
+    };
+}
 
 app.use(cors());
 app.set('trust proxy', true);

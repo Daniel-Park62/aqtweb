@@ -32,8 +32,8 @@ import tloadData from './controllers/tloadData.js' ;
 app.use(express.static(path.join(import.meta.dirname, "../public")));
 
 app.use((req,res,next) => {
-   res.locals.aqtlog = (...a) => { console.log((new Date()).toLocaleString('lt'),...a )} ;
-   if (process.env.AQTDEBUG) res.locals.aqtlog(`${req.ip}:${req.originalUrl}:`, req.body ? JSON.stringify(req.body) : "") ;
+   res.locals.aqtlog = (...a) => { process.env.AQTDEBUG && console.log((new Date()).toLocaleString('lt'),...a )} ;
+   res.locals.aqtlog(`${req.ip}:${req.originalUrl}:`, req.body ? JSON.stringify(req.body) : "") ;
    next();
 });
 

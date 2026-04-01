@@ -1,13 +1,16 @@
 <script>
-  import * as buffer from 'buffer/';
+  // import { createBubbler, stopPropagation } from 'svelte/legacy';
+
+  // const bubble = createBubbler();
+  import * as buffer from 'buffer';
   window.Buffer = buffer.Buffer ;
 
-  export let showModal; // boolean
-  export let usrid;
-  let dialog; // HTMLDialogElement
-  let opass = '';
-  let npass1 = '';
-  let npass2 = '';
+  /** @type {{showModal: any, usrid: any}} */
+  let { showModal = $bindable(), usrid } = $props();
+  let dialog = $state(); // HTMLDialogElement
+  let opass = $state('');
+  let npass1 = $state('');
+  let npass2 = $state('');
   async function changepass() {
     if (npass1 !== npass2) {
       alert("비밀번호 확인값이 다릅니다.");
@@ -54,17 +57,18 @@
     dialog.close();
   }
 
-  $: if (dialog && showModal) dialog.showModal();
+  $effect(() => {
+    if (dialog && showModal) dialog.showModal();
+  });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
 <dialog
   bind:this={dialog}
-  on:close={() => (showModal = false)}
-  on:click|self={() => dialog.close()}
+  onclose={() => (showModal = false)}
 >
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div on:click|stopPropagation>
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div>
     <h2>{usrid} 비밀번호변경</h2>
     <hr />
     <div>변경전 비밀번호:</div>
@@ -77,8 +81,8 @@
     <input type="password" bind:value={npass2} />
 
     <div class="btns">
-      <button on:click={_onCancel}> 취소 </button>
-      <button disabled='{npass1.length < 6}' on:click={changepass}> 적용 </button>
+      <button onclick={_onCancel}> 취소 </button>
+      <button disabled='{npass1.length < 6}' onclick={changepass}> 적용 </button>
     </div>
   </div>
 </dialog>
