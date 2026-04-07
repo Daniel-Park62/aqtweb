@@ -2,8 +2,8 @@
 <script>
   import { isLogged, userid } from "../aqtstore.js";
 
-  let { vid = $bindable('none'), pid = $bindable(0), parr = $bindable([]),
-       pidx = $bindable(0), origin = "", onParam = {} } = $props() ;
+  let { vid = $bindable('none'), parr = [],pid = 0, 
+       pidx = 0, origin = "", onParam = {} } = $props() ;
   let modal;
   let cdata = $state([]);
   let odata = $state({ ok: false, display: "none" });
@@ -13,7 +13,7 @@
   });
 
   $effect(() => {
-    getDetail(pid);
+    if (pid) getDetail(pid);
   });
 
   async function reSend(row) {

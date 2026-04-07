@@ -4,7 +4,7 @@ import config from './dbinfo.js';
 const pool = createPool({
      host: config.host,
      port: config.port,
-   // socketPath: '\\\\.\\pipe.\\MySQL',
+    // socketPath: '\\\\.\\pipe.\\MySQL',
       user: config.user,
       password: config.password,
       database: config.database,
@@ -15,6 +15,8 @@ const pool = createPool({
       decimalAsNumber : true,
       multipleStatements:true,
       debugLen : 1024,
+      charset: 'utf8mb4',
+      collation: 'utf8mb4_general_ci' 
 }) ;
 
 export default pool ;

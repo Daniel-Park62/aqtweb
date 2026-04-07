@@ -3,7 +3,6 @@
 
   import { authApps, userid } from "../aqtstore.js";
   import DetailTR from "./DetailTR.svelte";
-  import { onMount } from "svelte";
 
   const columns = [
     "ID",
@@ -78,6 +77,7 @@
       body: JSON.stringify(conds),
     });
     if (res.ok) {
+      rdata=[];
       rdata = await res.json();
       //  console.log("trlist end", rdata) ;
     } else {
@@ -177,9 +177,13 @@
   <table>
     <thead>
       <tr>
-        <th  onclick={() => {
-//          rdata.forEach(r => r.chk = !r.chk ) ;
-        }}>c</th>
+        <th><input type="checkbox" onchange={
+          (e) => {
+            for(let i=0; i < rdata.length; ++i) {
+                rdata[i].chk = e.target.checked ;
+            }
+          }
+        }></th>
         {#each columns as column }
           <th>
             <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
@@ -204,7 +208,7 @@
 
           <td><input type="checkbox" bind:checked={row.chk} /></td>
 
-          <td class="cmpid"><strong>{row.id}</strong></td>
+          <td class="cmpid"><strong>{row.pkey}</strong></td>
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
           <td style="text-align:right" class="elapsed">{row.원소요시간}</td>
@@ -222,7 +226,7 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid bind:pid bind:parr bind:pidx onParam=undefined />
+<DetailTR bind:vid pid={pid} parr={parr} pidx={pidx} onParam={undefined} />
 
 <style>
   .elapsed,

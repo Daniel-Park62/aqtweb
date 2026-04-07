@@ -23,9 +23,8 @@
   let tcodelist = $state([]);
   let selected = $state() ;
   
-  let tcntx =  $state('') ;
+  let tcntx =  $state('');
   async function getTRlistm() {
-    // [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
     Object.assign(conds,mycond);
     conds.tcode = selected.tcode ;
     tcntx = '조회중' ;
@@ -40,6 +39,8 @@
       const rdata = await res.json();
       const tcnt = rdata[0].tcnt ;
       tcntx = Number(tcnt).toLocaleString() +' 건';
+      conds = { ...conds };
+
       // conds.page = Math.min( Math.trunc(Number(tcnt) / conds.psize), conds.page ) ;
     } else {
       // rdata = Promise.resolve([]);

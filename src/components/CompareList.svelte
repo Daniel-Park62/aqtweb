@@ -28,11 +28,11 @@ import CompareTr from "./CompareTr.svelte";
 
   let tcodelist = $state([]);
   let selected = $state() ;
-  let tcnt = $state('');
+  let tcntx = $state('');
 
   async function getTRlistm() {
-    Object.assign(conds, mycond) ; // [conds.cond, conds.rcode, conds.uri] = [mycond.cond, mycond.rcode, mycond.uri] ;
     conds.tcode = selected.tcode ;
+    tcntx='조회중';
     const res = await fetch("/tloaddata/compareTcnt", {
       method: "POST",
       headers: {
@@ -41,11 +41,14 @@ import CompareTr from "./CompareTr.svelte";
       body: JSON.stringify(conds),
     });
     if (res.ok) {
+      Object.assign(conds, mycond) ; 
       const rdata = await res.json();
-      tcnt = rdata.tcnt ;
+      const tcnt = rdata.tcnt ;
+      tcntx = Number(tcnt).toLocaleString() +' 건';
       // console.log("trlist tcnt", rdata) ;
     } else {
       // rdata = Promise.resolve([]);
+      tcntx = '';
       throw new Error(res.statusText);
     }
   }
@@ -82,7 +85,7 @@ import CompareTr from "./CompareTr.svelte";
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
     <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} placeholder=" tobe:a.* , 원본:b.*"/></span>
     <button onclick={getTRlistm}>조회</button>
-    <span>{tcnt}</span>
+    <span>{tcntx}</span>
 
   </div>
 

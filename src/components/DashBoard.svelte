@@ -135,7 +135,7 @@
   let tick = 0;
   // $: getdata(tick);
 
-  let tcode;
+  let tcode="";
   let svccnt = 999;
   let datas = {
     svccnt: 0,
@@ -231,7 +231,7 @@
       </div>
     </div>
   </div>
-  <div class="tlist"><TidList bind:tick /></div>
+  <div class="tlist"><TidList bind:tcode={tcode}/></div>
 </div>
 
 <style>

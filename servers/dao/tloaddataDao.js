@@ -1,4 +1,7 @@
 import aqtdb from '../db/dbconn.js';
+aqtdb.query("SET collation_connection = 'utf8mb4_general_ci'");
+aqtdb.query("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_general_ci'");   
+
 function makeCond(pcond) {
   if (!pcond.psize) {
     return "" ;
@@ -13,28 +16,24 @@ function makeCond(pcond) {
 export default {
   find: async (args) => {
     // console.log(args);
-    if (!args.enc) args.enc = '';
     if (!args.psize) {
       return [];
     }
 
-    await aqtdb.query("select encval from vtcase where tcode = ? limit 1", [args.tcode])
-      .then(rows => {
-        if (rows[0]?.encval == 'euc-kr') args.enc = ' charset euckr'
-        else args.enc = '';
-      });
     let etcond = '';
     if (args.cond) etcond += ' and (' + args.cond + ') ';
 
     try {
       const rows = await aqtdb.query({
         dateStrings: true,
-        sql: "	SELECT pkey,  tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  \
-                 '' appid, uri, seqno, ackno, rcode,params, headers, errinfo, sflag, rhead, slen, rlen, \
-                 cast(sdata AS CHAR(250) " + args.enc + ") sdata , cast(rdata AS CHAR(250) " + args.enc + ") rdata,\
-                 date_format(cdate,'%Y-%m-%d %T') cdate \
-                 FROM tloaddata t  where tcode  = ? and t.uri rlike ? " + etcond + " order by o_stime limit ?, ?  "
-      }
+        sql: `	SELECT pkey,  t.tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, ifnull(method,'') method,  
+                 '' appid, uri, seqno, ackno, rcode,params, headers, errinfo, sflag, rhead, slen, rlen, 
+                 case encval when 'euc-kr' then CAST( sdata AS CHAR(250) CHARSET euckr) else cast(sdata as char) end  COLLATE utf8mb4_general_ci sdata ,
+                 case encval when 'euc-kr' then CAST( rdata AS CHAR(250) CHARSET euckr) else cast(rdata as char) end  COLLATE utf8mb4_general_ci rdata,
+                 date_format(cdate,'%Y-%m-%d %T') cdate 
+                 FROM tloaddata t left join vtcase m on (t.tcode = m.tcode) where t.tcode  = ? 
+                  and t.uri rlike ? ${etcond} order by o_stime limit ?, ?  `
+        }
         , [args.tcode, args.uri, args.page * args.psize, +(args.psize)]);
       return (rows);
     } catch (e) {
@@ -46,8 +45,8 @@ export default {
         dateStrings: true,
         sql: `SELECT pkey, pkey cmpid, t.tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, 
         dstip, dstport, ifnull(method,'') method,'' appid, uri, seqno, ackno, rcode,params, headers, errinfo, sflag, rhead, slen, rlen, 
-          case encval when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end sdata ,
-          case encval when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end rdata ,
+          case encval when 'euc-kr' then CAST( sdata AS CHAR CHARSET euckr) else cast(sdata as char) end  COLLATE utf8mb4_general_ci sdata ,
+          case encval when 'euc-kr' then CAST( rdata AS CHAR CHARSET euckr) else cast(rdata as char) end  COLLATE utf8mb4_general_ci rdata ,
       date_format(cdate,'%Y-%m-%d %T') cdate 
       FROM tloaddata t left join vtcase m on (t.tcode = m.tcode) where pkey  = ? limit 1`  }
         , [id]);

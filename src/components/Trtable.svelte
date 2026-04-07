@@ -1,7 +1,7 @@
 <script>
   import { authApps, userid } from "../aqtstore.js";
   import DetailTR from "./DetailTR.svelte";
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import ParamInput from "./ParamInput.svelte";
   let showParam = $state(false);
   const columns = [
@@ -88,28 +88,39 @@
     .catch( err => console.error(err)) ;
     // promise = Promise.resolve(tcodelist) ;
   });
+  let loading = false;
+
   async function getTRlist() {
+    if (loading) return ;
+    loading = true ;
     if (sv_row) sv_row.classList.remove("bg-teal-100");
     // pg = conds.page + 1;
     conds.apps = $authApps;
     conds.sortby = sortby ?? '';
     document.body.style.cursor = "wait";
-    const res = await fetch("/trlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(conds),
-    });
-    document.body.style.cursor = "default";
-    if (res.ok) {
-      rdata = await res.json();
-      //  console.log("trlist end", rdata) ;
-    } else {
-      // rdata = Promise.resolve([]);
-      rdata = [];
-      throw new Error(res.statusText);
+    rdata=[];
+    await tick() ;
+    try {
+      const res = await fetch("/trlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(conds),
+      });
+      if (res.ok) {
+        rdata = await res.json();
+        // console.log("trlist end", rdata) ;
+      } else {
+        throw new Error(res.statusText);
+      }
+    } catch(err) {
+      alert("데이터 조회 중 오류가 발생했습니다: " + err.message);
+    } finally {
+      document.body.style.cursor = "default";
+      loading = false ;
     }
+
   }
 
   async function getDownLoad() {
@@ -158,6 +169,7 @@
       bind:value={pg}
       onchange={() => {
         conds.page = pg - 1;
+        conds = { ...conds } ;
       }}
     />
     Page크기 :<input
@@ -171,6 +183,7 @@
   <button
     onclick={() => {
       conds.page++;
+      conds = { ...conds } ;
     }}
   >
     Next &gt;</button
@@ -179,6 +192,7 @@
     <button
       onclick={() => {
         conds.page--;
+        conds = { ...conds } ;
       }}
     >
       &lt; Prev
@@ -215,23 +229,23 @@
     </thead>
     <tbody>
       {#await rdata}
-        <p>...waiting</p>
-      {:then rows}
-      {#each rdata as row , i (row.pkey)}
+      <p> </p>
+      {:then rows}  
+      {#each rows as row , i (row.pkey)}
         <tr
           class={row.sflag}
           onclick={(e)=>{clickRow(e,row);} }
           ondblclick={(e) => {
             vid = "block";
             pidx = i ;
-            parr = rdata.map( k => k.pkey ) ;
+            parr = rows.map( k => k.pkey ) ;
             clickRow(e,row);
           }}
         >
 
           <td style="text-align:center"><input class="chkb" type="checkbox" bind:checked={row.chk} /></td>
 
-          <td class="cmpid"><strong><em>{row.id}</em></strong></td>
+          <td class="cmpid"><strong><em>{row.pkey}</em></strong></td>
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
           <td class="method">{row.method === null ? "" : row.method}</td>
@@ -247,12 +261,12 @@
         </tr>
       {/each}
       {:catch err}
-        <p style="color: red">{err.message}</p>
+          <p style="color: red">{err.message}</p>
       {/await}
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid bind:pid bind:parr bind:pidx onParam={()=> showParam = true} />
+<DetailTR bind:vid pid={pid} parr={parr} pidx={pidx} onParam={()=> showParam = true} />
 
 <style>
   .elapsed,

@@ -73,27 +73,36 @@
       selectedRowIds = [rowId, ...selectedRowIds].slice(0, 2);
     }
   }
+  let loading = false;
   async function getTRlist() {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
     if (conds.tcode !== tcode) conds.page = 0;
     conds.tcode = tcode;
     if (conds.tcode == undefined) return [];
+    if (loading) return ;
+    loading = true ;
     pg = conds.page + 1;
-
-    const res = await fetch("/tloaddata", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(conds),
-    });
-    if (res.ok) {
-      rdata = await res.json();
-      //  console.log("trlist end", rdata) ;
-    } else {
-      // rdata = Promise.resolve([]);
-      throw new Error(res.statusText);
+    rdata=[];
+    // await tick() ;
+    try {
+      const res = await fetch("/tloaddata", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(conds),
+      });
+      if (res.ok) {
+        rdata = await res.json();
+      } else {
+        throw new Error(res.statusText);
+      }
+    } catch(err) {
+      alert("데이터 조회 중 오류가 발생했습니다: " + err.message);
+    } finally {
+      loading = false ;
     }
+
   }
 
   $effect(() => { getTRlist() } );
@@ -114,15 +123,15 @@
         </tr>
       </thead>
       <tbody>
-        <!-- {#await rdata}
+        {#await rdata}
           <p>...waiting</p>
-        {:then rows} -->
-        {#each rdata as row, i (row.pkey)}
+        {:then rows} 
+        {#each rows as row, i (row.pkey)}
           <tr
             class={row.sflag}
             ondblclick={(e) => {
               pid = row.pkey;
-              parr = rdata.map(e => e.pkey) ;
+              parr = rows.map(e => e.pkey) ;
               pidx = i ;
               vid = "block";
               clickRow(e,row);
@@ -141,9 +150,9 @@
 
           </tr>
         {/each}
-        <!-- {:catch err}
+        {:catch err}
           <p style="color: red">{err.message}</p>
-        {/await} -->
+        {/await} 
       </tbody>
     </table>
   </div>
@@ -186,7 +195,7 @@
   </div>
 
 </div>
-<DetailTR bind:vid bind:pid bind:parr bind:pidx origin="org"/>
+<DetailTR bind:vid pid={pid} parr={parr} pidx={pidx} origin="org"/>
 
 <style>
   .container {

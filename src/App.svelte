@@ -17,6 +17,7 @@
 	import CompareList from "./components/CompareList.svelte";
 	import Tloaddata from "./components/Tloaddata.svelte";
 	import RegMockSvr from "./components/RegMockSvr.svelte";
+	import Itest from "./components/itest.svelte";
 
 	// onMount(async () => {
 	// 	const res = await fetch("/dashboard/testPassword");
@@ -42,11 +43,13 @@
 		{ nm: "테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
 		{ nm: "테스트 실행", url: "texecjob", cnm: TexecJob },
 		{ nm: "실시간 테스트", url: "texecjob3", cnm: TexecJob3 },
-		{ nm: "모의서버 관리", url: "regMockSvr", cnm: RegMockSvr },
+		{ nm: "가상서버 관리", url: "regMockSvr", cnm: RegMockSvr },
 		{ nm: "원본현황", url: "tloaddata", cnm: Tloaddata },
+		// { nm: "itest", url: "itest", cnm: Itest },
 	];
 	let boxChecked = $state(false);
-	let selected = $state(mitems[0]);
+	console.log(window?.AQTCONFIG) ;
+	let selected = $state(window?.AQTCONFIG?.page ? mitems[window?.AQTCONFIG.page ] : mitems[0]);
 	function select_item(item) {
 		selected = item;
 		// console.log(selected) ;

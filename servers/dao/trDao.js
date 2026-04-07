@@ -4,6 +4,8 @@ import fs from 'fs';
 import mapper from 'mybatis-mapper';
 mapper.createMapper(['servers/mappers/aqtdb.xml']);
 const NSPACE = 'aqtdb';
+aqtdb.query("SET collation_connection = 'utf8mb4_general_ci'");
+aqtdb.query("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_general_ci'");   
 
 export default {
   tasksum: async () => {

@@ -8,7 +8,7 @@ const configs = {
       socketPath: '\\\\.\\pipe.\\MySQL',
     },
     real: { // real server db info
-      host: process.env.AQTDBIP  ?? 'localhost',
+      host: process.env.AQTDBIP  ?? '192.168.0.84',
       port: process.env.AQTDBPORT  ||'3306',
       user: process.env.AQTDBUSER || 'aqtusr',
       password: process.env.AQTDBPASS || 'Dawinit1!',

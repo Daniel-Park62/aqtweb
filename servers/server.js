@@ -42,7 +42,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/dashboard', dashboard) ;
-
 app.use('/byservice', byservice) ;
 app.use('/regapp', regapp) ;
 app.use('/trlist', trlist) ;
