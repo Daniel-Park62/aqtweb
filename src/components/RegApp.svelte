@@ -158,15 +158,15 @@
 
   onMount( getData );
 </script>
-
-<div id="btns" style="display:flex; justify-content: flex-start; ">
+<main class="h-full w-full">
+<div class="flex justify-start gap-2 m-2">
   <button on:click={updApp}>적용</button>
   <button on:click={getData}>적용취소</button>
 </div>
 <hr />
 
-<div class="container">
-  <table class="app-tbl item">
+<div class="flex items-start gap-4 w-full">
+  <table class="app-tbl flex-1 min-w-0 overflow-x-auto">
     <thead>
       <tr>
         <th>수정</th>
@@ -203,7 +203,7 @@
     </tbody>
     <!-- <pre style="background: #eee">{JSON.stringify(data, null, 2)}</pre> -->
   </table>
-  <table class="apphost item">
+  <table class="apphost flex-1 min-w-0 overflow-x-auto">
     <thead>
       <tr>
         <th>APP ID</th>
@@ -227,7 +227,7 @@
     <!-- {:catch error}
       <p>{error.message}</p>
     {/await} -->
-    <tr style="color: grey">
+    <tr >
       <td contenteditable="false" bind:textContent={newRow_dtl[1]} />
       <td contenteditable="true" bind:textContent={newRow_dtl[2]} />
       <td contenteditable="true" bind:textContent={newRow_dtl[3]} />
@@ -236,53 +236,12 @@
     </tbody>
   </table>
 </div>
-
+</main>
 <style>
-  .container {
-    max-height: 85vh;
-    overflow: auto;
-    display: flex;
-  }
-  .app-tbl {
-    flex: 1 1 0;
-  }
-  .apphost {
-    flex: 1 1 0;
-    margin: 0 0 auto 5px;
-  }
-  .app-tbl,
-  .apphost {
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-  }
 
-  .item {
-    border-collapse: collapse;
-    height: auto;
-  }
-
-  td,
-  th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  th {
-    padding: 8px;
-    text-align: center;
-    position: sticky;
-    top: 0;
-  }
   td button {
     font-size: 0.7em;
   }
-  /* app-tbl tr:nth-child(even) {
-    background-color: #f2f2f2;
-  } */
-
-  /* tr:hover {
-    background-color: #ddd;
-  } */
 
   tr td:focus {
     background: #eee;

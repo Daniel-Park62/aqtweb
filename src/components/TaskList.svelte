@@ -36,7 +36,7 @@
     </thead>
     <tbody>
       {#await promise}
-        <p>...waiting</p>
+        <template>...waiting</template>
       {:then rows}
         {#each rows as row}
           <tr onclick={(e) => {
@@ -59,7 +59,7 @@
           </tr>
         {/each}
       {:catch error}
-        <p style="color: red">{error.message}</p>
+        <template style="color: red">{error.message}</template>
       {/await}
     </tbody>
   </table>

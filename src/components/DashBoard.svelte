@@ -183,8 +183,8 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="main" >
-  <div class="container">
+<main class="h-full w-full">
+  <div class="flex justify-evenly gap-2 m-2">
     <div class="subm">
       <div class="cap">단위테스트</div>
       <div class="items">
@@ -231,22 +231,10 @@
       </div>
     </div>
   </div>
-  <div class="tlist"><TidList bind:tcode={tcode}/></div>
-</div>
+  <div class="flex-1 overflow-y-auto ml-2"><TidList bind:tcode={tcode}/></div>
+</main>
 
 <style>
-  .main {
-    height: 90%;
-    display: flex;
-    flex-direction: column;
-  }
-  .container {
-    display: flex;
-    /* flex-basis: 183px; */
-    margin: 0%;
-    height: auto;
-    justify-content: space-evenly;
-  }
   .items {
     display: flex;
     margin: 0%;
@@ -272,33 +260,10 @@
     border: solid 1px #e4e4ed;
     box-shadow: 3px 3px 5px #8585a8;
     border-radius: 6px;
-    flex: 1 1 0;
+    flex: 0 1 0;
     margin: 0 1em;
     padding: 0.3em 1em;
     font-size: 1.2rem;
     justify-content: center;
-  }
-  .tlist {
-    /* max-height: 85%; */
-    flex: 1;
-    overflow-y: auto;
-  }
-  /* .item .per {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #6a40ff;
-  }
-  .item2 .per {
-    color: #e19ae1;
-  }
-  .item span {
-    display: inline-block;
-    text-align: right;
-    width: 4rem;
-    font-size: 1rem;
-  }
-  .item .lbl {
-    width: 6rem;
-  } */
-  
+  }  
 </style>

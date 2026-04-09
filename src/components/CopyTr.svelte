@@ -4,7 +4,7 @@
   import { gtcode, userid } from "../aqtstore" ;
   
   let tlist_org = $state([]);
-  /** @type {{tlist: any}} */
+  
   let { tlist, oncls={} } = $props();
   let conds = $state({
     srccode: "",

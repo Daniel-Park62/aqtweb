@@ -127,7 +127,7 @@
 
   //  onMount(getdata);
 </script>
-
+<main class="h-full">
 <div id="btns" style="display:flex; justify-content: flex-start; ">
   <button
     onclick={() => {
@@ -215,7 +215,7 @@
     </tbody>
   </table>
 </div>
-
+</main>
 <style>
   .tList {
     max-height: 80vh;

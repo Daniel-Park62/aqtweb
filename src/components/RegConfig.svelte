@@ -2,9 +2,6 @@
   import { onMount } from "svelte";
   import { userid } from "../aqtstore" ;
 
-  let rdata = Promise.resolve([]);
-  let jobsts = 0;
-
   let curRow = $state({});
 
   function updateConfig() {
@@ -123,7 +120,7 @@
   });
 </script>
 
-<div class="main">
+<div class="main h-auto m-3 p-10">
   <div class="items">
     <div class="item in_label">프로젝트명:</div>
     <input class="item in_value"  bind:value={curRow.pjtnm} />
@@ -134,7 +131,7 @@
     <div class="item in_label">원본차이조건:</div>
     <textarea rows="2"  bind:value={curRow.diffc}></textarea>
   </div>
-  <div>
+  <div class="m-2">
     <button onclick={updateConfig}>저장</button>
   </div>
   <hr />
@@ -162,6 +159,8 @@
   .main {
     max-height: 100%;
     overflow: auto;
+    border: 1px solid silver;
+    box-shadow: 0px 0px 5px #888;
   }
 
   .items {
@@ -169,6 +168,7 @@
     grid-template-columns:  9rem 1fr ;
     gap: 3px 10px;
     align-content: start;
+    justify-content: baseline;
     /* align-items: center; */
     margin: 10px;
   }
@@ -190,7 +190,7 @@
   .grp {
     /* border: 1px solid rgb(235, 233, 233); */
     grid-template-columns:  10rem auto auto 6rem;
-    margin: 10px 10px ;
+    margin: 10px ;
     display: grid;
     column-gap: 10px;
     height:2.2em;

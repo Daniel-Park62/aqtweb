@@ -153,6 +153,7 @@
     }
   }
 </script>
+<main class="h-full">
 
 <div id="btns" class="flex">
   <button
@@ -215,7 +216,7 @@
     </tbody>
   </table>
 </div>
-
+</main>
 <style>
   .tList {
     max-height: 80vh;

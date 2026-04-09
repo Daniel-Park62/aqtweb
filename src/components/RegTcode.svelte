@@ -126,7 +126,7 @@
   onMount( getdata );
 </script>
 
-<div id="btns" style="display:flex; justify-content: flex-start; ">
+<div class="flex justify-start gap-2 m-2">
   <button
     onclick={() => {
       (jobnm = "등록"),
@@ -266,8 +266,8 @@
     </div>
     <hr />
     <div class='m-2'>
-      <button type="button" class="bg-blue-600 rounded-md text-white" onclick={updTcode}>저장</button>
-      <button type="button" class="bg-blue-600 rounded-md text-white" onclick={() => getModal().close()}>닫기</button>
+      <button type="button"  onclick={updTcode}>저장</button>
+      <button type="button"  onclick={() => getModal().close()}>닫기</button>
     </div>
   </div>
 </Modal>

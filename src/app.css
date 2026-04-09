@@ -37,7 +37,7 @@ body {
   height: 100%;
 
   color: #333;
-	padding: 8px;
+	padding: 4px;
 	box-sizing: border-box;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
@@ -95,37 +95,14 @@ input:disabled {
 }
 
 button {
-  border: 1px solid #00f ;
-  color: #00f ;
-	background-color: #fff; /*  #C5DEF0; */
-	outline: 2px;
-	cursor: pointer ;
-	font-size: 0.9rem;
-	padding: 3px 0.8rem ;
-	margin: 0 0.3rem ;
-  border-radius: 6px;
+  @apply bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-4 py-1 text-sm rounded transition
 }
 
-button:disabled {
-	color: #999;
+main {
+  @apply bg-white shadow border border-gray-300 p-4 mb-4
 }
-
-/* button:not(:disabled):active {
-	background-color: #C5DEF0;
-}
- */
-button:focus {
-	border-color: #00f ; /* #9BB8CC; */
-}
-button:hover {
-  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
- }
-
  table {
-	border-collapse: collapse;
-	overflow: auto;
-  overflow-x: scroll;
-  width: 100%;
+  @apply min-w-[95%] border-collapse border border-gray-300 text-[.9rem] text-center whitespace-nowrap m-2
 }
 
 td, th {
@@ -142,10 +119,7 @@ td {
 }
 
 thead {
-	background-color: var(--th_bgcolor);
-	color: var(--th_color);
-  position: sticky;
-  top: 0;
+  @apply bg-gray-100 text-gray-700 font-semibold sticky top-0 z-10
 }
 /* 
 tbody tr:nth-child(odd) td {

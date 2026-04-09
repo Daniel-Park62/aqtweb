@@ -72,10 +72,10 @@ onDestroy(()=>{
 
 <div id="topModal" class:visible bind:this={topDiv} >
 	<div id='modal' style='--w:{w};--h:{h} ' >
-		<svg id="close" onclick={()=> close()} viewBox="0 0 12 12">
-			<circle cx=6 cy=6 r=6 />
-			<line x1=3 y1=3 x2=9 y2=9 />
-			<line x1=9 y1=3 x2=3 y2=9 />
+		<svg class="close" onclick={()=>close()} viewBox="0 0 12 12">
+			<circle cx="6" cy="6" r="6" />
+			<line x1="3" y1="3" x2="9" y2="9" />
+			<line x1="9" y1="3" x2="3" y2="9" />
 		</svg>
 		<div id='modal-content'>
 			{@render children?.()}
@@ -113,7 +113,7 @@ onDestroy(()=>{
 		visibility: visible !important;
 	}
 
-	#close {
+	.close {
 		position: absolute;
 		top:-12px;
 		right:-12px;
@@ -124,11 +124,11 @@ onDestroy(()=>{
 		transition: transform 0.3s;
 	}	
 
-	#close:hover {
+	.close:hover {
 		transform: scale(2);
 	}
 
-	#close line {
+	.close line {
 		stroke:#FFF;
 		stroke-width:2;
 	}

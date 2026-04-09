@@ -1,6 +1,6 @@
 <script>
 	import "./app.css";
-	import { onMount } from "svelte";
+	import DropDown from "./lib/DropDown.svelte";
 	import ByTcode from "./components/ByTcode.svelte";
 	import DashBoard from "./components/DashBoard.svelte";
 	import ByTask from "./components/ByTask.svelte";
@@ -10,7 +10,7 @@
 	import TexecJob from "./components/TexecJob.svelte";
 	import TexecJob3 from "./components/TexecJob3.svelte";
 	import LoginComp from "./components/LoginComp.svelte";
-	import { isLogged, userid } from "./aqtstore";
+	import { isLogged, pjtName } from "./aqtstore";
 	import RegService from "./components/RegService.svelte";
 	import RegUser from "./components/RegUser.svelte";
 	import RegConfig from "./components/RegConfig.svelte";
@@ -24,86 +24,90 @@
 	// 	const row = await res.json();
 	// 	if (res.ok) setCheckPass(row[0].pass1);
 	// });
-
-	let mitems = [
-		{ nm: "총괄 현황", url: "dashboard", cnm: DashBoard },
-		{ nm: "테스트별 수행현황", url: "bytcode", cnm: ByTcode },
-		{ nm: "업무별 수행현황", url: "bytask", cnm: ByTask },
-		// { nm: "상세수행현황", url: "detail", cnm: DashBoard },
-		{ nm: "수행결과원본비교", url: "compare", cnm: CompareList },
-		// { nm: "전문처리현황", url: "view", cnm: DashBoard },
-		{ nm: "전문상세검색", url: "TrList", cnm: TrList },
-	];
-
-	let mitems2 = [
-		{ nm: "기본정보관리", url: "regConfig", cnm: RegConfig },
-		{ nm: "App 등록", url: "regapp", cnm: RegApp },
-		{ nm: "사용자 등록", url: "regUser", cnm: RegUser },
-		{ nm: "서비스 등록", url: "regService", cnm: RegService },
-		{ nm: "테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
-		{ nm: "테스트 실행", url: "texecjob", cnm: TexecJob },
-		{ nm: "실시간 테스트", url: "texecjob3", cnm: TexecJob3 },
-		{ nm: "가상서버 관리", url: "regMockSvr", cnm: RegMockSvr },
-		{ nm: "원본현황", url: "tloaddata", cnm: Tloaddata },
-		// { nm: "itest", url: "itest", cnm: Itest },
+	const mdata = [
+	  { title:"기준정보관리",	
+	   items : [
+				{ nm: "기본정보관리",  cnm: RegConfig },
+				{ nm: "App 등록",  cnm: RegApp },
+				{ nm: "사용자 등록",  cnm: RegUser },
+				{ nm: "서비스 등록",  cnm: RegService },
+		]},
+	  { title:"테스트관리",	
+	   items : [
+				{ nm: "테스트등록/전문생성",  cnm: RegTcode },
+				{ nm: "테스트 실행",  cnm: TexecJob },
+				{ nm: "실시간 테스트",  cnm: TexecJob3 },
+				{ nm: "가상서버 관리",  cnm: RegMockSvr },
+				{ nm: "원본현황",  cnm: Tloaddata },
+				// { nm: "itest",  cnm: Itest },
+		]},
+		{ title :"분석보고서", 
+		  items : [
+				{ nm: "총괄 현황",  cnm: DashBoard },
+				{ nm: "테스트별 수행현황",  cnm: ByTcode },
+				{ nm: "업무별 수행현황",  cnm: ByTask },
+				// { nm: "상세수행현황",  cnm: DashBoard },
+				{ nm: "수행결과원본비교",  cnm: CompareList },
+				// { nm: "전문처리현황",  cnm: DashBoard },
+				{ nm: "전문상세검색",  cnm: TrList },
+		]},
 	];
 	let boxChecked = $state(false);
-	console.log(window?.AQTCONFIG) ;
-	let selected = $state(window?.AQTCONFIG?.page ? mitems[window?.AQTCONFIG.page ] : mitems[0]);
+
+	let selected = $state( { nm: "총괄 현황",  cnm: DashBoard });
 	function select_item(item) {
 		selected = item;
 		// console.log(selected) ;
 	}
 
-	// onMount( () => console.log(window.location.host)) ;
-	let chklabel = $derived(boxChecked ? "▶" : "◀");
-</script>
+ let openDropdownIndex = $state(-1);
 
+ function toggleDropdown(index) {
+			if (index >= 0 && openDropdownIndex === index) {
+					openDropdownIndex = -1; // 이미 열려있으면 닫기
+			} else {
+					openDropdownIndex = index; // 아니면 해당 드롭다운 열기
+			}
+	}
+	function closeDropdown(event) {
+      if (!event.target.closest('.menubar')) {
+          openDropdownIndex = -1;
+      }
+  }
+</script>
+<svelte:window onclick={closeDropdown} />
 {#if !$isLogged}
 	<LoginComp></LoginComp>
 {:else}
-	<main class="container">
-		<input
-			class="column"
-			type="checkbox"
-			id="checkbtn"
-			bind:checked={boxChecked}
-		/>
-		<label for="checkbtn" class="text-blue-500 cursor-pointer">{chklabel}</label
-		>
-		<div class="column menu" role="none">
-			<img src="/images/Logo.png" alt="" />
-			<p></p>
-			<img src="/images/result.png" alt="" />
-			<ul>
-				{#each mitems as item}
-					<li onclick={() => select_item(item)}>◽ {item.nm}</li>
-				{/each}
-			</ul>
-			{#if $isLogged == 2}
-				<div>
-					<hr class="bg-slate-50 h-1 my-5 border-0" />
-					<img src="/images/operating.png" alt="" />
-					<ul>
-						{#each mitems2 as item}
-							<li onclick={() => select_item(item)}>◽ {item.nm}</li>
-						{/each}
-					</ul>
+	<dev class="container">
+		<div class="flex m-1 items-center">
+			<img class='pt-2 h-14 mr-10' src="/images/Logo.png" alt="" />
+			<nav class="bg-gray-800 p-1 m-1" >
+				<div class="menubar flex space-x-10">
+					{#each mdata as mitem,i}
+					<DropDown
+						label={mitem.title}
+						items={mitem.items}
+						isOpen={openDropdownIndex === i}
+						onSelect={select_item}
+						toggle={() => toggleDropdown(i)}
+					/>
+					{/each}
 				</div>
-			{/if}
+			</nav>
+			<div class="job_name h-50">&nbsp&nbsp {selected.nm} &nbsp&nbsp</div>
+			<div class="text-cyan-50 text-right">{$pjtName}</div>
 		</div>
 
-		<div class="column right" role="none">
-			<div class="job_name"> {selected.nm}</div>
-			<div class="main-scr">
-				<selected.cnm></selected.cnm>
-			</div>
+		<div class="main-scr flex flex-col justify-stretch " role="none">
+			<!-- <svelte:component this={selected.cnm} class="self-start"/> -->
+			<selected.cnm></selected.cnm>
 		</div>
-	</main>
+	</dev>
 {/if}
 
 <style>
-	main {
+	.container {
 		font-family: "맑은 고딕", "Lato", "Nanum Barun Gothic", "sans-serif";
 		text-align: center;
 		padding: 0;
@@ -111,81 +115,31 @@
 		height: 100%;
 		margin: 0 5;
 		display: flex;
-	}
-	.column {
-		margin: 5px;
-		padding: 5px;
-		height: 100%;
-	}
-
-	.menu {
-		flex-basis: 240px;
-		color: rgb(248, 241, 241);
-		background-color: blue;
-		text-align: left;
-	}
-
-	#checkbtn {
-		display: none;
-	}
-
-	#checkbtn:checked ~ .menu {
-		display: none;
-	}
-	.right {
-		/* width: 80%; */
-		/* height: 92vh; */
-		/* max-width: 80%; */
-		/* border: 2px solid rgb(185, 199, 206); */
-		background-color: rgb(254, 255, 255);
-		flex: 1 1 0;
-		/* float: right; */
-		overflow: hidden;
-		display: flex;
 		flex-direction: column;
+	}
+	.main-scr {
+		background-color: rgb(254, 255, 255);
+		flex-grow: 1;
+		justify-content: center;
 		border: 1px outset rgb(238, 238, 238);
 		box-shadow: 0 2px 4px rgb(120, 119, 119);
 	}
-
-	.main-scr {
-		flex: 1 1 auto;
-		max-height: 100%;
-	}
-	.menu img {
-		padding: 3px 0px 0px 3px;
-		margin: 0px;
-	}
-
-	.menu ul {
-		font-family: "나눔바른고딕";
-		list-style: none;
-		padding: 0px;
-		font-size: 1.1rem;
-		margin: 0px;
-	}
-	.menu li {
-		cursor: pointer;
-		padding: 5px 20px;
-	}
-	.menu li:hover {
-		text-decoration: underline;
-	}
-
 	.job_name {
-		text-align: left;
-		color: black ; /* orangered; */
+		text-align: center;
+		vertical-align: baseline;
+		color: rgb(243, 235, 235) ; /* orangered; */
 		text-transform: uppercase;
 		text-shadow: 1px 1px 0px #bdbdbd;
-		font-size: 1.4em;
+		font-size: 1.3em;
 		font-weight: 500;
 		padding: 4px;
-		margin-bottom: 2px;
+		margin-left: auto;
 		border: 1px solid rgb(215, 211, 211);
 		border-radius: 6px;
 	}
 
 	@media (min-width: 640px) {
-		main {
+		.container {
 			max-width: none;
 		}
 	}

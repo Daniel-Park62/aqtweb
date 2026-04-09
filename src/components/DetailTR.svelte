@@ -402,20 +402,7 @@
     padding: 0.5em 0.5em;
     vertical-align: middle;
   }
-  .ny1 button {
-    width: 6em;
-    margin: 0 0.2em;
-    border-radius: 6px;
-    box-shadow:
-      0 8px 16px 0 rgba(0, 0, 0, 0.2),
-      0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  }
 
-  .ny1 button:hover {
-    box-shadow:
-      0 12px 16px 0 rgba(0, 0, 0, 0.24),
-      0 17px 50px 0 rgba(0, 0, 0, 0.19);
-  }
   .ny1 .title {
     font-size: 1.2rem;
     color:blue ;

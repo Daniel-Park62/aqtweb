@@ -40,7 +40,7 @@
   onMount(getdata);
 </script>
 
-<div class="tList">
+<div class="flex h-full">
   <div class="item">
     <table>
       <thead>
@@ -75,13 +75,8 @@
 </div>
 
 <style>
-  .tList {
-    /* max-height: 85vh; */
-    /* overflow: auto; */
-    display: flex;
-  }
   .item {
-    max-height: 85vh;
+    height: 100%;
     border-collapse: collapse;
     overflow: auto;
   }

@@ -60,7 +60,7 @@
   //  let rdata = Promise.resolve([]);
   let rdata = $state([]);
 
-  let pg = $state(conds.page + 1);
+  let pg = $derived(conds.page + 1);
 
 
   let selectedRowIds = [];
@@ -81,10 +81,11 @@
     if (conds.tcode == undefined) return [];
     if (loading) return ;
     loading = true ;
-    pg = conds.page + 1;
+    // pg = conds.page + 1;
     rdata=[];
     // await tick() ;
     try {
+      document.body.style.cursor = "wait";
       const res = await fetch("/tloaddata", {
         method: "POST",
         headers: {
@@ -101,61 +102,16 @@
       alert("데이터 조회 중 오류가 발생했습니다: " + err.message);
     } finally {
       loading = false ;
+      document.body.style.cursor = "default";
     }
 
   }
 
-  $effect(() => { getTRlist() } );
+  $effect(() => { if (pg) getTRlist() } );
 
 </script>
 
 <div class="container">
-
-  <div class="fitem tbl">
-    <table>
-      <thead>
-        <tr>
-          {#each columns as column}
-            <th>
-              {column.title}
-            </th>
-          {/each}
-        </tr>
-      </thead>
-      <tbody>
-        {#await rdata}
-          <p>...waiting</p>
-        {:then rows} 
-        {#each rows as row, i (row.pkey)}
-          <tr
-            class={row.sflag}
-            ondblclick={(e) => {
-              pid = row.pkey;
-              parr = rows.map(e => e.pkey) ;
-              pidx = i ;
-              vid = "block";
-              clickRow(e,row);
-            }}
-          >
-            <td class="id"><strong><em>{row.pkey}</em></strong></td>
-            <td class="stime">{row.stime}</td>
-            <td style="text-align:right" class="elapsed">{row.elapsed}</td>
-            <td class="method">{row.method === null ? "" : row.method}</td>
-            <td class="uri">{row.uri}</td>
-            <td style="text-align:right" class="rlen"
-              >{row.rlen.toLocaleString("ko-KR")}</td
-            >
-            <td class="rdata">{row.수신데이터 === null ? "" : row.rdata}</td>
-            <td class="dstport">{row.dstport}</td>
-
-          </tr>
-        {/each}
-        {:catch err}
-          <p style="color: red">{err.message}</p>
-        {/await} 
-      </tbody>
-    </table>
-  </div>
   <div class="fitem pgset">
     <span class="number-in">
       Page :<input
@@ -192,6 +148,50 @@
 
       </button>
     {/if}
+  </div>
+  <div class="fitem tbl h-full">
+    <table>
+      <thead>
+        <tr>
+          {#each columns as column}
+            <th>
+              {column.title}
+            </th>
+          {/each}
+        </tr>
+      </thead>
+      <tbody>
+        {#await rdata}
+          <template>...조회중</template>
+        {:then rows} 
+        {#each rows as row, i (row.pkey)}
+          <tr
+            class={row.sflag}
+            ondblclick={(e) => {
+              pid = row.pkey;
+              parr = rows.map(e => e.pkey) ;
+              pidx = i ;
+              vid = "block";
+              clickRow(e,row);
+            }}
+          >
+            <td class="id"><strong><em>{row.pkey}</em></strong></td>
+            <td class="stime">{row.stime}</td>
+            <td style="text-align:right" class="elapsed">{row.elapsed}</td>
+            <td class="method">{row.method === null ? "" : row.method}</td>
+            <td class="uri">{row.uri}</td>
+            <td style="text-align:right" class="rlen"
+              >{row.rlen.toLocaleString("ko-KR")}</td
+            >
+            <td class="rdata">{row.수신데이터 === null ? "" : row.rdata}</td>
+            <td class="dstport">{row.dstport}</td>
+
+          </tr>
+        {/each}
+
+        {/await} 
+      </tbody>
+    </table>
   </div>
 
 </div>

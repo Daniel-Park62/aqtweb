@@ -209,7 +209,7 @@
   <table>
     <thead>
       {#await rdata}
-      <p> </p>
+      <template>Waiting... </template>
       {:then rs}
       <tr>
         <th><input type="checkbox" onchange={
@@ -229,7 +229,7 @@
     </thead>
     <tbody>
       {#await rdata}
-      <p> </p>
+      <template>Waiting... </template>
       {:then rows}  
       {#each rows as row , i (row.pkey)}
         <tr
@@ -261,7 +261,7 @@
         </tr>
       {/each}
       {:catch err}
-          <p style="color: red">{err.message}</p>
+          <template style="color: red">{err.message}</template>
       {/await}
     </tbody>
   </table>
