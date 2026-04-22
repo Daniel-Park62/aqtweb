@@ -17,8 +17,7 @@
 	import CompareList from "./components/CompareList.svelte";
 	import Tloaddata from "./components/Tloaddata.svelte";
 	import RegMockSvr from "./components/RegMockSvr.svelte";
-	import Itest from "./components/itest.svelte";
-
+	
 	// onMount(async () => {
 	// 	const res = await fetch("/dashboard/testPassword");
 	// 	const row = await res.json();
@@ -53,15 +52,15 @@
 		]},
 	];
 	let boxChecked = $state(false);
-
-	let selected = $state( { nm: "총괄 현황",  cnm: DashBoard });
+	const aqthome = { nm: "총괄 현황",  cnm: DashBoard };
+	let selected = $state( aqthome);
 	function select_item(item) {
 		selected = item;
 		// console.log(selected) ;
 	}
 
  let openDropdownIndex = $state(-1);
-
+/* 
  function toggleDropdown(index) {
 			if (index >= 0 && openDropdownIndex === index) {
 					openDropdownIndex = -1; // 이미 열려있으면 닫기
@@ -73,33 +72,34 @@
       if (!event.target.closest('.menubar')) {
           openDropdownIndex = -1;
       }
-  }
+  } */
 </script>
-<svelte:window onclick={closeDropdown} />
+<!-- <svelte:window onclick={closeDropdown} /> -->
 {#if !$isLogged}
 	<LoginComp></LoginComp>
 {:else}
 	<dev class="container">
-		<div class="flex m-1 items-center">
-			<img class='pt-2 h-14 mr-10' src="/images/Logo.png" alt="" />
+		<div class="flex m-1 items-center ">
+			<img class='pt-2 h-14 mr-12 cursor-pointer' onclick={() => selected = aqthome}
+			     src="/images/Logo.png" alt="" />
 			<nav class="bg-gray-800 p-1 m-1" >
-				<div class="menubar flex space-x-10">
+				<div class="menubar flex space-x-8">
 					{#each mdata as mitem,i}
 					<DropDown
 						label={mitem.title}
 						items={mitem.items}
-						isOpen={openDropdownIndex === i}
+						// isOpen={openDropdownIndex === i}
 						onSelect={select_item}
-						toggle={() => toggleDropdown(i)}
+						// toggle={() => toggleDropdown(i)}
 					/>
 					{/each}
 				</div>
 			</nav>
-			<div class="job_name h-50">&nbsp&nbsp {selected.nm} &nbsp&nbsp</div>
-			<div class="text-cyan-50 text-right">{$pjtName}</div>
+			<div class="ml-auto p-2 bg-white text-[#070b57] font-black h-50 w-[18rem] rounded-md ">&nbsp&nbsp {selected.nm} &nbsp&nbsp</div>
+			<div class="text-cyan-50 text-right p-2 ml-5">{$pjtName}</div>
 		</div>
 
-		<div class="main-scr flex flex-col justify-stretch " role="none">
+		<div class="bg-slate-50 shadow-lg mt-1 flex-1 flex flex-col justify-stretch box-border rounded">
 			<!-- <svelte:component this={selected.cnm} class="self-start"/> -->
 			<selected.cnm></selected.cnm>
 		</div>
@@ -116,26 +116,6 @@
 		margin: 0 5;
 		display: flex;
 		flex-direction: column;
-	}
-	.main-scr {
-		background-color: rgb(254, 255, 255);
-		flex-grow: 1;
-		justify-content: center;
-		border: 1px outset rgb(238, 238, 238);
-		box-shadow: 0 2px 4px rgb(120, 119, 119);
-	}
-	.job_name {
-		text-align: center;
-		vertical-align: baseline;
-		color: rgb(243, 235, 235) ; /* orangered; */
-		text-transform: uppercase;
-		text-shadow: 1px 1px 0px #bdbdbd;
-		font-size: 1.3em;
-		font-weight: 500;
-		padding: 4px;
-		margin-left: auto;
-		border: 1px solid rgb(215, 211, 211);
-		border-radius: 6px;
 	}
 
 	@media (min-width: 640px) {

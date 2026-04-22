@@ -1,10 +1,10 @@
 <script>
 // @ts-nocheck
 
-  import { getLvlnm } from "./Common.svelte";
+  import { getLvlnm } from "../lib/Common.svelte";
   import TaskList from "./TaskList.svelte";
   import Trtable from "./Trtable.svelte";
-  import Modal,{getModal} from "../lib/Modal.svelte";
+  import Modal from "../lib/Modal2.svelte";
 
   let conds = $state({
     tcode: "",
@@ -18,6 +18,7 @@
 
   let task = $state(""), lvl = $state("") ,ischg = $state(0);
   let dtls = $state([]);
+  let showModal = $state(false);
 
   let sv_row ;
   function clickRow(e, row) {
@@ -69,14 +70,14 @@
 </script>
 
 <div class="main">
-  <div class="tlist">
+  <div class="h-[30vh] w-full overflow-y-auto flex-none">
     <TaskList bind:task bind:lvl bind:ischg />
   </div>
   <div class="sub-tit">
     서비스별 현황({task != '' ? task + ':' :''} {getLvlnm(lvl)})
   </div>
-  <div class="bottom">
-    <table>
+  <div class="flex-[1_1_0] overflow-y-auto">
+    <table class="max-w-[98%]">
       <thead>
         <tr >
           <th rowspan="2" id='svcid' class="cursor-pointer" onclick={sortdata} >서비스ID</th>
@@ -104,7 +105,7 @@
         {:then rows} -->
           {#each dtls as row}
             <tr onclick={(e)=>clickRow(e,row)}
-                ondblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal('bytask').open({}) }}>
+                ondblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; showModal = true; }}>
               <td >{row.svcid}</td>
               <td>{row.svckor}</td>
               <td align="right">{row.tcnt.toLocaleString("ko-KR")}</td>
@@ -127,7 +128,7 @@
   </div>
 </div>
 <div>
-<Modal id='bytask'>
+<Modal bind:showModal>
 	<Trtable bind:conds/>
 </Modal>
 </div>
@@ -137,10 +138,6 @@
     display: flex;
     flex-direction: column;
   }
-  .tlist {
-    height: 30%;
-    overflow-y: auto;
-  }
   .sub-tit {
     text-align: justify;
     background-color: rgb(235, 241, 243);
@@ -148,11 +145,6 @@
     color: darkblue;
     font-size: 1.5rem;
     height: 40px;
-  }
-
-  .bottom {
-    flex: 1 1 0;
-    overflow: auto;
   }
 
 </style>

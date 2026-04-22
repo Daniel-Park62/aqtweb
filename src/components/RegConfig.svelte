@@ -169,7 +169,8 @@
     gap: 3px 10px;
     align-content: start;
     justify-content: baseline;
-    /* align-items: center; */
+
+    align-items: center;
     margin: 10px;
   }
 
@@ -183,6 +184,7 @@
     height: 2.2em;
   }
   .in_label {
+    
     text-align: end;
     font-weight: bold;
     vertical-align: text-bottom;

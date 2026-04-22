@@ -183,11 +183,11 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<main class="h-full w-full">
-  <div class="flex justify-evenly gap-2 m-2">
+<main class="h-full w-full box-border flex flex-col overflow-hidden">
+  <div class="flex-[0_0_1] flex gap-2 m-1 justify-center">
     <div class="subm">
       <div class="cap">단위테스트</div>
-      <div class="items">
+      <div class="items ">
         <div class="item1 item">
           <Doughnut
             {data}
@@ -207,7 +207,7 @@
         </div>
       </div>
     </div>
-    <img class='w-10 cursor-pointer' onclick={()=>tick+=1} src="/images/refresh.svg" title="다시조회" />
+    <img class=" w-10 cursor-pointer" onclick={()=>tick+=1} src="/images/refresh.svg" alt="새로고침" />
     <div class="subm">
       <div class="cap">통합테스트</div>
       <div class="items">
@@ -231,7 +231,7 @@
       </div>
     </div>
   </div>
-  <div class="flex-1 overflow-y-auto ml-2"><TidList bind:tcode={tcode}/></div>
+  <div class="flex-[1_1_0] overflow-y-auto ml-2 w-full"><TidList bind:tcode={tcode}/></div>
 </main>
 
 <style>
@@ -239,12 +239,10 @@
     display: flex;
     margin: 0%;
     height: auto;
-    justify-content: space-evenly;
   }
 
   .subm {
-    flex: 1 1 0;
-    padding: 0.5em;
+    flex: 0 0 0;
     text-align: left;
     color: #3455a3;
   }

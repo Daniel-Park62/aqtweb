@@ -63,24 +63,21 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
-<dialog
+<dialog class="bg-slate-300 border-stone-700 rounded-lg pb-3 w-[400px] text-[#070b57]"
   bind:this={dialog}
   onclose={() => (showModal = false)}
 >
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div>
-    <h2>{usrid} 비밀번호변경</h2>
-    <hr />
+  <div class=" bg-[rgba(26,26,176,0.8)] text-white m-0 py-2 text-2xl rounded ">[{usrid}] 비밀번호변경</div>
+  <div class="flex flex-col p-6 text-left text-lg ">
     <div>변경전 비밀번호:</div>
     <input type="password" bind:value={opass} />
-    <br />
     <div>새 비밀번호:</div>
     <input type="password" bind:value={npass1} />
-    <br />
     <div>비밀번호 확인:</div>
     <input type="password" bind:value={npass2} />
 
-    <div class="btns">
+    <div class="flex justify-center gap-4">
       <button onclick={_onCancel}> 취소 </button>
       <button disabled='{npass1.length < 6}' onclick={changepass}> 적용 </button>
     </div>
@@ -88,27 +85,15 @@
 </dialog>
 
 <style>
-  dialog {
-    width: 400px;
-    border-radius: 0.2em;
-    border: 1;
-    padding: 0;
-    background-color: rgb(223, 218, 218);
-  }
+
+div > button {
+  @apply text-xl py-2 px-8 rounded bg-[rgba(26,26,176,0.8)] text-white hover:bg-blue-700;
+}
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.3);
   }
-  dialog > div {
-    padding: 1em;
-  }
   input {
-    width: 100%;
-		height: 48px;
-		padding: 0 10px;
-		box-sizing: border-box;
-		margin-bottom: 16px;
-		border-radius: 6px;
-		background-color: #f8f8f8;
+    @apply text-lg mb-4 py-2 px-4 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500;
   }
   
   dialog[open] {
@@ -123,7 +108,7 @@
     }
   }
   dialog[open]::backdrop {
-    animation: fade 0.2s ease-out;
+    animation: fade 0.4s ease-out;
   }
   @keyframes fade {
     from {
@@ -133,13 +118,5 @@
       opacity: 1;
     }
   }
-  .btns {
-    margin-top: 30px;
-    /* width: fit-content; */
-    display: flex;
-    justify-content: center;
-  }
-  button {
-    display: block;
-  }
+
 </style>

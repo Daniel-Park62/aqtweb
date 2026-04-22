@@ -22,13 +22,14 @@ router.get('/config', async function (req, res, next) {
 
 router.put('/change', async function (req, res, next) {
   let result;
+  res.locals.aqtlog(req.body);
   try {
     if (req.body.gubun == 'sdata') {
       result = await tcppacketDao.changeSdata([req.body.sdata, req.body.pkey]);
     } else if (req.body.gubun == 'params') {
       result = await tcppacketDao.changeParams([req.body.params, req.body.pkey]);
     } else if (req.body.gubun == 'headers') {
-      result = await tcppacketDao.changeHeaders([req.body.headers, req.body.pkey]);
+      result = await tcppacketDao.changeHeaders([req.body.params, req.body.pkey]);
     } else {
       return res.status(400).json({ message: "변경할 항목이 없습니다." });
     }

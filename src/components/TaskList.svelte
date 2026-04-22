@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { getLvlnm } from "./Common.svelte" ;
+  import { getLvlnm } from "../lib/Common.svelte" ;
 
   /** @type {{task?: string, lvl?: string, ischg?: number}} */
   let { task = $bindable(""), lvl = $bindable(''), ischg = $bindable(1) } = $props();
@@ -19,8 +19,7 @@
 
 </script>
 
-<div class="container">
-  <table class="tcode-status">
+  <table class="max-w-[98%]">
     <thead>
       <tr>
         <th>업무명</th>
@@ -63,37 +62,4 @@
       {/await}
     </tbody>
   </table>
-</div>
 
-<style>
-  /* .title {
-    text-align: justify;
-  } */
-
-  /* .container {
-    height: auto;
-    overflow: auto;
-  } */
-  .tcode-status {
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-  }
-/*
-  .tcode-status td,
-  .tcode-status th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  .tcode-status th {
-    text-align: center;
-    position: sticky;
-    top: 0;
-  }
-
-  .tcode-status tr:hover {
-    background-color: #ddd;
-  }
-  */
-</style>

@@ -8,5 +8,11 @@ export default defineConfig({
     outDir:'public',
     emptyOutDir:false
   },
+  resolve: {
+    alias: {
+      fs: 'rollup-plugin-node-polyfills/polyfills/empty',
+      path: 'rollup-plugin-node-polyfills/polyfills/path',
+    },
+  },
   // compilerOptions: { "forceConsistentCasingInFileNames": false } 
 })

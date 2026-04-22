@@ -63,61 +63,33 @@
 		$isLogged = 1;
 	}
 </script>
-
-<div class="login-wrapper">
-	<img src={imgUrl} alt="" />
-	<form id="login-form">
-		<h2>사용자ID</h2>
-		<input class="form-control" bind:value={usrid} />
-
-		<h2>비밀번호</h2>
-		<input
-			type="password"
-			class="form-control"
-			id="passw"
-			bind:value={password}
-		/>
-		<div class="btns">
-			<button type='button' onclick={login3} class="btn1">로그인</button>
-			<button type='button' onclick={() => (showModal = true)} class="btn2"
-				>비밀번호변경</button
-			>
-		</div>
-		<div id="error_message" class="text-danger">
-			<small>{error}</small>
-		</div>
-	</form>
+<div class="flex items-center justify-center min-h-screen">
+	
+	<div class="w-[400px] p-10 rounded-lg shadow-lg bg-[rgba(26,26,176,0.8)] shadow-slate-500">
+		<img src={imgUrl} alt="" />
+		<form class="my-6 text-left" onsubmit={(e)=> {e.preventDefault()}}>
+			<dev class="text-2xl text-yellow-50">사용자ID</dev>
+			<input class="form-control" bind:value={usrid} />
+	
+			<dev class="text-2xl text-yellow-50">비밀번호</dev>
+			<input type="password" class="form-control" bind:value={password} />
+			<div class="btns gap-4">
+				<button type='button' onclick={login3} class="btn1">로그인</button>
+				<button type='button' onclick={() => (showModal = true)} class="btn2"
+					>비밀번호변경</button
+				>
+			</div>
+			<div class="text-2xl text-amber-400">
+				<small>{error}</small>
+			</div>
+		</form>
+	</div>
+	<ChangePass bind:showModal {usrid} />
 </div>
-<ChangePass bind:showModal {usrid} />
 
 <style>
-	.login-wrapper {
-		/* position: relative; */
-		margin: 0 auto;
-		border: none;
-		width: 400px;
-		height: auto;
-		/* background-image: url("/images/login.png"); */
-		/* background-repeat: no-repeat; */
-		/* background-size: 70% ; */
-		/* background-position: left; */
-		padding: 40px;
-		box-sizing: border-box;
-		opacity: 0.8;
-		background-color: rgb(26, 26, 176);
-	}
-	h2 {
-		font-size: 24px;
-		color: #e2eee7;
-		margin-bottom: 20px;
-	}
-	.text-danger {
-		font-size: 20px;
-		color: yellow;
-		margin-top: 20px;
-	}
 	input {
-		font-size: 18px;
+		@apply text-lg;
 	}
 	.form-control {
 		width: 100%;
@@ -146,17 +118,6 @@
 	}
 
 	.btns > button {
-		color: #fff;
-		font-size: 20px;
-		background-color: #6a24fe;
-		border-radius: 6px;
+		@apply px-4 py-2 text-xl text-white rounded-md bg-[#6a24fe] hover:bg-[#5a1edb] transition-colors duration-300;
 	}
-	/* .btns::after {
-    content: "";
-    display: block;
-    clear: both;
-}
-	button {
-		display: block; 
-	} */
 </style>

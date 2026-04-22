@@ -3,7 +3,7 @@
 
   let rdata = $state([]);
   let curRow = $state({});
-  let ncount = 0 ;
+  let ncount = 0;
   const cols = {
     chk: true,
     pkey: 0,
@@ -79,7 +79,7 @@
       }),
     })
       .then(async (res) => {
-//        let rmsg = await res.json();
+        //        let rmsg = await res.json();
         if (res.status < 400) {
           alert("정상 삭제되었습니다");
           getdata();
@@ -103,51 +103,51 @@
   }
 
   onMount(getdata);
-  let tblbody = $state() ;
+  let tblbody = $state();
   async function addRow() {
-      cols.regdt = (new Date()).toLocaleString('lt') ;
-      rdata = [...rdata,{...cols} ] ;
+    cols.regdt = new Date().toLocaleString("lt");
+    rdata = [...rdata, { ...cols }];
 
-      await tick() ;
-      if (tblbody) {
-        const lastRow = tblbody.lastElementChild;
-        lastRow.click() ;
-        // 필요 시 스크롤 이동
-        lastRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+    await tick();
+    if (tblbody) {
+      const lastRow = tblbody.lastElementChild;
+      lastRow.click();
+      // 필요 시 스크롤 이동
+      lastRow.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }
 </script>
-<main class="h-full">
 
-<div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button onclick={addRow}>추가</button>
-  <button onclick={delUser}>선택삭제</button>
-  <button onclick={updUser}>적용</button>
-  <button onclick={getdata}>적용취소</button>
-</div>
-<hr />
-<div class="tList">
-  <table id='myTable'>
-    <thead>
-      <tr>
-        {#each columns as column}
-          <th>
-            {column}
-          </th>
-        {/each}
-      </tr>
-    </thead>
-    <tbody bind:this={tblbody}>
+<main class="h-full box-border">
+  <div class="flex justify-start gap-2 m-2 p-2 shadow">
+    <button onclick={addRow}>추가</button>
+    <button class="btn-delete" onclick={delUser}>선택삭제</button>
+    <button onclick={updUser}>적용</button>
+    <button onclick={getdata}>적용취소</button>
+  </div>
+  <div class="w-[95%] ">
+    <table class="w-full">
+      <thead>
+        <tr>
+          {#each columns as column}
+            <th>
+              {column}
+            </th>
+          {/each}
+        </tr>
+      </thead>
+      <tbody bind:this={tblbody}>
         {#each rdata as row}
-          <tr onclick={() => (curRow = row)}> 
+          <tr onclick={() => (curRow = row)}>
             <td><input type="checkbox" bind:checked={row.chk} /></td>
-            {#if row.pkey === 0 }
-              <td tabindex="0" 
+            {#if row.pkey === 0}
+              <td
+                tabindex="0"
                 class="usrid"
                 contenteditable="true"
                 style="width:10rem"
                 bind:textContent={row.usrid}
-></td>
+              ></td>
             {:else}
               <td class="usrid" style="width:10rem">{row.usrid}</td>
             {/if}
@@ -156,35 +156,32 @@
               contenteditable
               style="width:15rem"
               bind:textContent={row.host}
-></td>
+            ></td>
             <td
               contenteditable
               class="usrdesc"
               style="width:20%"
               bind:textContent={row.usrdesc}
-></td>
+            ></td>
             <td><input type="checkbox" bind:checked={row.admin} /></td>
-            <td
-              contenteditable="true"
-              class="apps"
-              bind:textContent={row.apps}
-></td>
+            <td contenteditable="true" class="apps" bind:textContent={row.apps}
+            ></td>
             <td>{row.regdt}</td>
             {#if curRow === row}
               <td>◀</td>
             {/if}
           </tr>
         {/each}
-    </tbody>
-  </table>
-</div>
+      </tbody>
+    </table>
+  </div>
 </main>
+
 <style>
-  .tList {
-    max-height: 80vh;
-    overflow: auto;
-  }
   .usrdesc {
     word-break: break-all;
+  }
+  div > button {
+    @apply w-24
   }
 </style>

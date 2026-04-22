@@ -2,20 +2,8 @@
   import { run } from 'svelte/legacy';
 
   import { authApps, userid } from "../aqtstore.js";
-  import DetailTR from "./DetailTR.svelte";
+  import DetailTR from "../lib/DetailTR.svelte";
 
-  const columns = [
-    "ID",
-    "송신시간",
-    "소요시간",
-    "소요시간(원)",
-    "증감",
-    "수신크기",
-    "수신데이터",
-    "수신데이터(원)",
-    "URI",
-    "Status",
-  ];
   let vid = $state("none");
   let pid = $state(0);
   let parr = $state([]) ;
@@ -122,10 +110,10 @@
 
   });
 </script>
-
-<div class="fitem pgset">
+<main class="h-full w-full flex flex-col overflow-hidden">
+<div class="flex-none flex mx-2 p-1 gap-1 shadow">
   <span class="number-in">
-    Page :<input
+    Page <input
       type="number"
       min="1"
       style="text-align:center;"
@@ -133,8 +121,8 @@
       onchange={() => {
         conds.page = pg - 1;
       }}
-    />
-    Page크기 :<input
+    />&nbsp;
+    Page크기 <input
       type="number"
       min="1"
       style="text-align:center;"
@@ -160,7 +148,7 @@
   {/if}
   &nbsp;&nbsp;
     * 소요시간증감값 조건 :<input
-      type="checkbox" style="height: 1em;width: 1em; position: relative; "
+      type="checkbox" class="size-[1em] mt-1" 
       bind:checked={conds.valchk}
     />
     <input class="number-in"
@@ -170,11 +158,11 @@
     />이상
   <div style="margin-left: auto">
     <button onclick={reSend}>재전송</button>
-    <button onclick={getDownLoad}>CSV</button>
+    <button class="btn-excel" onclick={getDownLoad}>CSV</button>
   </div>
 </div>
-<div class="fitem tbl">
-  <table>
+<div class="flex-[1_1_0]  w-full overflow-y-auto [scrollbar-gutter:stable] p-2 shadow ">
+  <table class="max-w-[98%]">
     <thead>
       <tr>
         <th><input type="checkbox" onchange={
@@ -184,12 +172,16 @@
             }
           }
         }></th>
-        {#each columns as column }
-          <th>
-            <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
-            {column}
-          </th>
-        {/each}
+        <th class="w-[5em]">ID</th>
+        <th >송신시간</th>
+        <th class="class">소요시간</th>
+        <th class="class">소요시간(원)</th>
+        <th >증감</th>
+        <th class="class">응답크기</th>
+        <th class="class">응답데이터</th>
+        <th class="class">응답데이터(원)</th>
+        <th class="w-[10em]">URI</th>
+        <th class="class">응답코드</th>
       </tr>
     </thead>
     <tbody>
@@ -208,15 +200,15 @@
 
           <td><input type="checkbox" bind:checked={row.chk} /></td>
 
-          <td class="cmpid"><strong>{row.pkey}</strong></td>
-          <td class="stime">{row.송신시간}</td>
-          <td style="text-align:right" class="elapsed">{row.소요시간}</td>
-          <td style="text-align:right" class="elapsed">{row.원소요시간}</td>
-          <td class={row.소요시간 > row.원소요시간 ? " text-red-700" : "text-blue-700"}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
-          <td style="text-align:right" class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
-          <td class={"d"+row.diff} title={row.diff ? "원본의결과와 다름":""}>{row.수신 === null ? "" : row.수신  }</td>
-          <td class="rhead">{row.원수신 === null ? "" : row.원수신 }</td>
-          <td class="uri">{row.uri}</td>
+          <td ><strong>{row.pkey}</strong></td>
+          <td class="w-[19ch] wrap-break-word ">{row.송신시간}</td>
+          <td class="elapsed text-right">{row.소요시간}</td>
+          <td class="elapsed text-right">{row.원소요시간}</td>
+          <td class={"w-[5em] " + (row.소요시간 > row.원소요시간 ? " text-red-700" : "text-blue-700")}>{(row.소요시간 - row.원소요시간).toFixed(3)}</td>
+          <td class="rlen text-right">{row.수신크기.toLocaleString("ko-KR")}</td>
+          <td class={"text-left d"+row.diff} title={row.diff ? "원본의결과와 다름":""}>{row.수신 === null ? "" : row.수신  }</td>
+          <td class="text-left">{row.원수신 === null ? "" : row.원수신 }</td>
+          <td class="w-[10em] text-left">{row.uri}</td>
           <td class="rcode">{row.rcode}</td>
         </tr>
       {/each}
@@ -226,111 +218,19 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid pid={pid} parr={parr} pidx={pidx} onParam={undefined} />
+</main>
+<DetailTR bind:vid pid={pid} parr={parr} bind:pidx />
 
 <style>
-  .elapsed,
-  .rlen,
-  .rcode,
-  .method,
-  .dstport,
-  .appid {
-    width: 5em;
-  }
-  .cmpid {
-    width: 6em;
-  }
-  .stime {
-    width: 14em;
-  }
-  .rhead,
-  .uri {
-    text-align: left;
-  }
 
-  .pgset {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-  }
-  .pgset * {
-    margin: 2px 4px;
-    padding: 2px 3px;
-    height: 1.7rem;
-  }
-  button {
-    border-radius: 6px;
-  }
-  .pgset button {
-    width: 4em;
-  }
   .number-in input {
     max-width: 60px;
     text-align: center;
   }
 
-  .tbl {
-    overflow: auto;
-    height: 78vh;
-  }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
   .d1 {
     background-color: rgb(244,230,230)
   }
 
-  /*
-  thead {
-    max-height: 1.2em;
-    position: sticky;
-    top: 0px;
-  }
-  th {
-    max-width: 20%;
-    padding-left: 5px;
-    text-align: center;
-    border-right: 1px solid #f0f2fa;
-  }
-
-  td {
-    max-width: 20%;
-    margin: 0;
-    padding: 0.5rem;
-    vertical-align: top;
-    text-align: center;
-    font-size: 0.9rem;
-    background-color: #ffffff;
-    border-right: 1px solid #f0f2fa;
-  }
-
-  td, th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  tbody tr:nth-child(odd) td {
-    background-color: #fafbff;
-  }
-
-  thead th:first-child {
-    border-top-left-radius: 5px;
-  }
-
-  thead th:last-child {
-    border-top-right-radius: 5px;
-  }
-
-  tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-
-  tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-
-  tbody tr:hover td{
-    background-color: #ddd;
-  } */
+  
 </style>

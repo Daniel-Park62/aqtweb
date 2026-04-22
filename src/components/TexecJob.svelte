@@ -11,7 +11,7 @@
 
   // $: geting(tick);
 
-  let tcodelist = $state([]);
+  let tcodelist = $state([]) ;
 
   const statusnm = { 0: "등록", 1: "실행대기", 2: "실행중", 3: "수행오류", 9:"작업완료" };
 
@@ -197,9 +197,10 @@
   onMount(() => {
     getdata();
     (async () => {
+      tcodelist = [];
       const res = await fetch("/tmaster/tsellist/" + $userid);
       const tlist = await res.json();
-      tcodelist = tlist.filter( r => (r.lvl != 0 && r.enddate == null )) ;
+      tcodelist = tlist.filter( r => (r.lvl != 0 && r.endDate == null )) ;
       const selEl = document.getElementById("tcode");
       selEl.addEventListener("change", (e) => {
         const fcode = tcodelist.find((r) => r.tcode == e.target.value);
@@ -215,10 +216,10 @@
   });
 </script>
 
-<div class="flex flex-col h-100">
-  <div class="flex justify-start items-baseline">
+<div class="flex flex-col h-full">
+  <div class="m-2 p-2 shadow flex gap-4 justify-start items-baseline">
     <lebel>[ ▼ 전문송신이력 ] 조회선택▶</lebel>
-    <div style="display:flex; border: 1px solid silver; margin:0 3px">
+    <div class="flex border border-gray-500 mx-2 p-1 rounded" >
       <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={1} /> 실행대기</label >
       <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={2} /> 실행중</label >
       <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={9} /> 작업완료</label >
@@ -226,9 +227,9 @@
     </div>
     <button onclick={getdata}>조회</button>
   </div>
-  <hr />
-  <div class="max-h-[45vh] overflow-auto grow">
-    <table class="my-1">
+
+  <div class="min-h-[calc(100%-378px)] overflow-auto grow">
+    <table class="m-1 p-2 w-[98%]">
       <thead>
         <tr>
           <th>Job No</th>      
@@ -292,25 +293,25 @@
       </tbody>
     </table>
   </div>
-  <hr />
-  <div class="flex pt-2">
+
+  <div class="shrink-0 flex m-2 p-2 gap-2 shadow rounded">
     <button onclick={newJob}>{curRow.jobsts === 1 ? "신규취소" : "작업추가" }</button>
     <button onclick={reExec}>실행요청</button>
     {#if curRow.pkey > 0}
-      <button onclick={() => deljob(curRow.pkey)}
+      <button class="btn-delete" onclick={() => deljob(curRow.pkey)}
         >{curRow.resultstat == 2 ? "작업중지" : "작업삭제"}</button
       >
     {/if}
     <button  onclick={()=>{curRow.resultstat=0; updExec() }}>저장</button>
   </div>
-  <div class="p-2 border-2 border-indigo-500 items basis-[100px] flex-none {curRow.pkey ? '': 'bg-lime-100'}">
+  <div class="m-1 p-2 shadow border-zinc-500 items flex-none {curRow.pkey ? '': 'bg-slate-200'}">
     <div class="item in_label">테스트ID:</div>
     <!-- <input class="item in_value" maxlength=10 style="width:200px"
           pattern="[A-Z0-9]{(3, 6)}"
           bind:value={curRow.tcode}
         /> -->
     <select id="tcode" class="item in_value" bind:value={curRow.tcode}>
-      {#each tcodelist.filter((a) => a.enddate === null) as t}
+      {#each tcodelist as t}
         <option value={t.tcode}>{t.tcode + " : " + t.name}</option>
       {/each}
     </select>

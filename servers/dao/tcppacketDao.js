@@ -65,7 +65,7 @@ export default {
   },
   /** @param {number[]} pkey */
   async redoSdata(pkey) {
-    return await aqtdb.query(`update ttcppacket t, tloaddata o  SET t.sdata = o.sdata 
+    return await aqtdb.query(`update ttcppacket t, tloaddata o  SET t.sdata = o.sdata , t.params = o.params,t.headers=o.headers
                               WHERE t.pkey in (?) AND t.cmpid = o.pkey ; commit ;`, pkey);
   },
   /** @param {*} parms */

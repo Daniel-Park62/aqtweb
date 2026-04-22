@@ -8,8 +8,8 @@
     getProNm,
     getAppid,
     getFirst
-  } from "./Common.svelte";
-  import Modal, { getModal } from "../lib/Modal.svelte";
+  } from "../lib/Common.svelte";
+  import Modal from "../lib/Modal2.svelte";
   import CopyTr from "./CopyTr.svelte";
   let rdata = $state(Promise.resolve([]));
   let tcode;
@@ -18,6 +18,8 @@
   let curRow = $state({});
   let encv = $state(false);
 
+  let showModal = $state(false);
+  let showModal2 = $state(false);
   let sv_row;
   function clickRow(e, row) {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
@@ -51,7 +53,6 @@
         let rmsg = await res.json();
         alert(rmsg.message);
         if (res.status < 300) {
-          getModal().close();
           getdata();
         }
       })
@@ -125,8 +126,8 @@
 
   onMount( getdata );
 </script>
-
-<div class="flex justify-start gap-2 m-2">
+<main class="h-full w-full box-border">
+<div class="flex justify-start gap-2 m-2 p-2 shadow">
   <button
     onclick={() => {
       (jobnm = "등록"),
@@ -135,20 +136,20 @@
         (curRow.lvl = "1"),
         (curRow.endDate = null),
         (curRow.tdate = new Date().toISOString().slice(0, 10));
-      getModal().open({}, "50", "70");
+        showModal = true;
     }}>신규등록</button
   >
-  <button onclick={delTcode}>선택삭제</button>
+  <button class="btn-delete" onclick={delTcode}>선택삭제</button>
   <button
     onclick={() => {
       gtcode.update((v) => curRow.tcode);
-      getModal('copytr').open({}, "60", "60");
+      showModal2 = true;
     }}>전문생성</button
   >
-  <button onclick={eraseTr}>전문삭제</button>
+  <button class="btn-delete" onclick={eraseTr}>전문삭제</button>
 </div>
-<hr />
-<div class="tmasterList">
+
+<div class="h-[calc(100%-40px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
   <table>
     <thead>
       <tr>
@@ -178,7 +179,7 @@
               curRow = row;
               encv = curRow.encval === "euc-kr";
               jobnm = "수정";
-              getModal().open({}, "40", "70");
+              showModal = true;
             }}
           >
             <td><input type="checkbox" bind:checked={row.chk} /></td>
@@ -203,13 +204,14 @@
     </tbody>
   </table>
 </div>
-<Modal>
+</main>
+<Modal bind:showModal showcls={false} wd="530px" hd="460px">
   <div class="hero from-amber-100 via-sky-300 to-sky-500 bg-gradient-to-br">
     <h2 class="mx-auto my-5 text-center sm:text-4xl text-3xl text-blue-800 font-bold">{curRow.tcode} 테스트코드 {jobnm}</h2>
     <hr />
     <div class="items p-5">
       <div class="item in_label">테스트코드:</div>
-      <div>
+      <div class="text-left">
         <input
           class="item in_value"
           pattern="[A-Z0-9]{3, 6}"
@@ -217,9 +219,9 @@
         />
       </div>
       <div class="item in_label">테스트명:</div>
-      <div><input class="item in_value" bind:value={curRow.desc1} /></div>
+      <div class="text-left"><input class="item in_value" bind:value={curRow.desc1} /></div>
       <div class="item in_label">APPID:</div>
-      <div>    <select     class="item in_value"     bind:value={curRow.appid}>
+      <div class="text-left">    <select     class="item in_value"     bind:value={curRow.appid}>
         {#each getAppid() as r}
             <option value={r.value}>
               {r.name}
@@ -228,7 +230,7 @@
                </select>
       </div>
       <div class="item in_label">단계:</div>
-      <div>
+      <div class="text-left">
         <select class="item in_value" bind:value={curRow.lvl}>
           {#each Object.entries(getLvls()) as [key, value], index (key)}
             <option value={key}>{value}</option>
@@ -236,13 +238,13 @@
         </select>
       </div>
       <div class="item in_label">테스트시작일:</div>
-      <div>
+      <div class="text-left">
         <input class="item in_value" type="date" bind:value={curRow.tdate} />
       </div>
       <div class="item in_label">대상서버:</div>
-      <div><input class="item in_value" bind:value={curRow.thost} /></div>
+      <div class="text-left"><input class="item in_value" bind:value={curRow.thost} /></div>
       <div class="item in_label">대상Port:</div>
-      <div>
+      <div class="text-left">
         <input
           class="item in_value"
           type="number"
@@ -252,7 +254,7 @@
         />
       </div>
       <div class="item in_label">전문구분:</div>
-      <div>
+      <div class="text-left">
         <select class="item in_value" bind:value={curRow.pro}>
           {#each Object.entries(getPros()) as [key, value], index (key)}
             <option value={key}>{value}</option>
@@ -265,22 +267,21 @@
       </label>
     </div>
     <hr />
-    <div class='m-2'>
+    <div class='p-2 gap-2 flex justify-center'>
       <button type="button"  onclick={updTcode}>저장</button>
-      <button type="button"  onclick={() => getModal().close()}>닫기</button>
+      <button type="button"  onclick={() => showModal = false}>닫기</button>
     </div>
   </div>
 </Modal>
-<Modal id="copytr" >
-  <CopyTr tlist={rdata} oncls={() => getModal('copytr').close()} />
-</Modal>
+<CopyTr bind:showCopyTr={showModal2} tlist={rdata} />
 
 <style>
   .items {
     display: grid;
-    grid-template-columns: 8rem 1fr;
+    grid-template-columns: 8rem auto;
     gap: 10px 20px;
-    align-content: start;
+    /* align-content: start;
+    justify-content: stretch; */
   }
 
   .item {
@@ -295,13 +296,10 @@
     border: 1px solid silver;
     border-radius: 5px;
     font-size: 14px;
+    /* width: 100%; */
   }
   .in_label {
     text-align: end;
   }
 
-  .tmasterList {
-    max-height: 80vh;
-    overflow-y: auto;
-  }
 </style>

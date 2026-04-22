@@ -2,16 +2,16 @@
 <script>
   import { onMount } from "svelte";
 
-  let columns = [1, "APPID", "APP명", "담당자"];
+  let columns = [true, "APPID", "APP명", "담당자"];
   let columns_dtl = [0,"APPID", "Host IP", "0"];
-  let data = [];
+  let data = $state([]) ;
+  let datadtl = $state([]);
   let deldata = [];
   let deldata_dtl = [];
-  let datadtl = [];
   let newRow = [...columns];
   let newRow_dtl = [...columns_dtl];
 
-  let appid = "";
+  let appid = $state("") ;
 
   function addRow() {
     data = [...data, [...newRow]];
@@ -56,7 +56,7 @@
   }
 
   // $: promise = data;
-  $: { getApphost(appid); }
+  $effect (() => { getApphost(appid); });
   //$: promise_dtl = datadtl;
 
   async function getData() {
@@ -159,14 +159,13 @@
   onMount( getData );
 </script>
 <main class="h-full w-full">
-<div class="flex justify-start gap-2 m-2">
-  <button on:click={updApp}>적용</button>
-  <button on:click={getData}>적용취소</button>
+<div class="flex justify-start gap-2 m-2 p-2 shadow">
+  <button onclick={updApp}>적용</button>
+  <button onclick={getData}>적용취소</button>
 </div>
-<hr />
 
 <div class="flex items-start gap-4 w-full">
-  <table class="app-tbl flex-1 min-w-0 overflow-x-auto">
+  <table class="app-tbl w-3/5 overflow-x-auto">
     <thead>
       <tr>
         <th>수정</th>
@@ -181,29 +180,29 @@
     {:then rows} -->
     <tbody>
       {#each data as row}
-        <tr on:click={() => (appid = row[1])}>
+        <tr onclick={() => {appid = row[1]; console.log(appid);}} >
           <td><input type="checkbox" bind:checked={row[0]} /></td>
-          <td contenteditable="false" bind:textContent={row[1]} />
-          <td contenteditable="true" bind:textContent={row[2]} />
-          <td contenteditable="true" bind:textContent={row[3]} />
-          <td><button on:click={() => deleteRow(row)}>X</button></td>
+          <td contenteditable="false" bind:textContent={row[1]}></td>
+          <td contenteditable="true" bind:textContent={row[2]}></td>
+          <td contenteditable="true" bind:textContent={row[3]}></td>
+          <td><button onclick={() => deleteRow(row)}>X</button></td>
         </tr>
       {/each}
     <!-- {/await} -->
     <tr>
       {#each newRow as col, i}
         {#if i == 0 }
-          <td><input type="checkbox" bind:checked={col} /></td>
+          <td><input type="checkbox" bind:checked={newRow[i]} ></td>
         {:else}
-          <td contenteditable="true" bind:textContent={col} />
+          <td contenteditable="true" bind:textContent={newRow[i]}></td>
         {/if}
       {/each}
-      <td><button on:click={addRow}>add</button></td>
+      <td><button onclick={addRow}>add</button></td>
     </tr>
     </tbody>
     <!-- <pre style="background: #eee">{JSON.stringify(data, null, 2)}</pre> -->
   </table>
-  <table class="apphost flex-1 min-w-0 overflow-x-auto">
+  <table class="apphost w-2/5 overflow-x-auto">
     <thead>
       <tr>
         <th>APP ID</th>
@@ -218,30 +217,26 @@
     <tbody>
       {#each datadtl as row}
         <tr>
-          <td contenteditable="false" bind:textContent={row[1]} />
-          <td contenteditable="true" bind:textContent={row[2]} />
-          <td contenteditable="true" bind:textContent={row[3]} />
-          <td><button on:click={() => deleteRow_dtl(row)}>X</button></td>
+          <td contenteditable="false" bind:textContent={row[1]}></td>
+          <td contenteditable="true" bind:textContent={row[2]}></td>
+          <td contenteditable="true" bind:textContent={row[3]}></td>
+          <td><button onclick={() => deleteRow_dtl(row)}>X</button></td>
         </tr>
       {/each}
     <!-- {:catch error}
       <p>{error.message}</p>
     {/await} -->
     <tr >
-      <td contenteditable="false" bind:textContent={newRow_dtl[1]} />
-      <td contenteditable="true" bind:textContent={newRow_dtl[2]} />
-      <td contenteditable="true" bind:textContent={newRow_dtl[3]} />
-      <td><button on:click={addRow_dtl}>add</button></td>
+      <td contenteditable="false" bind:textContent={newRow_dtl[1]}></td>
+      <td contenteditable="true" bind:textContent={newRow_dtl[2]}></td>
+      <td contenteditable="true" bind:textContent={newRow_dtl[3]}></td>
+      <td><button onclick={addRow_dtl}>add</button></td>
     </tr>
     </tbody>
   </table>
 </div>
 </main>
 <style>
-
-  td button {
-    font-size: 0.7em;
-  }
 
   tr td:focus {
     background: #eee;

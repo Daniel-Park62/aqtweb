@@ -1,10 +1,8 @@
 <script>
   import { onMount } from "svelte";
-  import { userid,authApps } from "../aqtstore.js";
-//   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
-// import { bind } from "svelte/internal";
-// import DetailTr from "./DetailTR.svelte";
-import CompareTr from "./CompareTr.svelte";
+  import { userid } from "../aqtstore.js";
+
+  import CompareTr from "./CompareTr.svelte";
 
   let vid = $state('none');
   let pid ;
@@ -70,7 +68,7 @@ import CompareTr from "./CompareTr.svelte";
 </script>
 
 <!-- svelte-ignore a11y_interactive_supports_focus -->
-<div class="main" role="button" onmouseenter={() => vid = 'none'}>
+<div class="main" role="none" onmouseenter={() => vid = 'none'}>
   <div class="cond fitem" role="button"  onkeyup={enterkey}>
     <p>* 테스트ID : </p> 
     <select bind:value={selected} onchange={()=> {conds.tcode = ''; conds.page=0}} >
@@ -89,7 +87,7 @@ import CompareTr from "./CompareTr.svelte";
 
   </div>
 
-  <div class="fitem">
+  <div class="flex-1 h-full">
     <CompareTr bind:conds />
   </div>
 </div>

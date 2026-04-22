@@ -1,9 +1,9 @@
 <script>
-  import { onMount } from "svelte";
+  import { getAppid } from "../lib/Common.svelte";
 
   let rdata = $state([]);
   let curRow = $state({});
-  let rcnt = $state(0) ;
+  let rcnt = $state(0);
   let cols = {
     chk: 1,
     pkey: 0,
@@ -115,7 +115,7 @@
     });
     if (res.status === 200) {
       const rows = await res.json();
-      rcnt = rows.length ;
+      rcnt = rows.length;
       rdata = rows.map((r) => {
         r.chk = 0;
         return r;
@@ -127,111 +127,108 @@
 
   //  onMount(getdata);
 </script>
-<main class="h-full">
-<div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button
-    onclick={() => {
-      newRow.appid = curRow.appid;
-      rdata = [{ ...newRow }, ...rdata];
-      newRow = { ...cols };
-      newRow.appid = curRow.appid;
-    }}>추가</button
-  >
-  <button onclick={delService}>선택삭제</button>
-  <button onclick={updService}>적용</button>
-  <button onclick={getdata}>적용취소</button>
-  <span>APPID : <input type="text" bind:value={conds.appid} /></span>
-  <span>서비스(URI) : <input type="text" bind:value={conds.svcid} /></span>
-  <button style="margin-left: auto" onclick={getdata}>조회</button>
-  <span>{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
-</div>
-<hr />
-<div class="tList">
-  <table>
-    <thead>
-      <tr>
-        {#each columns as column}
-          <th>
-            {column}
-          </th>
-        {/each}
-      </tr>
-    </thead>
-    <tbody>
-      {#await rdata}
-        <p>...waiting</p>
-      {:then rows}
-        {#each rows as row}
-          <tr onclick={(e) => clickRow(e, row)}>
-            <td><input type="checkbox" bind:checked={row.chk} /></td>
-            {#if row.pkey === 0}
+<datalist id="apps">
+  <option value="ATT"></option>
+  <option value="BTT"></option>
+  <option value="HHH"></option>
+  <option value="PPP"></option>
+</datalist>
+
+<main class="h-full w-full box-border">
+  <div class="flex justify-start gap-2 m-2 p-2 shadow">
+    <button
+      onclick={() => {
+        newRow.appid = curRow.appid;
+        rdata = [{ ...newRow }, ...rdata];
+        newRow = { ...cols };
+        newRow.appid = curRow.appid;
+      }}>추가</button
+    >
+    <button class="btn-delete" onclick={delService}>선택삭제</button>
+    <button onclick={updService}>적용</button>
+    <button onclick={getdata}>적용취소</button>
+    <label>APPID : <input type="text" bind:value={conds.appid} ></label>
+    <label>서비스(URI) : <input type="text" bind:value={conds.svcid} ></label>
+    <button class="ml-auto" onclick={getdata}>조회</button>
+    <label class="mr-3">{rcnt > 0 ? rcnt.toLocaleString("ko-KR") + " 건" : " "}</label>
+  </div>
+  <div class="h-[80vh] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] ">
+    <table class="w-[98%] ">
+      <thead>
+        <tr>
+          {#each columns as column}
+            <th>
+              {column}
+            </th>
+          {/each}
+        </tr>
+      </thead>
+      <tbody>
+        {#await rdata}
+          <p>...waiting</p>
+        {:then rows}
+          {#each rows as row}
+            <tr onclick={(e) => clickRow(e, row)}>
+              <td><input type="checkbox" bind:checked={row.chk} /></td>
+              {#if row.pkey === 0}
+                <td class="w-[14ch]">
+                  <select class="border-none w-full" bind:value={row.appid}>
+                    {#each getAppid() as r}
+                    <option value={r.value}>
+                      {r.name}
+                    </option>
+                    {/each}
+                  </select>
+                </td>
+                <td
+                  class="svcid"
+                  contenteditable="true"
+                  style="width:20rem ;text-align:left"
+                  bind:textContent={row.svcid}
+                ></td>
+              {:else}
+                <td class="w-[10ch]">{row.appid}</td>
+                <td class="svcid w-[20rem]">{row.svcid}</td>
+              {/if}
               <td
-                class="appid"
                 contenteditable="true"
-                bind:textContent={row.appid}
-></td>
+                class="svckor w-[20%]"
+                bind:textContent={row.svckor}
+              ></td>
               <td
-                class="svcid"
                 contenteditable="true"
-                style="width:20rem ;text-align:left"
-                bind:textContent={row.svcid}
-></td>
-            {:else}
-              <td class="appid">{row.appid}</td>
-              <td class="svcid" style="width:20rem">{row.svcid}</td>
-            {/if}
-            <td
-              contenteditable="true"
-              class="svckor"
-              style="width:20%"
-              bind:textContent={row.svckor}
-></td>
-            <td
-              contenteditable="true"
-              bind:textContent={row.svceng}
-              class="svceng"
-              style="width:20%"
-></td>
-            <td
-              contenteditable="false"
-              class="task"
-              bind:textContent={row.task}
-></td>
-            <td
-              contenteditable="true"
-              class="manager"
-              bind:textContent={row.manager}
-></td>
-            <td
-              contenteditable="true"
-              class="svckind"
-              bind:textContent={row.svckind}
-></td>
-          </tr>
-        {/each}
-      {:catch err}
-        <p style="color: red">{err.message}</p>
-      {/await}
-    </tbody>
-  </table>
-</div>
+                bind:textContent={row.svceng}
+                class="svceng w-[20%]"
+              ></td>
+              <td
+                contenteditable="false"
+                class="task"
+                bind:textContent={row.task}
+              ></td>
+              <td
+                contenteditable="true"
+                class="manager"
+                bind:textContent={row.manager}
+              ></td>
+              <td
+                contenteditable="true"
+                class="svckind"
+                bind:textContent={row.svckind}
+              ></td>
+            </tr>
+          {/each}
+        {:catch err}
+          <p style="color: red">{err.message}</p>
+        {/await}
+      </tbody>
+    </table>
+  </div>
 </main>
+
 <style>
-  .tList {
-    max-height: 80vh;
-    overflow: auto;
+  div > button {
+    @apply w-24
   }
-
-  #btns * {
-    margin: 2px 4px;
-    padding: 0 8px;
-    height: 1.8em;
-  }
-
-  button {
-    width: 6em;
-  }
-
   .svcid,
   .svckor,
   .svceng {

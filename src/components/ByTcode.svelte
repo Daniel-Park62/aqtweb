@@ -2,7 +2,7 @@
 
   import TidList from "./TidList.svelte";
   import Trtable from "./Trtable.svelte";
-  import Modal,{getModal} from "../lib/Modal.svelte";
+  import Modal from "../lib/Modal2.svelte";
 
   let conds = $state({
     tcode: "",
@@ -16,6 +16,7 @@
   });
   let dtls = $state([]);
   let tcode = $state("");
+  let showModal = $state(false);
   
   let sv_row ;
   function clickRow(e, row) {
@@ -70,14 +71,14 @@
 </script>
 
 <div class="main">
-  <div class="tlist">
+  <div class="h-[30vh] w-full overflow-y-auto flex-none">
     <TidList bind:tcode vdisp={false}/>
   </div>
-  <div class="sub-tit">
+  <div class="flex-none sub-tit">
     서비스별 현황({tcode})
   </div>
-  <div class="bottom">
-    <table class="tbl-svc">
+  <div class="flex-[1_1_0] overflow-y-auto">
+    <table class="w-[98%]">
       <thead>
         <tr>
           <th rowspan="2" class="cursor-pointer" id="svcid" onclick={sortdata}>서비스ID</th>
@@ -104,7 +105,7 @@
           <p>...waiting</p>
         {:then rows} -->
           {#each dtls as row}
-            <tr onclick={(e)=>clickRow(e,row)} ondblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal('bytcode').open({}) }}>
+            <tr onclick={(e)=>clickRow(e,row)} ondblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; showModal=true;}}>
               <td style="text-align:left; max-width:30%">{row.svcid}</td>
               <td style="text-align:left">{row.svckor}</td>
               <td>{row.cumcnt.toLocaleString("ko-KR")}</td>
@@ -131,7 +132,7 @@
   contentComponent={Trtable} 
   contentProps={conds} />
  -->    
-  <Modal id='bytcode' >
+  <Modal bind:showModal>
       <Trtable bind:conds />
   </Modal> 
   </div>
@@ -141,10 +142,6 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-  }
-  .tlist {
-    height: 30%;
-    overflow-y: auto;
   }
   tbody td {
     text-align: right;
@@ -157,8 +154,5 @@
     font-size: 1.5rem;
     height: 40px;
   }
-  .bottom {
-    flex: 1 1 0;
-    overflow: auto;
-  }
+
 </style>

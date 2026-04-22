@@ -1,20 +1,20 @@
 <script>
 
-  let { label = "메뉴", items = [], isOpen=false, onSelect,toggle } = $props();
+  let { label = "메뉴", items = [], onSelect  } = $props();
   // let isOpen = $state(false);
 
   function handleSelect(component) {
     onSelect(component); // 부모에게 선택된 컴포넌트 전달
-    isOpen = false;
+    // isOpen = false;
   }
   
 </script>
 
-<div class="dropdown">
-  <button onclick={toggle}>{label}</button>
+<div class="dropdown group">
+  <button >{label}</button>
 
-  {#if isOpen}
-    <ul class="menu bg-gray-800">
+  <!-- {#if isOpen} -->
+    <ul class="menu bg-gray-800 hidden group-hover:block">
       {#each items as item}
         <li>
           <button class="text-gray-100 hover:bg-gray-500 hover:font-bold" onclick={() => handleSelect(item)}>
@@ -23,7 +23,7 @@
         </li>
       {/each}
     </ul>
-  {/if}
+  <!-- {/if} -->
 </div>
 
 <style>
@@ -39,8 +39,8 @@
 
   .menu {
     position: absolute;
-    top: 90% ;
-    border: 1px solid #ccc;
+    top: 80% ;
+    border: none; 
     border-radius: 5px;
     padding: 10px;
     list-style: none;

@@ -43,6 +43,7 @@
 <div class="flex h-full">
   <div class="item">
     <table>
+    <caption class="m-4 text-xl text-left text-blue-900 shadow">원본데이터 목록</caption>
       <thead>
         <tr>
           {#each columns as column}
@@ -69,7 +70,7 @@
       </tbody>
     </table>
   </div>
-  <div class="item">
+  <div class="flex-1">
     <Tloadtable tcode={tcode} />
   </div>
 </div>

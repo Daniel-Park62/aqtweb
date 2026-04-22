@@ -1,9 +1,8 @@
-<script>
+<script lang="ts">
   import { authApps, userid } from "../aqtstore.js";
-  import DetailTR from "./DetailTR.svelte";
+  import DetailTR from "../lib/DetailTR.svelte";
   import { onMount, tick } from "svelte";
-  import ParamInput from "./ParamInput.svelte";
-  let showParam = $state(false);
+
   const columns = [
     "ID",
     "송신시간",
@@ -22,8 +21,7 @@
   let pid = $state(0);
   let parr = $state([]) ;
   let pidx = $state(0);
-  let params = $state("") ;
-
+  
   /** @type {{conds?: any}} */
   let { conds = $bindable({
     tcode: "",
@@ -41,11 +39,12 @@
   let pg = $derived(conds.page + 1);
 
   let sv_row ;
+  let curRow ;
   function clickRow(e, row) {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
     sv_row = e.target.parentElement;
     sv_row.classList.toggle("bg-teal-100");
-    params = row.params ?? "";
+    curRow = row;
     pid = row.pkey ;  
   }
 
@@ -158,9 +157,10 @@
       getTRlist();
     }
   });
+
 </script>
-<ParamInput bind:showModal={showParam} bind:resultStr={params} pkey={pid} />
-<div class="fitem pgset">
+<main class="flex flex-col h-full w-full border-0">
+<div class="flex-none shadow pgset">
   <span class="number-in">
     Page :<input
       type="number"
@@ -201,16 +201,12 @@
   <span> 정렬 : <input onkeyup={(e) => {if(e.key == 'Enter') getTRlist()}} placeholder="o_stime" class="w-[20rem]" type="text" bind:value={sortby} /></span>
   <div style="margin-left: auto">
     <button onclick={reSend}>재전송</button>
-    <button onclick={getDownLoad}>CSV</button>
-    <button onclick={() => { showParam = true; }}>파라미터</button>
+    <button class="btn-excel" onclick={getDownLoad}>CSV</button>
   </div>
 </div>
-<div class="fitem tbl">
-  <table>
+<div class="flex-[1_1_0] h-full w-full overflow-y-auto [scrollbar-gutter:stable] p-2  ">
+  <table class="max-w-[98%]">
     <thead>
-      {#await rdata}
-      <template>Waiting... </template>
-      {:then rs}
       <tr>
         <th><input type="checkbox" onchange={
           (e) => {
@@ -219,22 +215,27 @@
             }
           }
         }></th>
-        {#each columns as column }
-          <th>
-            {column}
-          </th>
-        {/each}
+      <th>ID</th>
+      <th>송신시간</th>
+      <th>소요시간</th>
+      <th>Method</th>
+      <th>URI</th>
+      <th>Status</th>
+      <th>응답크기</th>
+      <th>응답데이터</th>
+      <th>port</th>
+      <th>APID</th>
+      <th></th>
       </tr>
-      {/await}
     </thead>
     <tbody>
       {#await rdata}
-      <template>Waiting... </template>
+      <tr><td>Waiting... </td></tr>
       {:then rows}  
       {#each rows as row , i (row.pkey)}
         <tr
           class={row.sflag}
-          onclick={(e)=>{clickRow(e,row);} }
+          onclick={(e)=>{pidx = i ; clickRow(e,row);} }
           ondblclick={(e) => {
             vid = "block";
             pidx = i ;
@@ -249,7 +250,7 @@
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
           <td class="method">{row.method === null ? "" : row.method}</td>
-          <td class="uri">{row.uri}</td>
+          <td class="w-[10em]">{row.uri}</td>
           <td class="rcode">{row.status}</td>
           <td style="text-align:right" class="rlen"
             >{row.수신크기.toLocaleString("ko-KR")}</td
@@ -257,7 +258,7 @@
           <td class="rhead">{row.수신데이터 === null ? "" : row.수신데이터}</td>
           <td class="dstport">{row.dstport}</td>
           <td class="appid">{row.appid}</td>
-          {#if row.col1}<td class="col1">{row.col1}</td>{/if}
+          {#if row.col1}<td class="w-16">{row.col1}</td>{/if}
         </tr>
       {/each}
       {:catch err}
@@ -266,7 +267,8 @@
     </tbody>
   </table>
 </div>
-<DetailTR bind:vid pid={pid} parr={parr} pidx={pidx} onParam={()=> showParam = true} />
+</main>
+<DetailTR bind:vid pid={pid} parr={parr} bind:pidx />
 
 <style>
   .elapsed,
@@ -298,21 +300,12 @@
     padding: 2px 3px;
     height: 1.7rem;
   }
-  button {
-    border-radius: 6px;
-  }
-  .pgset button {
-    width: 5em;
-  }
+
   .number-in input {
     max-width: 60px;
     text-align: center;
   }
 
-  .tbl {
-    overflow: auto;
-    height: 78vh;
-  }
   table {
     border-collapse: collapse;
     width: 100%;

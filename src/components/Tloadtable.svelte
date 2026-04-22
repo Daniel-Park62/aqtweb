@@ -1,41 +1,7 @@
 <script>
 
-  import DetailTR from "./DetailTR.svelte";
+  import DetailTR from "../lib/DetailTR.svelte";
 
-  const columns = [
-    {
-      key: "id",
-      title: "ID",
-    },
-    {
-      key: "stime",
-      title: "송신시간",
-    },
-    {
-      key: "elapsed",
-      title: "시간",
-    },
-    {
-      key: "method",
-      title: "Method",
-    },
-    {
-      key: "uri",
-      title: "URI",
-    },
-    {
-      key: "rlen",
-      title: "Len",
-    },
-    {
-      key: "rdata",
-      title: "수신데이터",
-    },
-    {
-      key: "port",
-      title: "Port",
-    },
-  ];
   let vid = $state("none");
   let pid = $state(0);
   let parr = $state([]);
@@ -112,9 +78,9 @@
 </script>
 
 <div class="container">
-  <div class="fitem pgset">
+  <div class="flex items-center gap-2 m-2 p-2 shadow ">
     <span class="number-in">
-      Page :<input
+      Page <input
         type="number"
         min="1"
         style="text-align:center;"
@@ -123,7 +89,7 @@
           conds.page = pg - 1;
         }}
       />
-      Page크기 :<input
+      Page크기 <input
         type="number"
         min="1"
         style="text-align:center;"
@@ -149,15 +115,18 @@
       </button>
     {/if}
   </div>
-  <div class="fitem tbl h-full">
-    <table>
+  <div class="h-[85vh] w-full overflow-y-auto [scrollbar-gutter:stable]">
+    <table class="w-[98%] table-fixed">
       <thead>
         <tr>
-          {#each columns as column}
-            <th>
-              {column.title}
-            </th>
-          {/each}
+          <th class="w-24">ID</th>
+          <th class="w-36 ">송신시간</th>
+          <th class="w-16">소요시간</th>
+          <th class="w-16">Method</th>
+          <th>URI</th>
+          <th class="w-14">크기</th>
+          <th class="w-[40%]">응답데이터</th>
+          <th class="w-14">Port</th>
         </tr>
       </thead>
       <tbody>
@@ -176,15 +145,15 @@
             }}
           >
             <td class="id"><strong><em>{row.pkey}</em></strong></td>
-            <td class="stime">{row.stime}</td>
-            <td style="text-align:right" class="elapsed">{row.elapsed}</td>
+            <td class="break-all">{row.stime}</td>
+            <td class="text-right">{row.elapsed}</td>
             <td class="method">{row.method === null ? "" : row.method}</td>
             <td class="uri">{row.uri}</td>
-            <td style="text-align:right" class="rlen"
+            <td class="text-right"
               >{row.rlen.toLocaleString("ko-KR")}</td
             >
-            <td class="rdata">{row.수신데이터 === null ? "" : row.rdata}</td>
-            <td class="dstport">{row.dstport}</td>
+            <td class="rdata text-left">{row.수신데이터 === null ? "" : row.rdata}</td>
+            <td>{row.dstport}</td>
 
           </tr>
         {/each}
@@ -195,7 +164,7 @@
   </div>
 
 </div>
-<DetailTR bind:vid pid={pid} parr={parr} pidx={pidx} origin="org"/>
+<DetailTR bind:vid pid={pid} parr={parr} bind:pidx origin="org"/>
 
 <style>
   .container {
@@ -216,9 +185,6 @@
   }
   button {
     border-radius: 6px;
-  }
-  .pgset button {
-    width: 4em;
   }
   .number-in input {
     max-width: 60px;

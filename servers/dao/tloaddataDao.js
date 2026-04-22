@@ -65,7 +65,7 @@ export default {
 
     return await aqtdb.query({
         dateStrings: true,
-        sql: "SELECT concat(format(count(1),0) ,'건') tcnt  \
+        sql: "SELECT count(1) tcnt  \
           FROM vtcppacket a JOIN tloaddata B ON (a.cmpid = B.pkey)  \
           LEFT JOIN tservice s ON (a.appid = s.appid AND a.uri = s.svcid ) \
           WHERE a.tcode = ? and a.appid rlike ? " + etcond 

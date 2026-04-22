@@ -1,11 +1,12 @@
 
 <script>
   import { onMount,onDestroy, } from "svelte";
-  import { gtcode, userid } from "../aqtstore" ;
+  import { gtcode } from "../aqtstore" ;
   
   let tlist_org = $state([]);
   
-  let { tlist, oncls={} } = $props();
+  let { showCopyTr = $bindable(false) , tlist } = $props();
+  let dialog; 
   let conds = $state({
     srccode: "",
     dstcode: "",
@@ -59,8 +60,15 @@
     conds.srccode = tlist_org[0].tcode;
 
   });
+  $effect(() => {
+    if (dialog && showCopyTr) { 
+      dialog.showModal();
+    }
+  });
 
 </script>
+<dialog bind:this={dialog} 
+    onclose={() => (showCopyTr = false)} oncancel={() => {showCopyTr = false}} >
   
 <h2>테스트데이터 생성</h2>
 <div class="items">
@@ -86,13 +94,18 @@
 <p>** 작업정보 **</p>
 <p> {rmsg}</p>
 <hr>
-<div>
+<div class="flex justify-center gap-2 m-2 p-2 shadow">
   <button onclick={createTr}>데이터생성</button>
-  <button onclick={oncls}>닫기</button>
+  <button onclick={() => dialog.close()}>닫기</button>
 </div>
-
+</dialog>
 <style>
-  .items {
+dialog {
+ @apply rounded-lg border border-gray-300 ;
+}
+dialog::backdrop { background: rgba(0, 0, 0, 0.3); }
+
+.items {
     display:grid;
     grid-template-columns: 8rem 1fr 8rem 1fr;
     gap: 10px 20px;
@@ -108,7 +121,8 @@
 
   .in_value {
     border: 1px solid silver;
-    border-radius: 5px;
+    border-radius: 2px;
+    padding: 2px;
   }
   .in_label {
     text-align: end;

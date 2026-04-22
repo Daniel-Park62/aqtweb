@@ -155,27 +155,27 @@
 </script>
 <main class="h-full">
 
-<div id="btns" class="flex">
+<div  class="flex justify-start gap-2 m-2 p-2 shadow">
   <button
     onclick={addRow}>추가</button >
-  <button onclick={delService}>선택삭제</button>
-  <button onclick={updService}>선택수정</button>
+  <button class="btn-delete" onclick={delService}>선택삭제</button>
+  <button class="btn-update" onclick={updService}>선택수정</button>
   <button class="ml-auto" onclick={getdata}>조회</button>
-  <span class="ml-auto" >{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
+  <span class="mr-3">{rcnt > 0 ? rcnt.toLocaleString('ko-KR') + ' 건' : ' '}</span>
 </div>
-<hr />
-<div class="tList">
-  <table class="border-collapse table-fixed">
+
+<div class="h-[80vh] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
+  <table class="border-collapse table-fixed w-[98%]">
     <thead>
       <tr>
           <th class='w-[1.5cm]'>선택</th>
-          <th class='w-[20%]'>서버명</th>
-          <th class='w-[20%]'>종류</th>
+          <th >서버명</th>
+          <th class='w-[250px]'>종류</th>
           <th class='w-[7em]'>Port</th>
           <th>허용 IP Addr.</th>
-          <th>연관소스</th>
+          <th class="w-[14ch]">연관소스</th>
           <th class='w-[4cm]'>상태</th>
-          <th></th>
+          <th class='w-[5cm]'></th>
       </tr>
     </thead>
     <tbody bind:this={tblbody}>
@@ -189,10 +189,10 @@
               <input class="w-[100%] my-0 bg-transparent border-none" onchange={() => row.chk=true} bind:value={row.svrnm}>
             </td>
             <td class="border align-middle">
-              <div class="w-[100%] flex gap-4 items-center border-0 ">
-                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={2} onchange={() => chHdle(ix)}/> OpenAPI</label>
-                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} onchange={() => chHdle(ix)}/> TCP</label>
-                <label ><input class="radio radio-accent" type="radio" name={ix.toString()} bind:group={row.svrkind} value={1} onchange={() => chHdle(ix)}/> HTTP</label>
+              <div class="w-[100%] flex justify-center items-center  border-0 whitespace-nowrap">
+                <label for="openapi">OpenAPI</label><input id="openapi" class="radio radio-accent w-6 mr-4" type="radio" name={ix.toString()} bind:group={row.svrkind} value={2} onchange={() => chHdle(ix)}>
+                <label for="tcp">TCP</label><input id="tcp" class="radio radio-accent w-6 mr-4" type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} onchange={() => chHdle(ix)}>
+                <label for="http">HTTP</label><input id="http" class="radio radio-accent w-6" type="radio" name={ix.toString()} bind:group={row.svrkind} value={1} onchange={() => chHdle(ix)}>
               </div>
             </td>
             <td><input disabled={row.status==2} class="w-[100%] my-0 bg-transparent border-none" type=number onchange={() => row.chk=true} bind:value={row.portno} max=65535></td>
@@ -221,16 +221,6 @@
   .tList {
     max-height: 80vh;
     overflow: auto;
-  }
-
-  #btns * {
-    margin: 2px 4px;
-    padding: 0 8px;
-    height: 1.8em;
-  }
-
-  button {
-    width: 6em;
   }
 
 </style>

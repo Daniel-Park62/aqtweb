@@ -65,8 +65,8 @@
   }
 </script>
 
-<div class="main" onmouseenter={() => vid = 'none'}>
-  <div class="cond fitem" onkeyup={enterkey} >
+<main class="flex flex-col h-full" role="none" onmouseenter={() => vid = 'none'}>
+  <div class="cond fitem" role="none" onkeyup={enterkey} >
     <p>* 테스트ID : </p> 
     <select bind:value={selected} onchange={()=> {conds.tcode = ''; conds.page=0}} >
         
@@ -83,18 +83,12 @@
     <span>{tcntx}</span>
 
   </div>
-  <div class="fitem">
+  <div class="h-full border-0">
     <Trtable bind:conds/>
   </div>
-</div>
+</main>
 
 <style>
-  .main {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
   .cond {
     display:flex ;
     align-items: baseline ;
@@ -108,10 +102,7 @@
   .cond span {
     margin: 2px 8px;
   }  
-  .cond button {
-    width: 4em;
-    border-radius: 6px;
-  }
+
   .number-in input{
     max-width: 70px;
     text-align: right;

@@ -2,9 +2,10 @@
   
   import { authApps } from "../aqtstore.js";
   import { onMount } from "svelte";
-  import { getLvlnm } from "./Common.svelte";
+  import { getLvlnm } from "../lib/Common.svelte";
   import Trtable from "./Trtable.svelte";
-  import Modal,{getModal} from '../lib/Modal.svelte';
+  // import Modal,{getModal} from '../lib/Modal.svelte';
+  import Modal from '../lib/Modal2.svelte';
   
   /** @type {{vdisp?: boolean, tcode: any }} */
   let { vdisp = true, tcode = $bindable() } = $props();
@@ -18,6 +19,7 @@
     task: "",
     apps: "",
   });
+  let showModal = $state(false);
   let sv_row;
   function clickRow(e, row) {
     if (sv_row) sv_row.classList.remove("bg-teal-100");
@@ -65,8 +67,8 @@
   });
 </script>
 
-<div class="container">
-  <table class="tcode-status">
+<!-- <div class="w-full overflow-y-auto box-border"> -->
+  <table class="w-[98%]">
     <thead>
       <tr>
         <th id='tcode' class='cursor-pointer' onclick={sortdata}>테스트ID</th>
@@ -89,7 +91,7 @@
       {:then rows} -->
         {#each rows as row}
           <tr onclick={(e)=>clickRow(e,row)}
-              ondblclick={()=> { if (!vdisp) return; conds.tcode=row.tcode;conds.page=0; getModal('tid').open({})}} >
+              ondblclick={()=> { if (!vdisp) return; conds.tcode=row.tcode;conds.page=0; showModal = true; }} >
             <td>{row.tcode}</td>
             <td align="left">{row.desc1}</td>
             <td>{row.tdate}</td>
@@ -98,7 +100,7 @@
             <td align="right">{row.svc_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.data_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.scnt.toLocaleString("ko-KR")}</td>
-            <td align="right" ondblclick={()=> { conds.tcode=row.tcode;conds.cond = "sflag='2'"; getModal('tid').open({})}} >
+            <td align="right" ondblclick={()=> { conds.tcode=row.tcode;conds.cond = "sflag='2'"; showModal = true; }} >
                 {row.fcnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.fsvc_cnt.toLocaleString("ko-KR")}</td>
             <td align="right">{row.spct.toFixed(2)}</td>
@@ -110,19 +112,9 @@
       {/await} -->
     </tbody>
   </table>
-</div>
+<!-- </div> -->
 {#if vdisp }
-<Modal id='tid'>
-	<Trtable bind:conds/>
-</Modal>
+  <Modal bind:showModal>
+    <Trtable bind:conds/>
+  </Modal>
 {/if}
-
-<style>
-  .tcode-status {
-    font-family: "맑은 고딕", "Lato", Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    overflow-y: auto;
-  }
-
-</style>

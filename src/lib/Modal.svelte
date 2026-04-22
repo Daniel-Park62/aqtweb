@@ -71,13 +71,13 @@ onDestroy(()=>{
 </script>
 
 <div id="topModal" class:visible bind:this={topDiv} >
-	<div id='modal' style='--w:{w};--h:{h} ' >
+	<div id='modal' style='--w:{w};' >
 		<svg class="close" onclick={()=>close()} viewBox="0 0 12 12">
 			<circle cx="6" cy="6" r="6" />
 			<line x1="3" y1="3" x2="9" y2="9" />
 			<line x1="9" y1="3" x2="3" y2="9" />
 		</svg>
-		<div id='modal-content'>
+		<div id='modal-content' class="h-full">
 			{@render children?.()}
 		</div>
 	</div>
@@ -100,7 +100,7 @@ onDestroy(()=>{
 	#modal {
 		position: relative;
     /* height: calc(var(--h) * 1%); */
-		height : auto;
+		/* height : auto; */
     width : calc(var(--w) * 1%);
 		border-radius: 6px;
 		background: white;
