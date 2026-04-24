@@ -10,13 +10,14 @@
 	import TexecJob from "./components/TexecJob.svelte";
 	import TexecJob3 from "./components/TexecJob3.svelte";
 	import LoginComp from "./components/LoginComp.svelte";
-	import { isLogged, pjtName } from "./aqtstore";
+	import { isLogged } from "./aqtstore";
 	import RegService from "./components/RegService.svelte";
 	import RegUser from "./components/RegUser.svelte";
 	import RegConfig from "./components/RegConfig.svelte";
 	import CompareList from "./components/CompareList.svelte";
 	import Tloaddata from "./components/Tloaddata.svelte";
 	import RegMockSvr from "./components/RegMockSvr.svelte";
+	import { aqtConfig } from "./lib/Common.svelte";
 	
 	// onMount(async () => {
 	// 	const res = await fetch("/dashboard/testPassword");
@@ -96,10 +97,14 @@
 				</div>
 			</nav>
 			<div class="ml-auto p-2 bg-white text-[#070b57] font-black h-50 w-[18rem] rounded-md ">&nbsp&nbsp {selected.nm} &nbsp&nbsp</div>
-			<div class="text-cyan-50 text-right p-2 ml-5">{$pjtName}</div>
+			<div class="text-cyan-50 text-right p-2 ml-5 border-r-1">{aqtConfig.pjtnm}</div>
+			<button class="flex items-center bg-transparent hover:font-bold hover:bg-transparent border-0 p-2 ml-2 text-cyan-50"
+			        onclick={()=> $isLogged=0}>
+				<img src="/images/ut_top_login.png" alt="">로그아웃
+			</button>
 		</div>
 
-		<div class="bg-slate-50 shadow-lg mt-1 flex-1 flex flex-col justify-stretch box-border rounded">
+		<div spellcheck="false" class="bg-slate-50 shadow-lg mt-1 flex-1 flex flex-col justify-stretch box-border rounded">
 			<!-- <svelte:component this={selected.cnm} class="self-start"/> -->
 			<selected.cnm></selected.cnm>
 		</div>

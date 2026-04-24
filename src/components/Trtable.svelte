@@ -38,17 +38,6 @@
   let rdata = $state([]);
   let pg = $derived(conds.page + 1);
 
-  let sv_row ;
-  let curRow ;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-    curRow = row;
-    pid = row.pkey ;  
-  }
-
-
   async function reSend() {
     const datas = rdata
       .filter((r) => r.chk)
@@ -92,7 +81,7 @@
   async function getTRlist() {
     if (loading) return ;
     loading = true ;
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
+
     // pg = conds.page + 1;
     conds.apps = $authApps;
     conds.sortby = sortby ?? '';
@@ -160,7 +149,7 @@
 
 </script>
 <main class="flex flex-col h-full w-full border-0">
-<div class="flex-none shadow pgset">
+<div class="flex-none bg-slate-200 pgset">
   <span class="number-in">
     Page :<input
       type="number"
@@ -204,11 +193,11 @@
     <button class="btn-excel" onclick={getDownLoad}>CSV</button>
   </div>
 </div>
-<div class="flex-[1_1_0] h-full w-full overflow-y-auto [scrollbar-gutter:stable] p-2  ">
+<div class="flex-[1_1_0] h-full w-full overflow-y-auto [scrollbar-gutter:stable] p-2 ">
   <table class="max-w-[98%]">
     <thead>
       <tr>
-        <th><input type="checkbox" onchange={
+        <th class="w-10"><input type="checkbox" onchange={
           (e) => {
             for(let i=0; i < rdata.length; ++i) {
                 rdata[i].chk = e.target.checked ;
@@ -233,19 +222,18 @@
       <tr><td>Waiting... </td></tr>
       {:then rows}  
       {#each rows as row , i (row.pkey)}
-        <tr
+        <tr tabindex="0"
           class={row.sflag}
-          onclick={(e)=>{pidx = i ; clickRow(e,row);} }
+          onclick={(e)=>{pidx = i ; pid = row.pkey ;} }
           ondblclick={(e) => {
             vid = "block";
             pidx = i ;
             parr = rows.map( k => k.pkey ) ;
-            clickRow(e,row);
+            pid = row.pkey ;
           }}
         >
 
-          <td style="text-align:center"><input class="chkb" type="checkbox" bind:checked={row.chk} /></td>
-
+          <td class="text-center "><input class="chkb" type="checkbox" bind:checked={row.chk} /></td>
           <td class="cmpid"><strong><em>{row.pkey}</em></strong></td>
           <td class="stime">{row.송신시간}</td>
           <td style="text-align:right" class="elapsed">{row.소요시간}</td>
@@ -291,14 +279,12 @@
   }
 
   .pgset {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
+    @apply flex items-baseline justify-start rounded
   }
   .pgset * {
     margin: 2px 4px;
     padding: 2px 3px;
-    height: 1.7rem;
+    /* height: 1.7rem; */
   }
 
   .number-in input {

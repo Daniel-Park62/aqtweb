@@ -16,13 +16,6 @@
     uri: "",
   });
 
-  let sv_row ;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-  }
-
   //  let rdata = Promise.resolve([]);
   let rdata = $state([]);
 
@@ -41,7 +34,6 @@
   }
   let loading = false;
   async function getTRlist() {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
     if (conds.tcode !== tcode) conds.page = 0;
     conds.tcode = tcode;
     if (conds.tcode == undefined) return [];
@@ -78,7 +70,7 @@
 </script>
 
 <div class="container">
-  <div class="flex items-center gap-2 m-2 p-2 shadow ">
+  <div class="flex items-center gap-2 m-2 p-2 bg-slate-200 ">
     <span class="number-in">
       Page <input
         type="number"
@@ -134,14 +126,13 @@
           <template>...조회중</template>
         {:then rows} 
         {#each rows as row, i (row.pkey)}
-          <tr
+          <tr tabindex="0"
             class={row.sflag}
-            ondblclick={(e) => {
+            ondblclick={() => {
               pid = row.pkey;
               parr = rows.map(e => e.pkey) ;
               pidx = i ;
               vid = "block";
-              clickRow(e,row);
             }}
           >
             <td class="id"><strong><em>{row.pkey}</em></strong></td>

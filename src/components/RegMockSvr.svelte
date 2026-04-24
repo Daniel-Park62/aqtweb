@@ -165,7 +165,7 @@
 </div>
 
 <div class="h-[80vh] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
-  <table class="border-collapse table-fixed w-[98%]">
+  <table class="table-fixed w-[98%]">
     <thead>
       <tr>
           <th class='w-[1.5cm]'>선택</th>
@@ -183,7 +183,7 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row, ix}
-          <tr tabindex="0" class="focus-within:bg-blue-100 focus-within:outline-none cursor-pointer">
+          <tr tabindex="0" class="focus-within:bg-blue-100 focus-within:outline-none">
             <td class="align-middle"><input  disabled={row.pkey == 0} type="checkbox" bind:checked={row.chk} /></td>
             <td>
               <input class="w-[100%] my-0 bg-transparent border-none" onchange={() => row.chk=true} bind:value={row.svrnm}>

@@ -4,12 +4,6 @@
 
   /** @type {{task?: string, lvl?: string, ischg?: number}} */
   let { task = $bindable(""), lvl = $bindable(''), ischg = $bindable(1) } = $props();
-  let sv_row ;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-  }
 
   let promise = $state([]);
   onMount(async () => {
@@ -38,14 +32,14 @@
         <template>...waiting</template>
       {:then rows}
         {#each rows as row}
-          <tr onclick={(e) => {
-              ischg=0;
-              if (task != row.task || lvl != row.lvl) {
-                ischg=1;
-                task = row.task; lvl = row.lvl ; 
-              };
-              clickRow(e,row) ;
-          }} >
+          <tr tabindex="0" 
+              onclick={() => {
+                  ischg=0;
+                  if (task != row.task || lvl != row.lvl) {
+                    ischg=1;
+                    task = row.task; lvl = row.lvl ; 
+                  };
+              }} >
             <td>{row.task}</td>
             <td>{getLvlnm(row.lvl)}</td>
             <td align="right">{row.svc_cnt.toLocaleString("ko-KR")}</td>

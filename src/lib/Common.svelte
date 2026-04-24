@@ -4,6 +4,8 @@
   const proArr = {0:"tcp",1:"http",2:"udp",3:"tmax"};
   const appids = [];
   const appHist = {};
+  export let aqtConfig ={};
+
   export function setHist(a,b) {
     appHist[a] = b ;
   }
@@ -43,6 +45,12 @@
       });
     } else {
       throw new Error(res.statusText);
+    }
+    const res2 = await fetch("/aqtSetup");
+    if (res2.status < 400) {
+      aqtConfig = await res2.json();
+    } else {
+      throw new Error(res2.statusText);
     }
 
   }

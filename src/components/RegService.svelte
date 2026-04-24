@@ -31,14 +31,6 @@
     svcid: "",
   });
 
-  let sv_row;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-    curRow = row;
-  }
-
   function updService() {
     const upds = rdata
       .filter((r) => r.chk && r.pkey != 0)
@@ -105,7 +97,6 @@
   }
   async function getdata() {
     //    const res = await fetch("/tservice");
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
     const res = await fetch("/tservice/part", {
       method: "POST",
       headers: {
@@ -165,10 +156,10 @@
       </thead>
       <tbody>
         {#await rdata}
-          <p>...waiting</p>
+          <tr><td>...waiting</td></tr>
         {:then rows}
           {#each rows as row}
-            <tr onclick={(e) => clickRow(e, row)}>
+            <tr tabindex="0" onclick={() => curRow = row }>
               <td><input type="checkbox" bind:checked={row.chk} /></td>
               {#if row.pkey === 0}
                 <td class="w-[14ch]">
@@ -181,9 +172,8 @@
                   </select>
                 </td>
                 <td
-                  class="svcid"
+                  class="w-[20rem] text-left"
                   contenteditable="true"
-                  style="width:20rem ;text-align:left"
                   bind:textContent={row.svcid}
                 ></td>
               {:else}
@@ -192,13 +182,13 @@
               {/if}
               <td
                 contenteditable="true"
-                class="svckor w-[20%]"
+                class="w-[20%]"
                 bind:textContent={row.svckor}
               ></td>
               <td
                 contenteditable="true"
                 bind:textContent={row.svceng}
-                class="svceng w-[20%]"
+                class="w-[20%]"
               ></td>
               <td
                 contenteditable="false"
@@ -207,12 +197,10 @@
               ></td>
               <td
                 contenteditable="true"
-                class="manager"
                 bind:textContent={row.manager}
               ></td>
               <td
                 contenteditable="true"
-                class="svckind"
                 bind:textContent={row.svckind}
               ></td>
             </tr>
@@ -229,9 +217,5 @@
   div > button {
     @apply w-24
   }
-  .svcid,
-  .svckor,
-  .svceng {
-    word-break: break-all;
-  }
+
 </style>

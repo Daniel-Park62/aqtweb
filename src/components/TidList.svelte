@@ -20,18 +20,10 @@
     apps: "",
   });
   let showModal = $state(false);
-  let sv_row;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-    tcode=row.tcode;
-  }
 
   // let promise = [Promise.resolve([])];
   let rows = $state([]);
   async function getdata() {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
     const res = await fetch( "/dashboard/list/"+$authApps);
     rows = await res.json();
 //      console.log(" call dashboard end", promise) ;
@@ -68,7 +60,7 @@
 </script>
 
 <!-- <div class="w-full overflow-y-auto box-border"> -->
-  <table class="w-[98%]">
+  <table class="max-w-[98%]">
     <thead>
       <tr>
         <th id='tcode' class='cursor-pointer' onclick={sortdata}>테스트ID</th>
@@ -90,7 +82,7 @@
         <p>...waiting</p>
       {:then rows} -->
         {#each rows as row}
-          <tr onclick={(e)=>clickRow(e,row)}
+          <tr tabindex="0" class="focus:bg-blue-100" onclick={()=> tcode = row.tcode}
               ondblclick={()=> { if (!vdisp) return; conds.tcode=row.tcode;conds.page=0; showModal = true; }} >
             <td>{row.tcode}</td>
             <td align="left">{row.desc1}</td>

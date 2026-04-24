@@ -184,7 +184,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <main class="h-full w-full box-border flex flex-col overflow-hidden">
-  <div class="flex-[0_0_1] flex gap-2 m-1 justify-center">
+  <div class="flex-[0_0_1] flex gap-2 m-2 justify-center">
     <div class="subm">
       <div class="cap">단위테스트</div>
       <div class="items ">
@@ -231,7 +231,7 @@
       </div>
     </div>
   </div>
-  <div class="flex-[1_1_0] overflow-y-auto ml-2 w-full"><TidList bind:tcode={tcode}/></div>
+  <div class="flex-[1_1_0] overflow-y-auto ml-2 w-full rounded"><TidList bind:tcode={tcode}/></div>
 </main>
 
 <style>

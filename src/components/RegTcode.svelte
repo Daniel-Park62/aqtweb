@@ -7,10 +7,9 @@
     getPros,
     getProNm,
     getAppid,
-    getFirst
   } from "../lib/Common.svelte";
   import Modal from "../lib/Modal2.svelte";
-  import CopyTr from "./CopyTr.svelte";
+  import CopyTr from "../lib/CopyTr.svelte";
   let rdata = $state(Promise.resolve([]));
   let tcode;
   let jobnm = $state("등록");
@@ -20,13 +19,6 @@
 
   let showModal = $state(false);
   let showModal2 = $state(false);
-  let sv_row;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-    curRow = row;
-  }
 
   function updTcode() {
     fetch("/tmaster", {
@@ -114,8 +106,6 @@
       });
   }
   async function getdata() {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    getFirst();
     const res = await fetch("/tmaster");
     if (res.status <= 300) {
       rdata = await res.json();
@@ -173,7 +163,7 @@
       {:then rows}
         {#each rows as row (row.tcode)}
           <tr
-            onclick={(e) => clickRow(e, row)}
+            onclick={(e) => curRow = row}
             ondblclick={() => {
               // copyRow(row) ;
               curRow = row;

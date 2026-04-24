@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { userid } from "../aqtstore" ;
-
+  
   let curRow = $state({});
 
   function updateConfig() {

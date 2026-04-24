@@ -20,13 +20,6 @@
   let dtls = $state([]);
   let showModal = $state(false);
 
-  let sv_row ;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-  }
-
   const sortBy = { col: "", ascending: 1 };
   function sortdata(e) {
       if (sortBy.col == e.target.id) {
@@ -48,7 +41,7 @@
       dtls = dtls.sort(usort);
     };
   async function getDetail(t,l) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
+
     const res = await fetch("/byservice" ,
       { method : 'POST',
       headers: {
@@ -70,13 +63,13 @@
 </script>
 
 <div class="main">
-  <div class="h-[30vh] w-full overflow-y-auto flex-none">
+  <div class="max-h-[30vh] w-full overflow-y-auto flex-none p-2">
     <TaskList bind:task bind:lvl bind:ischg />
   </div>
-  <div class="sub-tit">
+  <div class="text-justify bg-slate-200 text-blue-950 text-2xl mt-2 mx-2 pl-2 rounded">
     서비스별 현황({task != '' ? task + ':' :''} {getLvlnm(lvl)})
   </div>
-  <div class="flex-[1_1_0] overflow-y-auto">
+  <div class="flex-[1_1_0] overflow-y-auto p-2">
     <table class="max-w-[98%]">
       <thead>
         <tr >
@@ -104,7 +97,7 @@
           <p>...waiting</p>
         {:then rows} -->
           {#each dtls as row}
-            <tr onclick={(e)=>clickRow(e,row)}
+            <tr tabindex="0"
                 ondblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; showModal = true; }}>
               <td >{row.svcid}</td>
               <td>{row.svckor}</td>
@@ -138,13 +131,4 @@
     display: flex;
     flex-direction: column;
   }
-  .sub-tit {
-    text-align: justify;
-    background-color: rgb(235, 241, 243);
-    margin-top: 25px;
-    color: darkblue;
-    font-size: 1.5rem;
-    height: 40px;
-  }
-
 </style>

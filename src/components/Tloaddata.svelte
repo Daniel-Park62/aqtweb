@@ -13,13 +13,6 @@
     "URI수",
     "등록일",
   ];
-  let sv_row;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-    tcode = row.tcode ;
-  }
 
   async function getdata() {
     try {
@@ -41,9 +34,9 @@
 </script>
 
 <div class="flex h-full">
-  <div class="item">
+  <div class="item ml-2 mt-3">
     <table>
-    <caption class="m-4 text-xl text-left text-blue-900 shadow">원본데이터 목록</caption>
+    <caption class="m-2 text-xl text-left text-blue-900 shadow">원본데이터 목록</caption>
       <thead>
         <tr>
           {#each columns as column}
@@ -57,7 +50,7 @@
         {#each rdata as row}
           <tr
             class={row.sflag}
-            onclick={(e) => clickRow(e,row)}
+            onclick={() => tcode = row.tcode }
           >
             <td class="tcode">{row.tcode}</td>
             <td class="stimef">{row.stimef}</td>

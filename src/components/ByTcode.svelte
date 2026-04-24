@@ -17,15 +17,7 @@
   let dtls = $state([]);
   let tcode = $state("");
   let showModal = $state(false);
-  
-  let sv_row ;
-  function clickRow(e, row) {
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
-    sv_row = e.target.parentElement;
-    sv_row.classList.toggle("bg-teal-100");
-  }
     
-  
   const sortBy = { col: "", ascending: 1 };
 
   function sortdata(e) {
@@ -50,7 +42,6 @@
   
   async function getDetail(c) {
     // const res = await fetch("/bytcode?tcode=" + c);
-    if (sv_row) sv_row.classList.remove("bg-teal-100");
     const res = await fetch("/byservice" ,
       { method : 'POST',
       headers: {
@@ -71,13 +62,13 @@
 </script>
 
 <div class="main">
-  <div class="h-[30vh] w-full overflow-y-auto flex-none">
+  <div class="h-[30vh] w-full overflow-y-auto border-0 flex-none p-2">
     <TidList bind:tcode vdisp={false}/>
   </div>
-  <div class="flex-none sub-tit">
+  <div class="text-justify bg-slate-200 text-blue-950 text-2xl mt-2 mx-2 pl-2 rounded">
     서비스별 현황({tcode})
   </div>
-  <div class="flex-[1_1_0] overflow-y-auto">
+  <div class="flex-[1_1_0] overflow-y-auto p-2">
     <table class="w-[98%]">
       <thead>
         <tr>
@@ -105,7 +96,7 @@
           <p>...waiting</p>
         {:then rows} -->
           {#each dtls as row}
-            <tr onclick={(e)=>clickRow(e,row)} ondblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; showModal=true;}}>
+            <tr tabindex="0" ondblclick={() => {conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; showModal=true;}}>
               <td style="text-align:left; max-width:30%">{row.svcid}</td>
               <td style="text-align:left">{row.svckor}</td>
               <td>{row.cumcnt.toLocaleString("ko-KR")}</td>
@@ -146,13 +137,4 @@
   tbody td {
     text-align: right;
   }
-  .sub-tit {
-    text-align: justify;
-    background-color: rgb(235, 241, 243);
-    margin-top: 25px;
-    color: darkblue;
-    font-size: 1.5rem;
-    height: 40px;
-  }
-
 </style>
