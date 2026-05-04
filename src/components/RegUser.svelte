@@ -119,7 +119,7 @@
 </script>
 
 <main class="h-full box-border">
-  <div class="flex justify-start gap-2 m-2 p-2 shadow">
+  <div class="headpan">
     <button onclick={addRow}>추가</button>
     <button class="btn-delete" onclick={delUser}>선택삭제</button>
     <button onclick={updUser}>적용</button>

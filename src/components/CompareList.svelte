@@ -1,11 +1,9 @@
 <script>
   import { onMount } from "svelte";
   import { userid } from "../aqtstore.js";
-
   import CompareTr from "./CompareTr.svelte";
 
   let vid = $state('none');
-  let pid ;
   let mycond = $state({
     rcode: '',
     cond: "",
@@ -68,8 +66,8 @@
 </script>
 
 <!-- svelte-ignore a11y_interactive_supports_focus -->
-<div class="main" role="none" onmouseenter={() => vid = 'none'}>
-  <div class="cond fitem" role="button"  onkeyup={enterkey}>
+<main class="flex flex-col h-full" role="none" onmouseenter={() => vid = 'none'}>
+  <div class="flex-none headpan mb-0" role="none" onkeyup={enterkey}>
     <p>* 테스트ID : </p> 
     <select bind:value={selected} onchange={()=> {conds.tcode = ''; conds.page=0}} >
         
@@ -81,44 +79,13 @@
     </select>
     <span>URI : <input type="text" bind:value={mycond.uri} /></span>
     <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
-    <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} placeholder=" tobe:a.* , 원본:b.*"/></span>
+    <span>기타 : <input class="w-[20rem]" type="text" bind:value={mycond.cond} placeholder=" tobe:a.* , 원본:b.*"/></span>
     <button onclick={getTRlistm}>조회</button>
     <span>{tcntx}</span>
 
   </div>
 
-  <div class="flex-1 h-full">
+  <div class="h-full">
     <CompareTr bind:conds />
   </div>
-</div>
-
-<style>
-  .main {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .cond {
-    display:flex ;
-    align-items: baseline ;
-    
-  }
-  .cond * {
-    margin: 2px 4px;
-    padding: 0 3px;
-    height: 1.7em;
-  }
-  .cond span {
-    margin: 2px 8px;
-  }  
-  .cond button {
-    width: 4em;
-    border-radius: 6px;
-  }
-  .number-in input{
-    max-width: 70px;
-    text-align: right;
-  }
-
-</style>
+</main>

@@ -34,8 +34,8 @@
 </script>
 
 <div class="flex h-full">
-  <div class="item ml-2 mt-3">
-    <table>
+  <div class="h-full flex-[0_0_550px] ml-2 mt-3">
+    <table class="w-[96%]">
     <caption class="m-2 text-xl text-left text-blue-900 shadow">원본데이터 목록</caption>
       <thead>
         <tr>
@@ -48,7 +48,7 @@
       </thead>
       <tbody>
         {#each rdata as row}
-          <tr
+          <tr tabindex="0"
             class={row.sflag}
             onclick={() => tcode = row.tcode }
           >
@@ -63,39 +63,8 @@
       </tbody>
     </table>
   </div>
-  <div class="flex-1">
+  <div class="h-full">
     <Tloadtable tcode={tcode} />
   </div>
 </div>
 
-<style>
-  .item {
-    height: 100%;
-    border-collapse: collapse;
-    overflow: auto;
-  }
-  .item:nth-child(1) {
-    flex: 0 0 550px;
-  }
-  table {
-    width : 96%;
-  }
-  td,
-  th {
-    border: 1px solid rgb(214, 214, 230);
-    padding: 5px;
-  }
-
-  td {
-    overflow: hidden;
-    white-space: wrap;
-    text-overflow: clip;
-    font-size: 0.9rem;
-  }
-
-  th {
-    background-color: var(--th_bgcolor);
-    color: var(--th_color);
-  }
-
-</style>

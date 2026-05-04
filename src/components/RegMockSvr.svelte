@@ -155,7 +155,7 @@
 </script>
 <main class="h-full">
 
-<div  class="flex justify-start gap-2 m-2 p-2 shadow">
+<div  class="headpan">
   <button
     onclick={addRow}>추가</button >
   <button class="btn-delete" onclick={delService}>선택삭제</button>
@@ -183,7 +183,7 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row, ix}
-          <tr tabindex="0" class="focus-within:bg-blue-100 focus-within:outline-none">
+          <tr tabindex="0" >
             <td class="align-middle"><input  disabled={row.pkey == 0} type="checkbox" bind:checked={row.chk} /></td>
             <td>
               <input class="w-[100%] my-0 bg-transparent border-none" onchange={() => row.chk=true} bind:value={row.svrnm}>

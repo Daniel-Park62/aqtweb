@@ -126,7 +126,7 @@
 </datalist>
 
 <main class="h-full w-full box-border">
-  <div class="flex justify-start gap-2 m-2 p-2 shadow">
+  <div class="headpan">
     <button
       onclick={() => {
         newRow.appid = curRow.appid;
@@ -143,7 +143,7 @@
     <button class="ml-auto" onclick={getdata}>조회</button>
     <label class="mr-3">{rcnt > 0 ? rcnt.toLocaleString("ko-KR") + " 건" : " "}</label>
   </div>
-  <div class="h-[80vh] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] ">
+  <div class="flex-[1_1_0] h-[calc(100%-50px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] ">
     <table class="w-[98%] ">
       <thead>
         <tr>
@@ -165,8 +165,8 @@
                 <td class="w-[14ch]">
                   <select class="border-none w-full" bind:value={row.appid}>
                     {#each getAppid() as r}
-                    <option value={r.value}>
-                      {r.name}
+                    <option value={r.appid}>
+                      {r.appname}
                     </option>
                     {/each}
                   </select>

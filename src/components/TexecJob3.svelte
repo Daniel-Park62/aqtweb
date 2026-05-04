@@ -243,7 +243,7 @@
 </script>
 
 <div class="flex flex-col h-full">
-  <div class="m-2 p-2 shadow flex gap-4 justify-start items-baseline">
+  <div class="headpan">
     <lebel>[ ▼ 전문송신이력 ] 조회선택▶</lebel>
     <div class="flex border border-gray-500 mx-2 p-1 rounded">
       <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={1} /> 실행대기</label >
@@ -277,7 +277,7 @@
             {#if qselected == 4 || qselected == row.resultstat}
               <tr tabindex="0"
                 id={row.pkey ? row.pkey + "jajq" : "newrow"}
-                class={ `focus-within:bg-teal-100 focus-within:outline-none   ${row.resultstat === 2 ? 'text-red-600' : row.resultstat === 1 ? "text-blue-700" : "" }`} 
+                class={ `${row.resultstat === 2 ? 'text-red-600' : row.resultstat === 1 ? "text-blue-700" : "" }`} 
                 onclick={(e) => {curRow = row ; cmdl=cmdcomp() }}
               >
                 <td class="pkey" tabindex="0"><strong>{row.pkey}</strong></td>

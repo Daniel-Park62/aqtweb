@@ -46,7 +46,7 @@ router.post('/logonchk', async function (req, res, next) {
      usrid : Buffer.from(req.body.usrid.substring(1), 'base64').toString('utf8')
   }
   
-  res.locals.aqtlog(`${req.ip}: [${parms.usrid +":"+ parms.pass}] login.`);
+  aqtlog(`${req.ip}: [${parms.usrid +":"+ parms.pass}] login.`);
 
   userDao.passCheck(parms)
     .then(rows => {

@@ -22,6 +22,7 @@ import tmaster from './controllers/tmaster.js' ;
 import tservice from './controllers/tservice.js' ;
 import texecjob from './controllers/texecjob.js' ;
 import tmocksvr from './controllers/tmocksvr.js' ;
+import taqtprog from './controllers/taqtprog.js' ;
 
 import tuser from './controllers/tuser.js' ;
 import trequest from './controllers/trequest.js' ;
@@ -29,11 +30,12 @@ import tresult from './controllers/tresult.js' ;
 import basicSetup from './controllers/basicSetup.js' ;
 import tloadData from './controllers/tloadData.js' ;
 
+global.aqtlog = (...a) => { process.env.AQTDEBUG && console.log((new Date()).toLocaleString('lt'),...a )} ;
+aqtlog( "Starting AQT-WEB Server...",import.meta.dirname) ;
 app.use(express.static(path.join(import.meta.dirname, "../public")));
 
 app.use((req,res,next) => {
-   res.locals.aqtlog = (...a) => { process.env.AQTDEBUG && console.log((new Date()).toLocaleString('lt'),...a )} ;
-   res.locals.aqtlog(`${req.ip}:${req.originalUrl}:`, req.body ? JSON.stringify(req.body) : "") ;
+   aqtlog(`${req.ip}:${req.originalUrl}:`, req.body ? JSON.stringify(req.body) : "") ;
    next();
 });
 
@@ -48,6 +50,7 @@ app.use('/trlist', trlist) ;
 app.use('/tmaster', tmaster) ;
 app.use('/tservice', tservice) ;
 app.use('/tmocksvr', tmocksvr) ;
+app.use('/taqtprog', taqtprog) ;
 app.use('/texecjob', texecjob) ;
 app.use('/tuser', tuser) ;
 app.use('/trequest', trequest) ;

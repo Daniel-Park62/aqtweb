@@ -36,18 +36,19 @@
   }
 
   export async function getFirst() {
+    appids.length = 0 ;
     const res = await fetch("/regapp");
-    if (res.status <= 400) {
+    if (res.ok) {
       const rdata = await res.json();
       rdata.forEach((/** @type {any[]} */ r) => {
-        if ( appids.findIndex((a) => a.value == r[0]) == -1)
-        appids.push( {value:r[0], name:r[0]} );
+        if ( appids.some((a) => a.appid === r[0]) ) return ;
+        appids.push( {appid:r[0], appname:r[1]} );
       });
     } else {
       throw new Error(res.statusText);
     }
     const res2 = await fetch("/aqtSetup");
-    if (res2.status < 400) {
+    if (res2.ok) {
       aqtConfig = await res2.json();
     } else {
       throw new Error(res2.statusText);

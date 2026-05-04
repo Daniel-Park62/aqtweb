@@ -1,121 +1,11 @@
 <script>
   import { onMount } from "svelte";
+  import * as tconfig from "../model/tconfig"
   
   let curRow = $state({});
 
-  function updateConfig() {
-    let {
-      pjtnm,
-      col1,
-      col2,
-      diffc,
-      sflagc,
-      encval,
-      col1type,
-      expr1,
-      col2type,
-      expr2
-    } = curRow;
-    
-    // console.log(curRow) ;
-    fetch("/aqtSetup", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        pjtnm,
-        col1,
-        col2,
-        diffc,
-        sflagc,
-        encval,
-        expr1,
-        col1type,
-        expr2,
-        col2type
-      }),
-    })
-      .then(async (res) => {
-        let rmsg = await res.json();
-        alert(rmsg.message);
-        if (res.status < 300) {
-          getdata();
-        }
-      })
-      .catch((err) => {
-        alert("error:" + err.message);
-      });
-  }
-  function altercol1() {
-    let {
-      col1,
-      col1type,
-      expr1
-    } = curRow;
-    
-    fetch("/aqtSetup/altercol1", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        col1,
-        expr1,
-        col1type
-      }),
-    })
-      .then(async (res) => {
-        let rmsg = await res.json();
-        alert(rmsg.message);
-        if (res.status < 300) {
-          getdata();
-        }
-      })
-      .catch((err) => {
-        alert("error:" + err.message);
-      });
-  }
-  function altercol2() {
-    let {
-      col2,
-      col2type,
-      expr2
-    } = curRow;
-    
-    fetch("/aqtSetup/altercol2", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        col2,
-        expr2,
-        col2type
-      }),
-    })
-      .then(async (res) => {
-        let rmsg = await res.json();
-        alert(rmsg.message);
-        if (res.status < 300) {
-          getdata();
-        }
-      })
-      .catch((err) => {
-        alert("error:" + err.message);
-      });
-  }
-  async function getdata() {
-    const res = await fetch("/aqtSetup");
-    if (res.status === 200) {
-      curRow = await res.json();
-    } else {
-      throw new Error(res.statusText);
-    }
-  }
-
   onMount(async () => {
-    getdata();
+    curRow = await tconfig.getdata();
   });
 </script>
 
@@ -131,7 +21,7 @@
     <textarea rows="2"  bind:value={curRow.diffc}></textarea>
   </div>
   <div class="m-2">
-    <button onclick={updateConfig}>저장</button>
+    <button onclick={() => tconfig.updateConfig(curRow)}>저장</button>
   </div>
   <hr />
   <div class="items">
@@ -140,14 +30,14 @@
       <input class="item in_value" style="float:left" bind:value={curRow.col1} />
       <input class="item in_value"  bind:value={curRow.col1type} />
       <input class="item in_value"  bind:value={curRow.expr1} />
-      <button class="item" onclick={altercol1}>적용</button>
+      <button class="item" onclick={() => tconfig.altercol1(curRow)}>적용</button>
     </div>
     <div class="item in_label "> 가상칼럼2: </div>
     <div class="item grp" >
       <input class="item in_value" style="float:left" bind:value={curRow.col2} />
       <input class="item in_value"  bind:value={curRow.col2type} />
       <input class="item in_value"  bind:value={curRow.expr2} />
-      <button class="item" onclick={altercol2}>적용</button>
+      <button class="item" onclick={() => tconfig.altercol2(curRow)}>적용</button>
     </div>
   </div>
   <hr />

@@ -82,7 +82,7 @@
         <p>...waiting</p>
       {:then rows} -->
         {#each rows as row}
-          <tr tabindex="0" class="focus:bg-blue-100" onclick={()=> tcode = row.tcode}
+          <tr tabindex="0" onclick={()=> tcode = row.tcode}
               ondblclick={()=> { if (!vdisp) return; conds.tcode=row.tcode;conds.page=0; showModal = true; }} >
             <td>{row.tcode}</td>
             <td align="left">{row.desc1}</td>

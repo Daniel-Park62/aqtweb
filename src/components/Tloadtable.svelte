@@ -69,13 +69,13 @@
 
 </script>
 
-<div class="container">
-  <div class="flex items-center gap-2 m-2 p-2 bg-slate-200 ">
-    <span class="number-in">
+<div class="flex flex-col h-full">
+  <div class="headpan my-1 mr-1"> 
+    <span >
       Page <input
         type="number"
         min="1"
-        style="text-align:center;"
+        class="w-16 text-center"
         bind:value={pg}
         onchange={() => {
           conds.page = pg - 1;
@@ -84,7 +84,7 @@
       Page크기 <input
         type="number"
         min="1"
-        style="text-align:center;"
+        class="w-16 text-center"
         bind:value={conds.psize}
       />
     </span>
@@ -157,37 +157,3 @@
 </div>
 <DetailTR bind:vid pid={pid} parr={parr} bind:pidx origin="org"/>
 
-<style>
-  .container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: hidden;
-  }
-  .pgset {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-  }
-  .pgset * {
-    margin: 2px 4px;
-    padding: 2px 3px;
-    height: 1.7rem;
-  }
-  button {
-    border-radius: 6px;
-  }
-  .number-in input {
-    max-width: 60px;
-    text-align: center;
-  }
-
-  .tbl {
-    overflow: auto;
-    flex: 1;
-    width: auto ;
-  }
-  thead {
-    background-color: rgb(209, 165, 69);
-  }
-</style>

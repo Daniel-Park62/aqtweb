@@ -159,20 +159,20 @@
   onMount( getData );
 </script>
 <main class="h-full w-full">
-<div class="flex justify-start gap-2 m-2 p-2 shadow">
+<div class="headpan">
   <button onclick={updApp}>적용</button>
   <button onclick={getData}>적용취소</button>
 </div>
 
-<div class="flex items-start gap-4 w-full">
-  <table class="app-tbl w-3/5 overflow-x-auto">
+<div class="flex-[1_1_0] flex items-start gap-4 w-full max-h-[calc(100%-50px)] overflow-auto">
+  <table class="app-tbl w-3/5 overflow-auto ">
     <thead>
       <tr>
-        <th>수정</th>
-        <th>APP id</th>
-        <th>APP 명</th>
+        <th class="w-10">수정</th>
+        <th>업무ID</th>
+        <th>업무명</th>
         <th>담당자</th>
-        <th style="width:4rem">삭제</th>
+        <th class="w-20">삭제</th>
       </tr>
     </thead>
     <!-- {#await promise}
@@ -208,7 +208,7 @@
         <th>APP ID</th>
         <th>Host IP</th>
         <th>Port</th>
-        <th style="width:4rem">삭제</th>
+        <th class="w-20">삭제</th>
       </tr>
     </thead>
     <!-- {#await promise_dtl}
@@ -220,7 +220,7 @@
           <td contenteditable="false" bind:textContent={row[1]}></td>
           <td contenteditable="true" bind:textContent={row[2]}></td>
           <td contenteditable="true" bind:textContent={row[3]}></td>
-          <td><button onclick={() => deleteRow_dtl(row)}>X</button></td>
+          <td><button class="btn-delete" onclick={() => deleteRow_dtl(row)}>X</button></td>
         </tr>
       {/each}
     <!-- {:catch error}
@@ -241,8 +241,7 @@
   tr td:focus {
     background: #eee;
   }
-
-  [contenteditable] {
-    outline-style: none;
+  td button {
+    @apply h-[90%] text-[90%] py-0
   }
 </style>

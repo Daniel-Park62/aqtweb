@@ -26,11 +26,11 @@
     "mariadb": "^3.5.2",
     "mybatis-mapper": "^0.8.0",
     "oracledb": "^6.10.0",
-    "qs": "^6.15.0",
     "svelte-chartjs": "^4.0.1",
     "svelte-table": "^0.6.3",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "ws": "^8.19.0"
+    "ws": "^8.19.0",
+    "xlsx": "^0.18.5"
   }
 }

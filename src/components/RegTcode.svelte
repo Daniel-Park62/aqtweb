@@ -117,7 +117,7 @@
   onMount( getdata );
 </script>
 <main class="h-full w-full box-border">
-<div class="flex justify-start gap-2 m-2 p-2 shadow">
+<div class="headpan">
   <button
     onclick={() => {
       (jobnm = "등록"),
@@ -139,8 +139,8 @@
   <button class="btn-delete" onclick={eraseTr}>전문삭제</button>
 </div>
 
-<div class="h-[calc(100%-40px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
-  <table>
+<div class="flex-[1_1_0] h-[calc(100%-50px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
+  <table >
     <thead>
       <tr>
         <th>&nbsp;</th>
@@ -162,7 +162,7 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row (row.tcode)}
-          <tr
+          <tr tablindex="0"
             onclick={(e) => curRow = row}
             ondblclick={() => {
               // copyRow(row) ;
@@ -195,7 +195,7 @@
   </table>
 </div>
 </main>
-<Modal bind:showModal showcls={false} wd="530px" hd="460px">
+<Modal bind:showModal showcls={false} wd="530px" hd="480px">
   <div class="hero from-amber-100 via-sky-300 to-sky-500 bg-gradient-to-br">
     <h2 class="mx-auto my-5 text-center sm:text-4xl text-3xl text-blue-800 font-bold">{curRow.tcode} 테스트코드 {jobnm}</h2>
     <hr />
@@ -213,8 +213,8 @@
       <div class="item in_label">APPID:</div>
       <div class="text-left">    <select     class="item in_value"     bind:value={curRow.appid}>
         {#each getAppid() as r}
-            <option value={r.value}>
-              {r.name}
+            <option value={r.appid}>
+              {r.appname}
             </option>
           {/each}
                </select>

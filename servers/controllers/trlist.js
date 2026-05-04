@@ -22,7 +22,7 @@ router.get('/config', async function (req, res, next) {
 
 router.put('/change', async function (req, res, next) {
   let result;
-  res.locals.aqtlog(req.body);
+  aqtlog(req.body);
   try {
     if (req.body.gubun == 'sdata') {
       result = await tcppacketDao.changeSdata([req.body.sdata, req.body.pkey]);

@@ -17,13 +17,10 @@
 	import CompareList from "./components/CompareList.svelte";
 	import Tloaddata from "./components/Tloaddata.svelte";
 	import RegMockSvr from "./components/RegMockSvr.svelte";
+	import RegProg from "./components/RegProg.svelte";
 	import { aqtConfig } from "./lib/Common.svelte";
 	
-	// onMount(async () => {
-	// 	const res = await fetch("/dashboard/testPassword");
-	// 	const row = await res.json();
-	// 	if (res.ok) setCheckPass(row[0].pass1);
-	// });
+	import CommHeader from "./compnt2/CommHeader.svelte";
 	const mdata = [
 	  { title:"기준정보관리",	
 	   items : [
@@ -31,7 +28,14 @@
 				{ nm: "App 등록",  cnm: RegApp },
 				{ nm: "사용자 등록",  cnm: RegUser },
 				{ nm: "서비스 등록",  cnm: RegService },
-		]},
+				{ nm: "프로그램 등록",  cnm: RegProg },
+				]},
+	  { title:"전문 Layout",	
+	   items : [
+				{ nm: "공통전문",  cnm: CommHeader },
+				{ nm: "업무전문",  cnm: RegApp },
+				{ nm: "전문Layout 조회",  cnm: RegUser },
+				]},
 	  { title:"테스트관리",	
 	   items : [
 				{ nm: "테스트등록/전문생성",  cnm: RegTcode },
@@ -46,9 +50,7 @@
 				{ nm: "총괄 현황",  cnm: DashBoard },
 				{ nm: "테스트별 수행현황",  cnm: ByTcode },
 				{ nm: "업무별 수행현황",  cnm: ByTask },
-				// { nm: "상세수행현황",  cnm: DashBoard },
 				{ nm: "수행결과원본비교",  cnm: CompareList },
-				// { nm: "전문처리현황",  cnm: DashBoard },
 				{ nm: "전문상세검색",  cnm: TrList },
 		]},
 	];
@@ -120,6 +122,7 @@
 		height: 100%;
 		margin: 0 5;
 		display: flex;
+		overflow: hidden;
 		flex-direction: column;
 	}
 

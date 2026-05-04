@@ -97,7 +97,6 @@
 
   async function viewOrig(row) {
     if (odata.display == "none") {
-      odata.display = "block";
       odata.ok = false;
       await getOrig(row);
     } else {
@@ -123,15 +122,16 @@
         }),
       });
 
-      if (res.ok) cdata = await res.json();
-      else {
+      if (res.ok) {
+        cdata = await res.json();
+        odata.display = "block";
+      } else {
         const err = await res.json();
         window.alert(err.message);
         return;
       }
       odata.ok = true;
       odata.row = cdata[0];
-      
     }
   }
 
@@ -254,7 +254,7 @@
   <div class="modal-content">
     {#if cdata.length > 0}
       <div class="ny1">
-        <span class="text-[1.2rem] font-bold text-blue-700">{` 전문ID : ${cdata[0].pkey} ( ${cdata[0].cmpid} )`} </span>
+        <span class="text-[1.2rem] font-bold text-gray-800">{` 전문ID : ${cdata[0].pkey} ( ${cdata[0].cmpid} )`} </span>
         <nav>
           {#if !origin}
             <button onclick={async () => reSend(cdata[0])}>재전송</button>

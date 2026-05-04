@@ -66,7 +66,7 @@
 </script>
 
 <main class="flex flex-col h-full" role="none" onmouseenter={() => vid = 'none'}>
-  <div class="cond fitem" role="none" onkeyup={enterkey} >
+  <div class="flex-none headpan mb-0" role="none" onkeyup={enterkey} >
     <p>* 테스트ID : </p> 
     <select bind:value={selected} onchange={()=> {conds.tcode = ''; conds.page=0}} >
         
@@ -77,8 +77,8 @@
       {/each}
     </select>
     <span>URI : <input type="text" bind:value={mycond.uri} /></span>
-    <span class="number-in">응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
-    <span>기타 : <input style="width: 20rem;" type="text" bind:value={mycond.cond} /></span>
+    <span>응답코드 : <input  type="number" bind:value={mycond.rcode} /></span>
+    <span>기타 : <input class="w-[20rem]" type="text" bind:value={mycond.cond} /></span>
     <button  onclick={getTRlistm}>조회</button>
     <span>{tcntx}</span>
 
@@ -87,25 +87,3 @@
     <Trtable bind:conds/>
   </div>
 </main>
-
-<style>
-  .cond {
-    display:flex ;
-    align-items: baseline ;
-    
-  }
-  .cond * {
-    margin: 2px 4px;
-    padding: 0 3px;
-    height: 1.8em;
-  }
-  .cond span {
-    margin: 2px 8px;
-  }  
-
-  .number-in input{
-    max-width: 70px;
-    text-align: right;
-  }
-
-</style>

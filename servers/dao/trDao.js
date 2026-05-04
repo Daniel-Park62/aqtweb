@@ -1,6 +1,6 @@
 import aqtdb from '../db/dbconn.js';
 import path from 'path';
-import fs from 'fs';
+
 import mapper from 'mybatis-mapper';
 mapper.createMapper(['servers/mappers/aqtdb.xml']);
 const NSPACE = 'aqtdb';
@@ -73,23 +73,25 @@ export default {
   const str_qry = ` SELECT t.tcode, t.uri URI, t.stime 송신시간, t.rtime 수신시간, t.svctime 소요시간, t.rcode 응답코드, 
         REGEXP_REPLACE(cast(t.sdata as char(200) ${senc} ),'[\0\r\n]',' ') 송신데이터, 
         REGEXP_REPLACE(CAST( t.rdata AS CHAR(200) ${senc} ),'[\0\r\n]',' ') 수신,   
-        REGEXP_REPLACE(CAST( B.rdata AS CHAR(200) ${senc} ),'[\0\r\n]',' ') 원수신  
-        FROM ttcppacket t JOIN tloaddata B ON (t.cmpid = B.pkey)  
-        LEFT JOIN tservice s ON (t.appid = s.appid AND t.uri = s.svcid ) 
+        REGEXP_REPLACE(CAST( ifnull(B.rdata,'') AS CHAR(200) ${senc} ),'[\0\r\n]',' ') 원수신  
+        FROM vtcppacket t left JOIN tloaddata B ON (t.cmpid = B.pkey)  
         WHERE t.tcode = ? and t.appid rlike ? ${etcond}
          INTO OUTFILE ? 
           FIELDS TERMINATED BY '\\t'  
           LINES TERMINATED BY '\\n'  ` ;
 
-  const fff =  path.join( import.meta.dirname , tfile );
-  
+  const fff = process.env.AQT_TMPDIR ? path.join(process.env.AQT_TMPDIR, tfile) : tfilenm;
+  aqtlog("파일명:", fff, tfilenm);
   try {
     const rst = await aqtdb.query({dateStrings:true, 
                 sql: str_qry  }, [ parms.tcode,parms.apps,  tfilenm ]);
-
-    fs.copyFileSync(tfilenm, fff);
-    fs.unlinkSync(tfilenm);
-    setTimeout( () => fs.unlinkSync(fff), 5000) ;
+    aqtlog("쿼리결과:", rst) ;
+    if (rst.affectedRows === 0) {
+      throw new Error("다운로드할 데이터가 없습니다.") ;
+    } 
+    // fs.copyFileSync(tfilenm, fff);
+    // fs.unlinkSync(tfilenm);
+    // setTimeout( () => fs.unlinkSync(fff), 5000) ;
     return fff;
   } catch (e){  throw (e)};
 
