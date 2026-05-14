@@ -61,7 +61,7 @@
   });
 </script>
 
-<div class="main">
+<main class="flex flex-col h-full">
   <div class="h-[30vh] w-full overflow-y-auto border-0 flex-none p-2">
     <TidList bind:tcode vdisp={false}/>
   </div>
@@ -127,13 +127,8 @@
       <Trtable bind:conds />
   </Modal> 
   </div>
-</div>
+</main>
 <style>
-  .main {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
   tbody td {
     text-align: right;
   }

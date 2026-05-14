@@ -1,23 +1,27 @@
 <!-- @migration-task Error while migrating Svelte code: `<tr>` is invalid inside `<table>` -->
 <script>
   import { onMount } from "svelte";
+  import tapphost from "../model/tapphost.js";
+  import { getFirst } from "../lib/Common.svelte";
 
-  let columns = [true, "APPID", "APP명", "담당자"];
-  let columns_dtl = [0,"APPID", "Host IP", "0"];
+  let columns = [0, "", "", ""];
+  let columns_dtl = [0,"", "Host IP 입력", "0"];
   let data = $state([]) ;
   let datadtl = $state([]);
   let deldata = [];
   let deldata_dtl = [];
-  let newRow = [...columns];
-  let newRow_dtl = [...columns_dtl];
+  let newRow = $state([...columns]);
+  let newRow_dtl = $state([...columns_dtl]);
 
-  let appid = $state("") ;
+  let appid = "" ;
 
   function addRow() {
+    newRow[0] = 1 ;
     data = [...data, [...newRow]];
-//    newRow = [...columns];
+
   }
   function addRow_dtl() {
+    columns_dtl[1] = appid;
     newRow_dtl[1] = appid;
     datadtl = [...datadtl, [...newRow_dtl]];
 //    newRow_dtl = [...columns_dtl];
@@ -44,8 +48,7 @@
      */
   async function getApphost (appid) {
     if (appid > "") {
-      const res = await fetch("/regapp/host/" + appid);
-      datadtl = await res.json();
+      datadtl = await tapphost.getApphost(appid);
       deldata_dtl = [];
     } else {
       datadtl = [];
@@ -56,104 +59,51 @@
   }
 
   // $: promise = data;
-  $effect (() => { getApphost(appid); });
+  // $effect (() => { getApphost(appid); });
   //$: promise_dtl = datadtl;
 
   async function getData() {
-   const res = await fetch("/regapp");
-   const rows = await res.json();
-   data = rows.map((r) => { r.unshift(0); return r} ) ;
-
+   data = await tapphost.getData();
+    newRow = [...columns];
     deldata = [];
     deldata_dtl = [];
-    if (data.length > 0) appid = data[0][1] ;
-  }
-  function delApp() {
-    // let udata = [];
-    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
-
-    fetch("/regapp", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        values: deldata,
-      }),
-    }).then(res => {
-      if ( res.ok ) deldata_dtl = [] ;
-    }).catch((err) => {
-      alert( err.message ) ;
-    });
-  }
-  function delAppHost() {
-    // let udata = [];
-    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
-
-    fetch("/regapp/host", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        values: deldata_dtl,
-      }),
-    }).catch((err) => {
-      throw err;
-    });
+    // if (data.length > 0) appid = data[0][1] ;
+    getApphost(appid) ;
   }
 
-  function updApp() {
+  async function updApp() {
     // let udata = [];
     // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
-    updAppHost();
-    if (deldata.length) delApp();
+    let dcnt = "" , ucnt = "" ;
+    await updAppHost();
+    if (deldata.length) {
+      const rmsg = await tapphost.delApp(deldata).then( res => res.json() );
+      console.log("삭제",rmsg,"result") ;
+      if (rmsg.affectedRows) dcnt = ` ${rmsg.affectedRows} 건 삭제\n`;
+    }
     const udata = data.filter(r => r[0] ).map(r => {r.shift(); return r} ) ;
-    if ( udata.length == 0 ) return ;
-    fetch("/regapp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        values: udata,
-      }),
-    })
-      .then(async (res) => {
-        // getFirst() ;
-        let rmsg = await res.json();
-        alert(rmsg.message);
-        if (res.status < 300) {
-          getData();
-//          await setAppid();
-        }
-      })
-      .catch((err) => {
+    if ( udata.length ) {
+      const rmsg = await tapphost.updApp(udata).then(res => res.json());
+      if (rmsg.affectedRows)ucnt = ` ${rmsg.affectedRows} 건 수정`;
+      getData();
+      getFirst();
+    }
+    console.log("적용",dcnt, ucnt) ;
+    if (dcnt>"" || ucnt>"") alert(`적용완료: ${dcnt}  ${ucnt} `);
+  }
+
+  async function updAppHost() {
+    // let udata = [];
+    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
+    if (deldata_dtl.length) await tapphost.delAppHost(deldata_dtl);
+    if (datadtl.length === 0) return ;
+    await tapphost.updAppHost(datadtl)
+      .then(async res => {
+        const rmsg = await res.json() ;
+        alert(rmsg) ;
+      }).catch((err) => {
         alert("error:" + err.message);
       });
-      
-  }
-
-  function updAppHost() {
-    // let udata = [];
-    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
-    if (deldata_dtl.length) delAppHost();
-    if (datadtl.length === 0) return ;
-    fetch("/regapp/host", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ins: datadtl.filter(r => r[0] == 0).map(r => {r.shift() ; return r ;}) ,
-        upd: datadtl.filter(r => r[0] > 0) ,
-      }),
-    }).then(async res => {
-      const rmsg = await res.json() ;
-      console.log(rmsg) ;
-    }).catch((err) => {
-      alert("error:" + err.message);
-    });
   }
 
   onMount( getData );
@@ -180,12 +130,12 @@
     {:then rows} -->
     <tbody>
       {#each data as row}
-        <tr onclick={() => {appid = row[1]; console.log(appid);}} >
+        <tr onclick={() => {appid = row[1]; getApphost(appid) }} >
           <td><input type="checkbox" bind:checked={row[0]} /></td>
           <td contenteditable="false" bind:textContent={row[1]}></td>
           <td contenteditable="true" bind:textContent={row[2]}></td>
           <td contenteditable="true" bind:textContent={row[3]}></td>
-          <td><button onclick={() => deleteRow(row)}>X</button></td>
+          <td><button class="btn-delete" onclick={() => deleteRow(row)}>X</button></td>
         </tr>
       {/each}
     <!-- {/await} -->

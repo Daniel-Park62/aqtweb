@@ -25,12 +25,12 @@ const tapphostDao = {
       sql: "select pkey, appid,thost,tport from tapphosts where appid = ? order by thost,tport"  },parms ) ;
   },
   appDelete: async (parms) => {
-    await aqtdb.query('delete from tapphosts where appid in (?)', parms) ;
+    await aqtdb.query('delete from tapphosts where appid in (?)', [parms]) ;
     const qstr = 'delete from tapplication where appid in (?)' ; 
-    return await aqtdb.query(qstr, parms)  ;
+    return await aqtdb.query(qstr, [parms])  ;
   },
   hostDelete: async (parms) => {
-    return await aqtdb.query('delete from tapphosts where pkey in (?)', parms) ;
+    return await aqtdb.query('delete from tapphosts where pkey in (?)', [parms]) ;
   },
 
 }

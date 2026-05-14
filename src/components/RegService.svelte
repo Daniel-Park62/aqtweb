@@ -138,10 +138,10 @@
     <button class="btn-delete" onclick={delService}>선택삭제</button>
     <button onclick={updService}>적용</button>
     <button onclick={getdata}>적용취소</button>
-    <label>APPID : <input type="text" bind:value={conds.appid} ></label>
-    <label>서비스(URI) : <input type="text" bind:value={conds.svcid} ></label>
+    <span>APPID : <input type="text" bind:value={conds.appid} ></span>
+    <span>서비스(URI) : <input type="text" bind:value={conds.svcid} ></span>
     <button class="ml-auto" onclick={getdata}>조회</button>
-    <label class="mr-3">{rcnt > 0 ? rcnt.toLocaleString("ko-KR") + " 건" : " "}</label>
+    <span class="mr-3">{rcnt > 0 ? rcnt.toLocaleString("ko-KR") + " 건" : " "}</span>
   </div>
   <div class="flex-[1_1_0] h-[calc(100%-50px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] ">
     <table class="w-[98%] ">

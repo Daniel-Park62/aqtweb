@@ -19,52 +19,42 @@ async function getData() {
 /**
    * @param {any[]} deldata
    */
-function delApp(deldata) {
+async function delApp(deldata) {
 
-  fetch("/regapp", {
+  return fetch("/regapp", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       values: deldata,
-    }),
-  }).then(res => {
-    if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
-    return res ;
-  }).catch((err) => {
-    throw err;
+    }) 
   });
 }
 
 /**
    * @param {any[]} deldata_dtl
    */
-function delAppHost(deldata_dtl) {
+async function delAppHost(deldata_dtl) {
 
-  fetch("/regapp/host", {
+  return fetch("/regapp/host", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       values: deldata_dtl,
-    }),
-  }).catch((err) => {
-    throw err;
-  });
-}
-
+    }) 
+  }) ;
+  }
 /**
  * 
- * @param {any[]} data 
+ * @param {any[]} udata 
  * @returns 
  */
-function updApp(data) {
+async function updApp(udata) {
 
-  const udata = data.filter(r => r[0]).map(r => { r.shift(); return r });
-  if (udata.length == 0) return;
-  fetch("/regapp", {
+  return fetch("/regapp", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -72,14 +62,7 @@ function updApp(data) {
     body: JSON.stringify({
       values: udata,
     }),
-  })
-    .then(async (res) => {
-      if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
-      let rmsg = await res.json();
-      return rmsg ;
-    })
-    .catch((err) => { throw err });
-
+  }) ;
 }
 /**
  * 
@@ -89,20 +72,15 @@ function updApp(data) {
 function updAppHost(datadtl) {
 
   if (datadtl.length === 0) return;
-  fetch("/regapp/host", {
+  return fetch("/regapp/host", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      ins: datadtl.filter(r => r[0] == 0).map(r => { r.shift(); return r; }),
+      ins: datadtl.filter(r => r[0] === 0).map(r => {  r.slice(1) ; }),
       upd: datadtl.filter(r => r[0] > 0),
-    }),
-  }).then(async res => {
-    if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
-    const rmsg = await res.json();
-    return rmsg ;
-  }).catch((err) => {
-    throw err ;
-  });
+    }) 
+  }) ;
 }
+module.exports = { getApphost, getData, delApp, delAppHost, updApp, updAppHost };

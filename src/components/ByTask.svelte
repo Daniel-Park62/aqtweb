@@ -62,7 +62,7 @@
   });
 </script>
 
-<div class="main">
+<main class="flex flex-col h-full">
   <div class="max-h-[30vh] w-full overflow-y-auto flex-none p-2">
     <TaskList bind:task bind:lvl bind:ischg />
   </div>
@@ -119,16 +119,9 @@
       </tbody>
     </table>
   </div>
-</div>
+</main>
 <div>
 <Modal bind:showModal>
 	<Trtable bind:conds/>
 </Modal>
 </div>
-<style>
-  .main {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-</style>

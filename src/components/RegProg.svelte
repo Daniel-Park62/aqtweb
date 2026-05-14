@@ -3,7 +3,7 @@
   import { onMount, tick } from "svelte";
   import * as tprog from "../model/taqtprog";
   import Modal from "../lib/Modal2.svelte";
-  const pgbm = { 1:"테스트전",2:"요청전",3:"응답후",4:"테스트완료시작후" } ;
+  const pgbm = { 1:"테스트전",2:"요청전",3:"응답후",4:"테스트후" } ;
   let rcnt = $state(0);
   const cols = {
     chk: true,
@@ -73,7 +73,7 @@
 </script>
 
 <main class="h-full">
-  <div class="flex justify-start gap-2 px-2 py-1 bg-slate-200 border-gray-300 rounded border">
+  <div class="headpan">
     <button onclick={addRow}>추가</button>
     <button class="btn-delete" onclick={erase}>선택삭제</button>
     <button class="btn-update" onclick={save}>선택수정</button>
@@ -84,7 +84,7 @@
   </div>
 
   <div
-    class="flex-[1_1_0]h-[calc(100%-50px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]"
+    class="flex-[1_1_0] h-[calc(100%-50px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]"
   >
     <table class="table-fixed w-[98%]">
       <thead>
@@ -120,28 +120,26 @@
                   {/each}
                 </select>
               </td>
-              <td class="border align-middle">
+              <td class="border align-middle ">
                  <div
-                  class="w-fit flex justify-center items-center border-0 whitespace-nowrap"
+                  class="w-fit flex justify-center items-center border-0 whitespace-nowrap gap-2 text-center"
                 >
-                  <label for="JS">JS</label><input
-                    id="JS"
-                    class="radio radio-accent w-6 mr-4"
+                  <span >JS<input
+                    class="radio radio-accent w-6 align-middle"
                     type="radio"
                     name={ix.toString()}
                     bind:group={row.pgkind}
                     value={1}
                     onchange={() => row.chk = true}
-                  />
-                  <label for="C">C</label><input
-                    id="C"
-                    class="radio radio-accent w-6 mr-4"
+                  /></span>
+                  <span>C<input
+                    class="radio radio-accent w-6 align-middle"
                     type="radio"
                     name={ix.toString()}
                     bind:group={row.pgkind}
                     value={2}
                     onchange={() => row.chk = true}
-                  />
+                  /></span>
                 </div>
               </td>
               <td class="align-middle">

@@ -1,9 +1,16 @@
 import express from 'express';
 const router = express.Router();
 import taqtprogDao from '../dao/taqtprogDao.js';
+import texecprogDao from '../dao/texecprogDao.js' ;
 
 router.get('/', function (req, res, next) {
   taqtprogDao.list()
+    .then(rows => res.json(rows))
+    .catch((e) => next(e) );
+});
+
+router.get('/exec/:jobid', function (req, res, next) {
+  texecprogDao.list(req.params.jobid)
     .then(rows => res.json(rows))
     .catch((e) => next(e) );
 });
@@ -27,10 +34,32 @@ router.post('/', async function (req, res, next) {
 
 });
 
-router.delete('/', function (req, res, next) {
-  taqtprogDao.delete(req.body.prognos)
-    .then(r => res.status(201).send(r))
-    .catch(e => next(e));
+router.post('/exec', async function (req, res, next) {
+  let msg = {message:'수정 되었습니다.'} ;
+  try {
+    if (req.body.pkey > 0) {
+      await texecprogDao.delete(req.body.pkey);
+    }
+
+    if (req.body.ins.length > 0) {
+      const r = await texecprogDao.update(req.body.ins);
+      msg.message += r.affectedRows + " 건 등록되었습니다.";
+    }
+    res.json(msg);
+  } catch (e) {
+    next(e);
+  }
+
+});
+
+router.delete('/', async function (req, res, next) {
+  try {
+    await texecprogDao.deleteByProg(req.body.prognos);
+    const r = await taqtprogDao.delete(req.body.prognos);
+    res.status(201).send(r);
+  } catch (e) {
+    next(e);
+  }
 
 });
 

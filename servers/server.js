@@ -23,12 +23,24 @@ import tservice from './controllers/tservice.js' ;
 import texecjob from './controllers/texecjob.js' ;
 import tmocksvr from './controllers/tmocksvr.js' ;
 import taqtprog from './controllers/taqtprog.js' ;
-
 import tuser from './controllers/tuser.js' ;
 import trequest from './controllers/trequest.js' ;
 import tresult from './controllers/tresult.js' ;
 import basicSetup from './controllers/basicSetup.js' ;
 import tloadData from './controllers/tloadData.js' ;
+
+// bang
+import logonchk from './cntr/logonchk.js';
+import project from './cntr/project.js'
+import jobService from './cntr/jobService.js'
+import commonController from './cntr/commonController.js'
+import commHeader from './cntr/commHeader.js'
+import jobController from './cntr/jobController.js'
+import testCase from './cntr/testCase.js'
+import testSinalio from './cntr/testSinalio.js'
+import unitTest from './cntr/unitTest.js'
+import integrationTest from './cntr/integrationTest.js'
+import useruploadmanagement from './cntr/userUploadManagement.js';
 
 global.aqtlog = (...a) => { process.env.AQTDEBUG && console.log((new Date()).toLocaleString('lt'),...a )} ;
 aqtlog( "Starting AQT-WEB Server...",import.meta.dirname) ;
@@ -57,6 +69,19 @@ app.use('/trequest', trequest) ;
 app.use('/tresult', tresult) ;
 app.use('/aqtSetup', basicSetup) ;
 app.use('/tloaddata', tloadData) ;
+// bang
+app.use('/logonchk', logonchk);
+app.use('/project', project);
+app.use('/jobService', jobService);
+app.use('/useruploadmanagement', useruploadmanagement);
+app.use('/common', commonController);
+app.use('/commHeader', commHeader);
+app.use('/jobs', jobController);
+app.use('/testCase', testCase);
+app.use('/testSinalio', testSinalio);
+app.use('/unitTest', unitTest);
+app.use('/integrationTest', integrationTest);
+// end bang
 
 const server = app.listen(port,'0.0.0.0', () => {
    console.log((new Date()).toLocaleString('lt'), `Server is up at port ${port}`);

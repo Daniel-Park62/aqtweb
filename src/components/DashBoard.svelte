@@ -231,7 +231,7 @@
       </div>
     </div>
   </div>
-  <div class="flex-[1_1_0] overflow-y-auto ml-2 w-full rounded"><TidList bind:tcode={tcode}/></div>
+  <div class="flex-1 overflow-y-auto ml-2 w-full rounded"><TidList bind:tcode={tcode}/></div>
 </main>
 
 <style>

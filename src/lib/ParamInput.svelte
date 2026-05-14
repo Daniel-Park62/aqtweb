@@ -1,5 +1,4 @@
 <script>
-  import qs from "qs";
 
   let { showModal = $bindable(), items=$bindable() , title="파라미터",pkey, onApply = () => {} } = $props();
   // 초기 상태: 빈 입력창 하나 제공
@@ -38,7 +37,9 @@
 <dialog bind:this={dialog} 
     onclose={() => (showModal = false)} oncancel={() => {showModal = false}} >
   <dev class="flex flex-col p-4 gap-2 items-center  ">
-    <div class="m-2 text-xl font-bold text-indigo-950 bg-slate-50">{title}({pkey})</div>
+    <div class="border-l-4 border-indigo-700 pl-3 tracking-wider text-xl font-bold text-indigo-950 self-start">
+      {title}(ID:{pkey})</div>
+    
     <div class="w-[96%] p-4 m-2 border shadow rounded">
       {#each items as item,  ix}
         <div class="row">

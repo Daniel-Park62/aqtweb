@@ -45,8 +45,11 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  @apply text-xl font-bold text-gray-700
+}
+
+h2 {
+  @apply text-lg font-bold text-gray-700
 }
 
 .card {
@@ -76,7 +79,7 @@ a:visited {
 }
 
 label {
-	display: block;
+  @apply font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right
 }
 
 input, button, select, textarea {
@@ -95,6 +98,7 @@ input:disabled {
 	color: #ccc;
 }
 
+
 button {
   @apply bg-white hover:bg-gray-100 hover:font-semibold text-gray-800
         min-w-10 border border-blue-900 px-4 py-1 text-sm rounded transition
@@ -105,17 +109,22 @@ button {
 .btn-excel {
   @apply text-green-500 border border-green-500 
 }
-
 .btn-close {
   @apply text-gray-700 hover:bg-gray-200 hover:text-gray-900 
 }
+
+.btn-next {
+  @apply px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50
+}
+
 main {
   @apply bg-white shadow border border-gray-300 p-2 mb-2 flex flex-col
 }
 
 .headpan {
-  @apply flex justify-start gap-2 px-2 py-1 mb-1 bg-slate-200 border-gray-300 rounded border
+  @apply flex justify-start gap-2 px-2 py-1 mb-1 bg-slate-200 border-gray-300 rounded border items-baseline
 }
+
 
 table {
   @apply w-full border-separate border-spacing-0 border-hidden

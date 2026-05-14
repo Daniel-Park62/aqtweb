@@ -251,10 +251,10 @@
           {/each}
         </select>
       </div>
-      <label class="item in_label">
+      <span class="item in_label">
         <input type="checkbox" bind:checked={encv} />
         EUC-KR
-      </label>
+      </span>
     </div>
     <hr />
     <div class='p-2 gap-2 flex justify-center'>

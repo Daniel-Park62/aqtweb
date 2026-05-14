@@ -33,7 +33,7 @@
   onMount(getdata);
 </script>
 
-<div class="flex h-full">
+<main class="flex flex-row h-full">
   <div class="h-full flex-[0_0_550px] ml-2 mt-3">
     <table class="w-[96%]">
     <caption class="m-2 text-xl text-left text-blue-900 shadow">원본데이터 목록</caption>
@@ -66,5 +66,5 @@
   <div class="h-full">
     <Tloadtable tcode={tcode} />
   </div>
-</div>
+</main>
 

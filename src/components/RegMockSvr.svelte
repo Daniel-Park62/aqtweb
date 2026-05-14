@@ -188,7 +188,7 @@
             <td>
               <input class="w-[100%] my-0 bg-transparent border-none" onchange={() => row.chk=true} bind:value={row.svrnm}>
             </td>
-            <td class="border align-middle">
+            <td class="border align-middle ">
               <div class="w-[100%] flex justify-center items-center  border-0 whitespace-nowrap">
                 <label for="openapi">OpenAPI</label><input id="openapi" class="radio radio-accent w-6 mr-4" type="radio" name={ix.toString()} bind:group={row.svrkind} value={2} onchange={() => chHdle(ix)}>
                 <label for="tcp">TCP</label><input id="tcp" class="radio radio-accent w-6 mr-4" type="radio" name={ix.toString()} bind:group={row.svrkind} value={0} onchange={() => chHdle(ix)}>
@@ -222,5 +222,7 @@
     max-height: 80vh;
     overflow: auto;
   }
-
+label {
+ @apply bg-inherit border-none
+}
 </style>

@@ -18,7 +18,7 @@
         enc_val: "",
         tcode: "",
         proto_col: "",
-        compr_yn:"",
+        compr_yn: "",
         fail_cond: "",
         diffc_cond: "",
         virtual_col1: "",
@@ -52,7 +52,7 @@
 
     // Top Select Selection
     let selectedTopProjectId = "";
-    
+
     onMount(() => {
         handleTopSelectChange();
     });
@@ -62,7 +62,6 @@
         try {
             const projectRes = await fetch($rooturl + "/project/list");
             projects = await projectRes.json();
-
         } catch (error) {
             console.error("메타데이터 로딩 실패:", error);
         }
@@ -73,10 +72,10 @@
         await loadMetadata();
 
         const found = projects.find((p) => {
-            p.PRJ_ID == selectedProject
-            selectedProject = p.PRJ_ID;            
+            p.PRJ_ID == selectedProject;
+            selectedProject = p.PRJ_ID;
         });
-        
+
         if (!selectedProject || selectedProject === "") {
             resetForm();
             await fetchBusinessItems();
@@ -86,12 +85,11 @@
             if (found) {
                 await loadMetadata();
                 await handleGridRowClick(found);
-                await handleTopSearch(); 
+                await handleTopSearch();
             } else {
                 resetForm();
                 await fetchBusinessItems();
             }
-
         }
     }
 
@@ -108,7 +106,7 @@
                 projects = await res.json();
             } else {
                 console.error("Failed to fetch projects");
-                projects = []; 
+                projects = [];
             }
         } catch (error) {
             console.error("Error fetching projects:", error);
@@ -128,7 +126,10 @@
                 url += `&projectId=${selectedProject}`;
             }
 
-            if (!searchKeyword && (!selectedProject || selectedProject === "")) {
+            if (
+                !searchKeyword &&
+                (!selectedProject || selectedProject === "")
+            ) {
                 businessItems = [];
                 isLoading = false;
                 return;
@@ -151,18 +152,17 @@
     }
 
     function handleGridRowClick(project) {
-        if (project.isNew) 
-            return;
+        if (project.isNew) return;
 
         currentProject = {
-            prj_id      : project.PRJ_ID,
-            prj_nm      : project.PRJ_NM,
-            enc_val     : project.ENC_VAL,
-            tcode       : project.TCODE,
-            proto_col   : project.PROTO_COL,
-            compr_yn    : project.COMPR_YN,
-            fail_cond   : project.FAIL_COND,
-            diffc_cond  : project.DIFFC_COND,
+            prj_id: project.PRJ_ID,
+            prj_nm: project.PRJ_NM,
+            enc_val: project.ENC_VAL,
+            tcode: project.TCODE,
+            proto_col: project.PROTO_COL,
+            compr_yn: project.COMPR_YN,
+            fail_cond: project.FAIL_COND,
+            diffc_cond: project.DIFFC_COND,
             virtual_col1: project.VIRT_COL1,
             virtual_col2: project.VIRT_COL2,
             virtual_type1: project.VIRT_TYPE1,
@@ -174,20 +174,20 @@
 
     function resetForm() {
         currentProject = {
-            prj_id          : "",
-            prj_nm          : "",
-            enc_val         : "",
-            tcode           : "",
-            proto_col       : "",
-            compr_yn        : "",
-            fail_cond       : "",
-            diffc_cond      : "",
-            virtual_col1    : "",
-            virtual_col2    : "",
-            virtual_type1   : "varchar(100)",
-            virtual_type2   : "varchar(100)",
-            virtual_expr1   : "varchar(100) cast('' as char(100)) charset utf8mb4",
-            virtual_expr2   : "varchar(100) cast('' as char(100)) charset utf8mb4",
+            prj_id: "",
+            prj_nm: "",
+            enc_val: "",
+            tcode: "",
+            proto_col: "",
+            compr_yn: "",
+            fail_cond: "",
+            diffc_cond: "",
+            virtual_col1: "",
+            virtual_col2: "",
+            virtual_type1: "varchar(100)",
+            virtual_type2: "varchar(100)",
+            virtual_expr1: "varchar(100) cast('' as char(100)) charset utf8mb4",
+            virtual_expr2: "varchar(100) cast('' as char(100)) charset utf8mb4",
         };
     }
 
@@ -218,8 +218,7 @@
             return;
         }
 
-        if (!confirm("프로젝트 정보를 저장하시겠습니까?")) 
-            return;
+        if (!confirm("프로젝트 정보를 저장하시겠습니까?")) return;
 
         try {
             const res = await fetch(`${$rooturl}/project/save`, {
@@ -232,7 +231,7 @@
                 alert("저장 되었습니다.");
 
                 await loadMetadata();
-                await handleTopSearch(); 
+                await handleTopSearch();
             } else {
                 const text = await res.text();
 
@@ -248,8 +247,7 @@
 
     // 상단 가상컬럼1 적용 버튼
     async function handleTopapp1() {
-        if (!confirm("가상컬럼1 을 수정하시겠습니까?")) 
-            return;
+        if (!confirm("가상컬럼1 을 수정하시겠습니까?")) return;
 
         try {
             const res = await fetch(`${$rooturl}/project/saveapp1`, {
@@ -262,7 +260,7 @@
                 alert("가상컬럼1이 수정 되었습니다.");
 
                 await loadMetadata();
-                await handleTopSearch(); 
+                await handleTopSearch();
             } else {
                 const text = await res.text();
 
@@ -278,8 +276,7 @@
 
     // 상단 가상컬럼1 적용 버튼
     async function handleTopapp2() {
-        if (!confirm("가상컬럼2 을 수정하시겠습니까?")) 
-            return;
+        if (!confirm("가상컬럼2 을 수정하시겠습니까?")) return;
 
         try {
             const res = await fetch(`${$rooturl}/project/saveapp2`, {
@@ -292,7 +289,7 @@
                 alert("가상컬럼2가 수정 되었습니다.");
 
                 await loadMetadata();
-                await handleTopSearch(); 
+                await handleTopSearch();
             } else {
                 const text = await res.text();
 
@@ -331,16 +328,16 @@
     // 하단 grid 추가
     async function handleGridAdd() {
         const newRow = {
-            state      : "I",
-            APP_ID      : "",
-            APPNM       : "",
-            MAIN_MGR    : "",
-            GUBUN       : 1,
-            SCNT        : "",
-            HOST_IP     : "",
-            HOST_PORT   : 0,
-            isNew       : true,
-            _tempId     : `new_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            state: "I",
+            APP_ID: "",
+            APPNM: "",
+            MAIN_MGR: "",
+            GUBUN: 1,
+            SCNT: "",
+            HOST_IP: "",
+            HOST_PORT: 0,
+            isNew: true,
+            _tempId: `new_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         };
 
         businessItems = [newRow, ...businessItems];
@@ -379,7 +376,9 @@
             }
 
             businessItems = businessItems.filter(
-                (item) => !selectedIds.has(item.APP_ID) && !selectedIds.has(item._tempId),
+                (item) =>
+                    !selectedIds.has(item.APP_ID) &&
+                    !selectedIds.has(item._tempId),
             );
 
             alert("삭제 되었습니다.");
@@ -387,7 +386,9 @@
             selectedIds = new Set();
         } catch (e) {
             console.error(e);
-            alert(" 삭제 중 오류 발생하였습니다!!! \n 관리자에게 문의하시기 바랍니다.");
+            alert(
+                " 삭제 중 오류 발생하였습니다!!! \n 관리자에게 문의하시기 바랍니다.",
+            );
         }
     }
 
@@ -397,20 +398,19 @@
 
         try {
             for (let item of businessItems) {
-
                 if (!item.APP_ID) {
                     alert("업무코드는 필수 입력입니다. 업무코드를 입력하세요.");
                     return;
                 } else {
                     const payload = {
-                        state       : item.state,
-                        app_id      : item.APP_ID,
-                        appnm       : item.APPNM,
-                        main_mgr    : item.MAIN_MGR,
-                        gubun       : item.GUBUN || 1,
-                        scnt        : item.SCNT,
-                        host_ip     : item.HOST_IP,
-                        host_port   : item.HOST_PORT,
+                        state: item.state,
+                        app_id: item.APP_ID,
+                        appnm: item.APPNM,
+                        main_mgr: item.MAIN_MGR,
+                        gubun: item.GUBUN || 1,
+                        scnt: item.SCNT,
+                        host_ip: item.HOST_IP,
+                        host_port: item.HOST_PORT,
                     };
 
                     await fetch(`${$rooturl}/project/business/save`, {
@@ -425,7 +425,9 @@
             selectedIds = new Set();
         } catch (error) {
             console.error(error);
-            alert(" 저장 중 오류 발생하였습니다!!! \n 관리자에게 문의하시기 바랍니다.");
+            alert(
+                " 저장 중 오류 발생하였습니다!!! \n 관리자에게 문의하시기 바랍니다.",
+            );
         }
     }
 
@@ -433,53 +435,95 @@
     async function handleGridSearch() {
         await fetchBusinessItems();
     }
-
 </script>
 
-<div class="container mx-auto p-4 lg:p-8 bg-gray-50 flex flex-col h-[calc(100vh-4.8rem)] gap-4">
+<div
+    class="container mx-auto p-4 lg:p-8 bg-gray-50 flex flex-col h-[calc(100vh-4.8rem)] gap-4"
+>
     <div class="bg-white shadow border border-gray-300 p-4 mb-0">
         <div class="flex justify-end mb-2 space-x-2">
             <div class="flex space-x-2 mr-auto items-start">
-                <h2 class="text-lg font-bold text-gray-700 px-5">프로젝트/업무</h2>
+                <h2 class="text-lg font-bold text-gray-700 px-5">업무 관리</h2>
             </div>
             <div class="items-center hidden">
-                <span class="w-32 mr-1 text-sm font-bold text-right bg-gray-200 px-2 py-1 border border-gray-300">프로젝트</span>
-                <select on:change={handleTopSelectChange} bind:value={selectedProject} 
-                        class="border border-gray-300 rounded-sm px-2 py-1 text-sm focus:outline-none focus:border-blue-500 min-w-[120px]">
+                <span
+                    class="w-32 mr-1 text-sm font-bold text-right bg-gray-200 px-2 py-1 border border-gray-300"
+                    >프로젝트</span
+                >
+                <select
+                    on:change={handleTopSelectChange}
+                    bind:value={selectedProject}
+                    class="border border-gray-300 rounded-sm px-2 py-1 text-sm focus:outline-none focus:border-blue-500 min-w-[120px]"
+                >
                     {#each projects as project}
                         <option value={project.PRJ_ID}>{project.PRJ_NM}</option>
                     {/each}
                 </select>
             </div>
-            <button on:click={handleTopSave}
-                class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded transition">
-                저장
-            </button>
+            <button on:click={handleTopSave}> 저장 </button>
         </div>
         <div class="py-2"></div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <input type="text" class="flex-1 border border-gray-300 py-1 px-2 bg-gray-100 text-gray-500 hidden" placeholder="프로젝트 ID 자동생성" disabled bind:value={currentProject.prj_id}/>
+            <input
+                type="text"
+                class="flex-1 border border-gray-300 py-1 px-2 bg-gray-100 text-gray-500 hidden"
+                placeholder="프로젝트 ID 자동생성"
+                disabled
+                bind:value={currentProject.prj_id}
+            />
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">프로젝트명</label>
-                <input type="text" class="flex-1 border border-gray-300 py-1 px-2" placeholder="프로젝트명 입력" bind:value={currentProject.prj_nm} />
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >프로젝트명</label
+                >
+                <input
+                    type="text"
+                    class="flex-1 border border-gray-300 py-1 px-2"
+                    placeholder="프로젝트명 입력"
+                    bind:value={currentProject.prj_nm}
+                />
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">기본 인코딩</label>
-                <input type="text" class="flex-1 border border-gray-300 py-1 px-2" placeholder="기본인코딩(예:MS949) 입력" bind:value={currentProject.enc_val} />
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >기본 인코딩</label
+                >
+                <input
+                    type="text"
+                    class="flex-1 border border-gray-300 py-1 px-2"
+                    placeholder="기본인코딩(예:MS949) 입력"
+                    bind:value={currentProject.enc_val}
+                />
             </div>
             <div class="items-center space-x-1 hidden">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">테스트 ID</label>
-                <input type="text" class="flex-1 border border-gray-300 py-1 px-2" placeholder="테스트 ID 입력" bind:value={currentProject.tcode} />
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >테스트 ID</label
+                >
+                <input
+                    type="text"
+                    class="flex-1 border border-gray-300 py-1 px-2"
+                    placeholder="테스트 ID 입력"
+                    bind:value={currentProject.tcode}
+                />
             </div>
             <!-- Row 2 -->
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">프로토콜</label>
-                <select class="flex-1 border border-gray-300 py-1 px-2" bind:value={currentProject.proto_col}>
-                    <option value="" disabled selected>프로토콜을 선택하세요</option>                    
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >프로토콜</label
+                >
+                <select
+                    class="flex-1 border border-gray-300 py-1 px-2"
+                    bind:value={currentProject.proto_col}
+                >
+                    <option value="" disabled selected
+                        >프로토콜을 선택하세요</option
+                    >
                     <option value="0">0:TCP</option>
                     <option value="1">1:HTTP</option>
                     <option value="2">2:UDP</option>
@@ -488,9 +532,16 @@
             </div>
             <div class="items-center space-x-1 hidden">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">압축여부</label>
-                <select class="flex-1 border border-gray-300 py-1 px-2" bind:value={currentProject.compr_yn}>
-                    <option value="" disabled selected>옵션을 선택하세요</option>                    
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >압축여부</label
+                >
+                <select
+                    class="flex-1 border border-gray-300 py-1 px-2"
+                    bind:value={currentProject.compr_yn}
+                >
+                    <option value="" disabled selected>옵션을 선택하세요</option
+                    >
                     <option value="0">0:압축아님</option>
                     <option value="1">1:압축</option>
                 </select>
@@ -500,48 +551,84 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">실패조건</label>
-                <input type="text" class="flex-1 border border-gray-300 py-1 px-2"
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >실패조건</label
+                >
+                <input
+                    type="text"
+                    class="flex-1 border border-gray-300 py-1 px-2"
                     placeholder="실패조건 (예: if(rcode > 399, 2, if(rcode > 199, 1, 0))) 입력"
-                    bind:value="{currentProject.fail_cond}"
+                    bind:value={currentProject.fail_cond}
                 />
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">원본차이조건</label>
-                <input type="text" class="flex-1 border border-gray-300 py-1 px-2"
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >원본차이조건</label
+                >
+                <input
+                    type="text"
+                    class="flex-1 border border-gray-300 py-1 px-2"
                     placeholder="원본차이조건 (예: AND (a.rcode <> b.rcode or a.rcode > 399 or b.rcode > 399)) 입력"
-                    bind:value={currentProject.diffc_cond}/>
+                    bind:value={currentProject.diffc_cond}
+                />
             </div>
         </div>
         <div class="py-3"></div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-x-4 gap-y-2 text-sm">
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">가상컬럼1</label>
-                <input type="text" class="border border-gray-300 py-1 px-2" placeholder="가상컬럼1 입력" bind:value={currentProject.virtual_col1}/>
-                <input type="text" class="border border-gray-300 py-1 px-2" placeholder="varchar(100)" bind:value={currentProject.virtual_type1}/>
-                <input type="text" class="flex-1 border border-gray-300 py-1 px-2"
-                        placeholder="varchar(100) cast('' as char(100)) charset utf8mb4"
-                        bind:value={currentProject.virtual_expr1}/>
-                <button on:click={handleTopapp1}
-                    class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded transition">
-                    적용
-                </button>
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >가상컬럼1</label
+                >
+                <input
+                    type="text"
+                    class="border border-gray-300 py-1 px-2"
+                    placeholder="가상컬럼1 입력"
+                    bind:value={currentProject.virtual_col1}
+                />
+                <input
+                    type="text"
+                    class="border border-gray-300 py-1 px-2"
+                    placeholder="varchar(100)"
+                    bind:value={currentProject.virtual_type1}
+                />
+                <input
+                    type="text"
+                    class="flex-1 border border-gray-300 py-1 px-2"
+                    placeholder="varchar(100) cast('' as char(100)) charset utf8mb4"
+                    bind:value={currentProject.virtual_expr1}
+                />
+                <button on:click={handleTopapp1}> 적용 </button>
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">가상컬럼2</label>
-                <input type="text" class="border border-gray-300 py-1 px-2" placeholder="가상컬럼2 입력" bind:value={currentProject.virtual_col2}/>
-                <input type="text" class="border border-gray-300 py-1 px-2" placeholder="varchar(100)" bind:value={currentProject.virtual_type2} />
-                <input type="text" class="flex-1 border border-gray-300 py-1 px-2"
-                        placeholder="varchar(100) cast('' as char(100)) charset utf8mb4"
-                        bind:value={currentProject.virtual_expr2}
+                <label
+                    class="w-32 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right"
+                    >가상컬럼2</label
+                >
+                <input
+                    type="text"
+                    class="border border-gray-300 py-1 px-2"
+                    placeholder="가상컬럼2 입력"
+                    bind:value={currentProject.virtual_col2}
                 />
-                <button on:click={handleTopapp2}
-                    class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded transition">
-                    적용
-                </button>
+                <input
+                    type="text"
+                    class="border border-gray-300 py-1 px-2"
+                    placeholder="varchar(100)"
+                    bind:value={currentProject.virtual_type2}
+                />
+                <input
+                    type="text"
+                    class="flex-1 border border-gray-300 py-1 px-2"
+                    placeholder="varchar(100) cast('' as char(100)) charset utf8mb4"
+                    bind:value={currentProject.virtual_expr2}
+                />
+                <button on:click={handleTopapp2}> 적용 </button>
             </div>
         </div>
     </div>
@@ -551,78 +638,166 @@
                 <h2 class="text-lg font-bold text-gray-700 px-5">업무</h2>
             </div>
             <div class="flex space-x-2 items-center">
-                <select class="border border-gray-300 rounded px-2 py-1 text-sm" bind:value={searchType}>
+                <select
+                    class="border border-gray-300 rounded px-2 py-1 text-sm"
+                    bind:value={searchType}
+                >
                     <option value="all">전체</option>
                     <option value="APPNM">업무명</option>
                     <option value="MAIN_MGR">담당자</option>
                     <option value="HOST_IP">HOST IP</option>
                     <option value="HOST_PORT">PORT</option>
                 </select>
-                <input type="text" class="border border-gray-300 rounded px-2 py-1 text-sm" placeholder="필드명 입력" bind:value={searchKeyword}/>
-                <button on:click={handleGridSearch} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded">
-                    조회
-                </button>
-                <button on:click={handleGridAdd} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded">
-                    추가
-                </button>
-                <button on:click={handleGridDelete} class="bg-white hover:bg-gray-100 text-red-600 border border-red-600 px-3 py-1 text-sm rounded">
+                <input
+                    type="text"
+                    class="border border-gray-300 rounded px-2 py-1 text-sm"
+                    placeholder="필드명 입력"
+                    bind:value={searchKeyword}
+                />
+                <button on:click={handleGridSearch}> 조회 </button>
+                <button on:click={handleGridAdd}> 추가 </button>
+                <button class="btn-delete" on:click={handleGridDelete}>
                     삭제
                 </button>
-                <button on:click={handleGridSave} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded">
-                    저장
-                </button>
+                <button on:click={handleGridSave}> 저장 </button>
             </div>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full border-collapse border border-gray-300 text-xs text-center whitespace-nowrap">
-                <thead class="bg-gray-100 text-gray-700 font-semibold">
+            <table class="min-w-full">
+                <thead>
                     <tr>
-                        <th class="border border-gray-300 px-2 py-1 w-8"><input type="checkbox" on:change={toggleAll} /></th>
-                        <th class="border border-gray-300 px-2 py-1 hidden" style="width: 150px; min-width: 150px;">상태</th>
-                        <th class="border border-gray-300 px-2 py-1" style="width: 150px; min-width: 150px;">업무코드</th>
-                        <th class="border border-gray-300 px-2 py-1" style="width: 150px; min-width: 150px;">업무명</th>
-                        <th class="border border-gray-300 px-2 py-1" style="width: 150px; min-width: 150px;">주담당자</th>
-                        <th class="border border-gray-300 px-2 py-1 hidden" style="width: 100px; min-width: 100px;">구분</th>
-                        <th class="border border-gray-300 px-2 py-1" style="width: 100px; min-width: 100px;">대상서비스수</th>
-                        <th class="border border-gray-300 px-2 py-1" style="width: 150px; min-width: 150px;">Host IP</th>
-                        <th class="border border-gray-300 px-2 py-1" style="width: 100px; min-width: 100px;">Port</th>
+                        <th class="w-8">
+                            <input type="checkbox" on:change={toggleAll} />
+                        </th>
+                        <th
+                            class="text-center hidden"
+                            style="width: 150px; min-width: 150px;">상태</th
+                        >
+                        <th
+                            class="text-center"
+                            style="width: 150px; min-width: 150px;">업무코드</th
+                        >
+                        <th
+                            class="text-center"
+                            style="width: 150px; min-width: 150px;">업무명</th
+                        >
+                        <th
+                            class="text-center"
+                            style="width: 150px; min-width: 150px;">주담당자</th
+                        >
+                        <th
+                            class="text-center hidden"
+                            style="width: 100px; min-width: 100px;">구분</th
+                        >
+                        <th
+                            class="text-center"
+                            style="width: 100px; min-width: 100px;"
+                            >대상서비스수</th
+                        >
+                        <th
+                            class="text-center"
+                            style="width: 150px; min-width: 150px;">Host IP</th
+                        >
+                        <th
+                            class="text-center"
+                            style="width: 100px; min-width: 100px;">Port</th
+                        >
                     </tr>
                 </thead>
                 <tbody class="bg-whit">
                     {#each paginatedList as item}
                         <tr class="hover:bg-blue-50">
-                            <td class="border border-gray-300 px-2 py-1 text-center">
-                                <input type="checkbox" checked={selectedIds.has(item.APP_ID || item._tempId)} on:change={() => toggleOne(item.APP_ID || item._tempId)}/>
+                            <td class="text-center">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedIds.has(
+                                        item.APP_ID || item._tempId,
+                                    )}
+                                    on:change={() =>
+                                        toggleOne(item.APP_ID || item._tempId)}
+                                />
                             </td>
-                            <td class="border border-gray-300 px-2 py-1 disabled:opacity-50 hidden">
+                            <td class="disabled:opacity-50 hidden">
                                 {item.state}
                             </td>
-                            <td class="border border-gray-300 px-2 py-1 disabled:opacity-50">
-                                <input type="text" class="w-full border-none bg-transparent focus:ring-1 text-center" bind:value={item.APP_ID} on:input={() => {toggleOne(item.APP_ID || item._tempId)}}/>
+                            <td class="disabled:opacity-50">
+                                <input
+                                    type="text"
+                                    class="w-full border-none bg-transparent focus:ring-1 text-center"
+                                    bind:value={item.APP_ID}
+                                    on:input={() => {
+                                        toggleOne(item.APP_ID || item._tempId);
+                                    }}
+                                />
                             </td>
-                            <td class="border border-gray-300 px-2 py-1">
-                                <input type="text" class="w-full border-none bg-transparent focus:ring-1 text-center" bind:value={item.APPNM} on:input={() => {toggleOne(item.APP_ID || item._tempId)}}/>
+                            <td class="text-center">
+                                <input
+                                    type="text"
+                                    class="w-full border-none bg-transparent focus:ring-1 text-center"
+                                    bind:value={item.APPNM}
+                                    on:input={() => {
+                                        toggleOne(item.APP_ID || item._tempId);
+                                    }}
+                                />
                             </td>
-                            <td class="border border-gray-300 px-2 py-1">
-                                <input type="text" class="w-full border-none bg-transparent focus:ring-1 text-center" bind:value={item.MAIN_MGR} on:input={() => {toggleOne(item.APP_ID || item._tempId)}}/>
+                            <td class="text-center">
+                                <input
+                                    type="text"
+                                    class="w-full border-none bg-transparent focus:ring-1 text-center"
+                                    bind:value={item.MAIN_MGR}
+                                    on:input={() => {
+                                        toggleOne(item.APP_ID || item._tempId);
+                                    }}
+                                />
                             </td>
-                            <td class="border border-gray-300 px-2 py-1 hidden">
-                                <input type="text" class="w-full border-none bg-transparent focus:ring-1 text-right" bind:value={item.GUBUN} on:input={() => {toggleOne(item.APP_ID || item._tempId)}}/>
+                            <td class="text-center hidden">
+                                <input
+                                    type="text"
+                                    class="w-full border-none bg-transparent focus:ring-1 text-right"
+                                    bind:value={item.GUBUN}
+                                    on:input={() => {
+                                        toggleOne(item.APP_ID || item._tempId);
+                                    }}
+                                />
                             </td>
-                            <td class="border border-gray-300 px-2 py-1">
-                                <input type="text" class="w-full border-none bg-transparent focus:ring-1 text-right" bind:value={item.SCNT} on:input={() => {toggleOne(item.APP_ID || item._tempId)}}/>
+                            <td class="text-center">
+                                <input
+                                    type="text"
+                                    class="w-full border-none bg-transparent focus:ring-1 text-right"
+                                    bind:value={item.SCNT}
+                                    on:input={() => {
+                                        toggleOne(item.APP_ID || item._tempId);
+                                    }}
+                                />
                             </td>
-                            <td class="border border-gray-300 px-2 py-1">
-                                <input type="text" class="w-full border-none bg-transparent focus:ring-1 text-center" bind:value={item.HOST_IP} on:input={() => {toggleOne(item.APP_ID || item._tempId)}}/>
+                            <td class="text-center">
+                                <input
+                                    type="text"
+                                    class="w-full border-none bg-transparent focus:ring-1 text-center"
+                                    bind:value={item.HOST_IP}
+                                    on:input={() => {
+                                        toggleOne(item.APP_ID || item._tempId);
+                                    }}
+                                />
                             </td>
-                            <td class="border border-gray-300 px-2 py-1">
-                                <input type="text" class="w-full border-none bg-transparent focus:ring-1 text-center" bind:value={item.HOST_PORT} on:input={() => {toggleOne(item.APP_ID || item._tempId)}}/>
+                            <td class="text-center">
+                                <input
+                                    type="text"
+                                    class="w-full border-none bg-transparent focus:ring-1 text-center"
+                                    bind:value={item.HOST_PORT}
+                                    on:input={() => {
+                                        toggleOne(item.APP_ID || item._tempId);
+                                    }}
+                                />
                             </td>
                         </tr>
                     {/each}
                     {#if businessItems.length === 0}
                         <tr>
-                            <td colspan="16" class="text-center py-4 border border-gray-300">
+                            <td
+                                colspan="16"
+                                class="text-center py-4 border border-gray-300"
+                            >
                                 데이터가 없습니다.
                             </td>
                         </tr>
@@ -632,34 +807,58 @@
         </div>
         {#if totalPages > 1}
             <div class="flex justify-center items-center mt-4 space-x-1">
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
-                        on:click={() => goToPage(1)} disabled={currentPage === 1} >
+                <button
+                    class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+                    on:click={() => goToPage(1)}
+                    disabled={currentPage === 1}
+                >
                     처음
                 </button>
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
-                        on:click={() => goToPage(currentPage - 1)} disabled={currentPage === 1} >
+                <button
+                    class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+                    on:click={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
                     이전
                 </button>
 
                 {#each Array(Math.min(5, totalPages)) as _, i}
-                    {@const pageNum = totalPages <= 5 ? i + 1 : Math.min(Math.max(currentPage - 2, 1),totalPages - 4,) + i}
-                    <button class="px-3 py-1 border border-gray-300 rounded text-sm {currentPage === pageNum ? 'bg-blue-600 text-white border-blue-600' : 'hover:bg-gray-100'}"
-                            on:click={() => goToPage(pageNum)} >
+                    {@const pageNum =
+                        totalPages <= 5
+                            ? i + 1
+                            : Math.min(
+                                  Math.max(currentPage - 2, 1),
+                                  totalPages - 4,
+                              ) + i}
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded text-sm {currentPage ===
+                        pageNum
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'hover:bg-gray-100'}"
+                        on:click={() => goToPage(pageNum)}
+                    >
                         {pageNum}
                     </button>
                 {/each}
 
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
-                        on:click={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} >
+                <button
+                    class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+                    on:click={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
                     다음
                 </button>
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
-                        on:click={() => goToPage(totalPages)} disabled={currentPage === totalPages} >
+                <button
+                    class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+                    on:click={() => goToPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                >
                     마지막
                 </button>
 
-                <span class="ml-4 text-sm text-gray-600"> 
-                    Page {currentPage} of {totalPages} (Total {businessItems.length} items)
+                <span class="ml-4 text-sm text-gray-600">
+                    Page {currentPage} of {totalPages} (Total {businessItems.length}
+                    items)
                 </span>
             </div>
         {/if}

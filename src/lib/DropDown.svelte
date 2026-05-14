@@ -33,8 +33,8 @@
   }
 
   .dropdown > button {
-    @apply  bg-gray-800 text-gray-100 hover:text-white  font-semibold py-2 px-4 
-             border border-gray-500 rounded shadow ;
+    @apply  bg-gray-800 text-gray-100 hover:text-white  font-semibold py-2 px-2 
+             border border-gray-700 rounded shadow min-w-28 ;
   }
 
   .menu {

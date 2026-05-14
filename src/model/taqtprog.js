@@ -20,6 +20,28 @@ async function save(rdata) {
     throw err;
   };
 }
+async function saveExec(rdata) {
+  try {
+    const del = rdata.filter((r) => r.chk && r.progno != 0);
+    const ins = rdata.filter((r) => r.chk && r.progno == 0);
+
+    // console.log(inss)     ;
+    const res = await fetch("/taqtprog/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        del: del,
+        ins: ins,
+      }),
+    });
+    if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+    return await res.json();
+  } catch (err) {
+    throw err;
+  };
+}
 
 function erase(rdata) {
   const delcodes = rdata
@@ -45,11 +67,39 @@ function erase(rdata) {
       throw err;
     });
 }
+function eraseExec(delcodes) {
+
+  if (delcodes.length == 0) return;
+  // console.log("del code:", delcodes) ;
+  fetch("/taqtprog/exec", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prognos: delcodes,
+    }),
+  })
+    .then(async (res) => {
+      if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+      return await res.json();
+    })
+    .catch((err) => {
+      throw err;
+    });
+}
+
 async function getdata() {
 
   const res = await fetch("/taqtprog");
   if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
   return await res.json();
 }
+async function getdataExec(jobid) {
 
-export { save, erase, getdata };
+  const res = await fetch(`/taqtprog/exec/${jobid}`);
+  if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+  return await res.json();
+}
+
+export { save, erase, getdata, getdataExec, saveExec };

@@ -413,7 +413,7 @@
     <div class="bg-white shadow border border-gray-300 p-4 mb-0">
         <div class="flex justify-end mb-2 space-x-2 items-center">
         <div class="flex space-x-2 mr-auto items-start">
-            <h2 class="text-lg font-bold text-gray-700 px-5">공통전문</h2>
+            <h2 class=" px-5">공통전문</h2>
         </div>
             <div class="flex items-center space-x-2 mr-4">
 
@@ -431,10 +431,10 @@
                     </select>
                 </div>
             </div>
-            <button on:click={handleTopSearch} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded transition">
+            <button on:click={handleTopSearch} class=" transition">
                 조회
             </button>
-            <button on:click={handleTopSave} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded transition">
+            <button on:click={handleTopSave} class=" transition">
                 저장
             </button>
         </div>
@@ -446,19 +446,19 @@
             <input type="text" class="flex-1 border border-gray-300 bg-gray-100 py-1 px-2 text-gray-500" bind:value={currentHeader.comm_header_id} hidden/>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-36 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">공통헤더명 (한글)</label>
+                <label class="w-36 ">공통헤더명 (한글)</label>
                 <input type="text" class="flex-1 border border-gray-300 py-1 px-2" 
                        placeholder="전문명(한글) 입력" bind:value={currentHeader.comm_header_name_kr}/>
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-36 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">공통헤더명 (영문)</label>
+                <label class="w-36 ">공통헤더명 (영문)</label>
                 <input type="text" class="flex-1 border border-gray-300 py-1 px-2"
                        placeholder="전문명(영문) 입력" bind:value={currentHeader.comm_header_name_en}/>
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-36 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">전문유형</label>
+                <label class="w-36 ">전문유형</label>
                 <select class="flex-1 border border-gray-300 py-1 px-2" bind:value={currentHeader.msg_type}>
                     <option value="" disabled>요청/응답 선택</option>
                     <option value="1">요청</option>
@@ -467,7 +467,7 @@
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-36 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">포맷</label>
+                <label class="w-36 ">포맷</label>
                 <select class="flex-1 border border-gray-300 py-1 px-2" bind:value={currentHeader.format}>
                     <option value="" disabled>포맷 선택</option>
                     <option value="1">FIXED</option>
@@ -477,7 +477,7 @@
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-36 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">방향</label>
+                <label class="w-36 ">방향</label>
                 <select class="flex-1 border border-gray-300 py-1 px-2" bind:value={currentHeader.direction}>
                     <option value="" disabled>방향 선택</option>
                     <option value="1">Inbound</option>
@@ -486,21 +486,21 @@
             </div>
             <div class="flex items-center space-x-1">
                 <!-- svelte-ignore a11y_label_has_associated_control -->
-                <label class="w-36 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">전체길이</label>
+                <label class="w-36 ">전체길이</label>
                 <input type="text" class="flex-1 border border-gray-300 py-1 px-2" placeholder="Fixed만 해당" bind:value={currentHeader.total_length}/>
             </div>
         </div>
         <!-- Row 4: Description (Full Width) -->
         <div class="flex items-center mt-2 text-sm space-x-1">
             <!-- svelte-ignore a11y_label_has_associated_control -->
-            <label class="w-36 font-bold bg-gray-100 py-1 px-2 border border-gray-300 block text-right">설명</label>
+            <label class="w-36 ">설명</label>
             <input type="text" class="flex-1 border border-gray-300 py-1 px-2" placeholder="해당 전문의 역할/설명 입력" bind:value={currentHeader.description}/>
         </div>
     </div>
     <div class="bg-white p-4 shadow border border-gray-300">
         <div class="flex justify-between items-center mb-4">
             <div class="flex space-x-2 mr-auto items-start">
-                <h2 class="text-lg font-bold text-gray-700 px-5">공통헤더 필드</h2>
+                <h2 class=" px-5">공통헤더 필드</h2>
             </div>
             <div class="flex items-center">
                 <input type="file" class="hidden" accept=".xlsx, .xls" bind:this={fileInput} on:change={onFileSelected}/>
@@ -514,21 +514,21 @@
                     <option value="FLD_DESC">필드설명</option>
                 </select>
                 <input type="text" class="border border-gray-300 rounded px-2 py-1 text-sm" placeholder="필드명 입력" bind:value={searchKeyword}/>
-                <button on:click={fetchCommHeaders} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded">
+                <button on:click={fetchCommHeaders} >
                     조회
                 </button>
-                <button on:click={handleGridAdd} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded">
+                <button on:click={handleGridAdd} >
                     추가
                 </button>
-                <button on:click={handleGridDelete} class="bg-white hover:bg-gray-100 text-red-600 border border-red-600 px-3 py-1 text-sm rounded">
+                <button on:click={handleGridDelete} class="btn-delete">
                     삭제
                 </button>
-                <button on:click={handleGridSave} class="bg-white hover:bg-gray-100 text-blue-600 border border-blue-600 px-3 py-1 text-sm rounded">
+                <button on:click={handleGridSave} >
                     저장
                 </button>
             <div class="w-px h-6 bg-gray-300 mx-1"></div>
-                <button on:click={handleExcelUpload} class="bg-white hover:bg-gray-100 text-green-600 border border-green-600 px-3 py-1 text-sm rounded">엑셀 업로드</button>
-                <button on:click={handleExcelDownload} class="bg-white hover:bg-gray-100 text-green-600 border border-green-600 px-3 py-1 text-sm rounded">엑셀다운로드</button>
+                <button on:click={handleExcelUpload} class="btn-excel">엑셀 업로드</button>
+                <button on:click={handleExcelDownload} class="btn-excel">엑셀다운로드</button>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -539,7 +539,7 @@
                         <th class=" hidden">업무ID</th>
                         <th class=" hidden">공통헤더ID</th>
                         <th class=" hidden">필드ID</th>
-                        <th class="" style="width: 100px; min-width: 100px;">필드명(영문)</th>
+                        <th class="w-[400px]" style="width: 300px; min-width: 300px;">필드명(영문)</th>
                         <th class="" style="width: 100px; min-width: 100px;">필드명(한글)</th>
                         <th class="" style="width: 100px; min-width: 100px;">필드타입</th>
                         <th class="" style="width: 80px; min-width: 80px;">자리수</th>
@@ -557,7 +557,7 @@
                 </thead>
                 <tbody class="bg-white">
                     {#each paginatedList as item (item.COMMHDFLD_ID)}
-                        <tr class="hover:bg-blue-50 cursor-pointer">
+                        <tr >
                             <td class="" on:click|stopPropagation>
                                 <input type="checkbox" checked={selectedIds.has(item.COMMHDFLD_ID)} on:change={() => toggleOne(item.COMMHDFLD_ID)}/>
                             </td>
@@ -570,22 +570,22 @@
                             <td class="border border-gray-300 px-1 py-1 hidden">
                                 {item.COMMHDFLD_ID}
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_EN_NM}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_KR_NM}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_TYPE}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_LEN}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_CMT}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <!-- <select class="w-full bg-transparent border-none text-left outline-none" bind:value={item.FLD_SGMT}> -->
                                 <select class="flex-1 border border-gray-300 py-0 px-1" bind:value={item.FLD_SGMT}>
                                     <option value="" disabled>세그먼트 선택</option>
@@ -596,28 +596,28 @@
                                     <option value="5">5:Tail</option>
                                 </select>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.ST_POS}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_ORDER}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.ESSEN_YN}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.DEFAULT_VAL}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_FORMAT}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.FLD_CDSET}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.MASK_YN}/>
                             </td>
-                            <td class="border border-gray-300 px-1 py-1">
+                            <td >
                                 <input type="text" class="w-full bg-transparent border-none text-center outline-none" bind:value={item.META_CONV_RULE}/>
                             </td>
                         </tr>
@@ -634,10 +634,10 @@
         <!-- Pagination Controls -->
         {#if totalPages > 1}
             <div class="flex justify-center items-center mt-4 space-x-1">
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50" on:click={() => goToPage(1)} disabled={currentPage === 1}>
+                <button class="btn-next" on:click={() => goToPage(1)} disabled={currentPage === 1}>
                     처음
                 </button>
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50" on:click={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+                <button class="btn-next" on:click={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
                     이전
                 </button>
 
@@ -649,15 +649,15 @@
                                   Math.max(currentPage - 2, 1),
                                   totalPages - 4,
                               ) + i}
-                    <button class="px-3 py-1 border border-gray-300 rounded text-sm {currentPage === pageNum ? 'bg-blue-600 text-white border-blue-600' : 'hover:bg-gray-100'}" on:click={() => goToPage(pageNum)}>
+                    <button class="btn-next" on:click={() => goToPage(pageNum)}>
                         {pageNum}
                     </button>
                 {/each}
 
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50" on:click={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                <button class="btn-next" on:click={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
                     다음
                 </button>
-                <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50" on:click={() => goToPage(totalPages)} disabled={currentPage === totalPages}>
+                <button class="btn-next" on:click={() => goToPage(totalPages)} disabled={currentPage === totalPages}>
                     마지막
                 </button>
 

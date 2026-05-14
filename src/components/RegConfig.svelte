@@ -9,7 +9,7 @@
   });
 </script>
 
-<div class="main h-auto m-3 p-10">
+<main class="h-auto m-3 p-10">
   <div class="items">
     <div class="item in_label">프로젝트명:</div>
     <input class="item in_value"  bind:value={curRow.pjtnm} />
@@ -42,7 +42,7 @@
   </div>
   <hr />
 
-</div>
+</main>
 
 <style>
   .main {

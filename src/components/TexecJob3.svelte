@@ -4,11 +4,12 @@
 */
   import { onMount } from "svelte";
   import { userid } from "../aqtstore";
+  import RegExeProg from "../lib/RegExeProg.svelte";
 
   let tick = 0;
   let intv ;
   let cmdl = $state() ;
-  // $: geting(tick);
+  let showModal = $state(false);
 
   let tcodelist = $state([]);
 
@@ -242,20 +243,20 @@
 
 </script>
 
-<div class="flex flex-col h-full">
+<main class="h-full">
   <div class="headpan">
-    <lebel>[ ▼ 전문송신이력 ] 조회선택▶</lebel>
+    <span>[ ▼ 전문송신이력 ] 조회선택▶</span>
     <div class="flex border border-gray-500 mx-2 p-1 rounded">
-      <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={1} /> 실행대기</label >
-      <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={2} /> 실행중</label >
-      <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={9} /> 작업완료</label >
-      <label class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={4} /> 모두보기</label >
+      <span class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={1} /> 실행대기</span>
+      <span class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={2} /> 실행중</span>
+      <span class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={9} /> 작업완료</span>
+      <span class="rlabel" ><input type="radio" name="drone" bind:group={qselected} value={4} /> 모두보기</span>
     </div>
     <button onclick={getdata}>조회</button>
   </div>
 
   <div class="min-h-[calc(100%-378px)] overflow-auto grow">
-    <table class="m-1 p-2 w-[98%]">
+    <table class="w-[98%]">
       <thead>
         <tr>
           <th>Job No</th>      
@@ -319,8 +320,8 @@
       </tbody>
     </table>
   </div>
-  <hr />
-  <div class="flex m-2 p-2 gap-2 shadow ">
+
+  <div class="headpan">
     <button onclick={newJob}>{curRow.jobsts === 1 ?  "신규취소" : "작업추가" }</button>
     <button onclick={reExec}>실행요청</button>
     {#if curRow.pkey > 0}
@@ -329,10 +330,12 @@
       >
     {/if}
     <button  onclick={()=>{curRow.resultstat=0; updExec() }}>저장</button>
+    <button disabled={!curRow.pkey} onclick={()=>{ showModal = true; }}>선후행프로그램선택</button>
+
     <p class="ml-auto text-slate-700 text-xs justify-end">{cmdl} </p>
   </div>
   <div class="m-1 p-2 shadow border-zinc-500 items flex-none {curRow.pkey ? '': 'bg-slate-200'}">
-    <div class="item in_label">테스트ID:</div>
+    <div class="item text-right">테스트ID:</div>
     <!-- <input class="item in_value" maxlength=10 style="width:200px"
           pattern="[A-Z0-9]{(3, 6)}"
           bind:value={curRow.tcode}
@@ -343,79 +346,79 @@
       {/each}
     </select>
 
-    <div class="item in_label">Description:</div>
+    <div class="item text-right">Description:</div>
     <input
       class="item in_value caret-pink-500 col-start-4 col-span-3"
       bind:value={curRow.tdesc}
     />
-    <div class="item in_label">작업개수:</div>
+    <div class="item text-right">작업개수:</div>
     <input class="item in_value" type="number" bind:value={curRow.tnum} />
 
-    <div class="item in_label">자료종류:</div>
-    <div class="item in_value flex ">
-      <label class="pt-1"><input type="radio" name="aqttype" value={"TCP"} bind:group={curRow.aqttype}/> TCP</label>
-      <label class="pt-1"><input type="radio" name="aqttype" value={"TMAX"} bind:group={curRow.aqttype}/> TMAX</label>
-      <label class="pt-1"><input type="radio" name="aqttype" value={"JEUS"} bind:group={curRow.aqttype}/> JEUS</label>
-      <label class="pt-1"><input type="radio" name="aqttype" value={"HTTP"} bind:group={curRow.aqttype}/> HTTP</label>
-      <label class="pt-1"><input type="radio" name="aqttype" value={"UDP"} bind:group={curRow.aqttype}/> UDP</label>
+    <div class="item text-right">자료종류:</div>
+    <div class="item in_value flex items-center">
+      <span class="px-2"><input type="radio" name="aqttype" value={"TCP"} bind:group={curRow.aqttype}/> TCP</span>
+      <span class="px-2"><input type="radio" name="aqttype" value={"TMAX"} bind:group={curRow.aqttype}/> TMAX</span>
+      <span class="px-2"><input type="radio" name="aqttype" value={"JEUS"} bind:group={curRow.aqttype}/> JEUS</span>
+      <span class="px-2"><input type="radio" name="aqttype" value={"HTTP"} bind:group={curRow.aqttype}/> HTTP</span>
+      <span class="px-2"><input type="radio" name="aqttype" value={"UDP"} bind:group={curRow.aqttype}/> UDP</span>
     </div>
 
-    <div class="item in_label">작업요청일시:</div>
+    <div class="item text-right">작업요청일시:</div>
     <input class="item in_value" type="datetime-local" bind:value={curRow.reqstartDt} />
 
-    <div class="item in_label" title="테스트대상 서버ip 또는 host명">테스트Host:</div>
+    <div class="item text-right" title="테스트대상 서버ip 또는 host명">테스트Host:</div>
     <input id="thost" class="item in_value" bind:value={curRow.thost} />
-    <div class="item in_label">- port:</div>
+    <div class="item text-right">- port:</div>
     <input class="item in_value" type="number" bind:value={curRow.tport} />
 
-    <div class="item in_label">테스트여부:</div>
-    <div class="item in_value flex">
-      <label class="pt-1"><input type="radio" name="immd" value={0} bind:group={curRow.immd}/> 데이터수집</label>
-      <label class="pt-1"><input type="radio" name="immd" value={1} bind:group={curRow.immd}/> 실시간</label>
-      <label title="수행결과를 저장하지않으므로 처리속도향상을 기대" class="pt-1"><input type="radio" name="immd" value={2} bind:group={curRow.immd}/> 실시간(결과무시)</label>
+    <div class="item text-right">테스트여부:</div>
+    <div class="item in_value flex items-center">
+      <span class="px-2"><input type="radio" name="immd" value={0} bind:group={curRow.immd}/> 데이터수집</span>
+      <span class="px-2"><input type="radio" name="immd" value={1} bind:group={curRow.immd}/> 실시간</span>
+      <span title="수행결과를 저장하지않으므로 처리속도향상을 기대" class="px-2"><input type="radio" name="immd" value={2} bind:group={curRow.immd}/> 실시간(결과무시)</span>
     </div>
    
-    <div class="item in_label">수집방법:</div>
-    <div class="item in_value flex ">
-      <label class="pt-1"><input type="radio" name="ptype" value={"C"} bind:group={curRow.ptype}/> NetWork</label>
-      <label class="pt-1"><input type="radio" name="ptype" value={"F"} bind:group={curRow.ptype}/> 파일에서</label>
+    <div class="item text-right">수집방법:</div>
+    <div class="item in_value flex items-center">
+      <span class="px-2"><input type="radio" name="ptype" value={"C"} bind:group={curRow.ptype}/> NetWork</span>
+      <span class="px-2"><input type="radio" name="ptype" value={"F"} bind:group={curRow.ptype}/> 파일에서</span>
     </div>
-    <div class="item in_label">파일명:</div>
+    <div class="item text-right">파일명:</div>
     <input class="item in_value " bind:value={curRow.dstf} />
 
-    <div class="item in_label">처리건수:</div>
+    <div class="item text-right">처리건수:</div>
     <input class="item in_value " type="number" bind:value={curRow.limits} />
 
-    <div class="item in_label">수집명령:</div>
-    <div class="item in_value flex">
-      <label class="pt-1"><input type="radio" name="ctype" value={0} bind:group={curRow.ctype}/> tcpdump</label>
-      <label class="pt-1"><input type="radio" name="ctype" value={1} bind:group={curRow.ctype}/> netti</label>
-      <label class="pt-1"><input type="radio" name="ctype" value={2} bind:group={curRow.ctype}/> snoop</label>
+    <div class="item text-right">수집명령:</div>
+    <div class="item in_value flex items-center">
+      <span class="px-2"><input type="radio" name="ctype" value={0} bind:group={curRow.ctype}/> tcpdump</span>
+      <span class="px-2"><input type="radio" name="ctype" value={1} bind:group={curRow.ctype}/> netti</span>
+      <span class="px-2"><input type="radio" name="ctype" value={2} bind:group={curRow.ctype}/> snoop</span>
     </div>
 
-    <label class="item in_value pt-1 col-span-2"><input type="checkbox" name="norcv" bind:checked={curRow.norcv}/> 송신만 수집하고 응답은 무시함</label>
+    <span class="item in_value px-1 col-span-2"><input type="checkbox" name="norcv" bind:checked={curRow.norcv}/> 송신만 수집하고 응답은 무시함</span>
 
-    <div class="item in_label">수집대상ip:</div>
+    <div class="item text-right">수집대상ip:</div>
     <input class="item in_value" bind:value={curRow.dstip} />
-    <div class="item in_label">- port:</div>
+    <div class="item text-right">- port:</div>
     <input class="item in_value" type="number" bind:value={curRow.dstport} />
 
-    <div class="item in_label" title="tcpdump 시 추가할 옵션 ">수집추가옵션:</div>
+    <div class="item text-right" title="tcpdump 시 추가할 옵션 ">수집추가옵션:</div>
     <input class="item in_value " name="otherOpt" bind:value={curRow.otherOpt} />
 
 
-    <div class="item in_label" title="tcpdump 시 추가할 필터조건">추가조건:</div>
+    <div class="item text-right" title="tcpdump 시 추가할 필터조건">추가조건:</div>
     <input class="item in_value" bind:value={curRow.otherCond} />
 
-    <div class="item in_label">작업메세지:</div>
+    <div class="item text-right">작업메세지:</div>
     <textarea
       readonly
       class="item border-gray-500 text-sm col-span-3 h-16 mb-0"
       bind:value={curRow.msg}
 ></textarea>
   </div>
-</div>
-
+</main>
+<RegExeProg bind:showModal={showModal} pkey={curRow.pkey} />
 <style>
 
   .in_value > label,
@@ -428,7 +431,7 @@
     grid-template-columns: repeat(3, 7rem auto) 7rem 5rem;
     gap: 3px 10px;
     align-content: start;
-    /* align-items: center; */
+    align-items: baseline;
     margin: 5px;
   }
 
@@ -440,9 +443,6 @@
     border: 1px solid silver;
     border-radius: 5px;
     height: 2.2em;
-  }
-  .in_label {
-    text-align: end;
   }
 
 </style>

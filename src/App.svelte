@@ -20,7 +20,18 @@
 	import RegProg from "./components/RegProg.svelte";
 	import { aqtConfig } from "./lib/Common.svelte";
 	
+	// compnt2 
 	import CommHeader from "./compnt2/CommHeader.svelte";
+	import JobManage from "./compnt2/JobManage.svelte";
+	import JobTree from "./compnt2/JobTree.svelte";
+	import JobDataManage from "./compnt2/JobDataManage.svelte";
+	import ComJobDataSingle from "./compnt2/ComJobDataSingle.svelte";
+	import JobDataSearch from "./compnt2/JobDataSearch.svelte";
+	import TestCaseReg from "./compnt2/TestCaseReg.svelte";
+	import TestCaseSearch from "./compnt2/TestCaseSearch.svelte";
+	import TestSinalioReg from "./compnt2/TestSinalioReg.svelte";
+	import TestSinalioSearch from "./compnt2/TestSinalioSearch.svelte";
+
 	const mdata = [
 	  { title:"기준정보관리",	
 	   items : [
@@ -33,9 +44,33 @@
 	  { title:"전문 Layout",	
 	   items : [
 				{ nm: "공통전문",  cnm: CommHeader },
-				{ nm: "업무전문",  cnm: RegApp },
-				{ nm: "전문Layout 조회",  cnm: RegUser },
+				{ nm: "업무전문",  cnm: JobManage },
+				{ nm: "전문Layout 조회",  cnm: JobTree },
 				]},
+    {
+      title: "테스트데이터",
+      items: [
+        { nm: "전문업로드", cnm: JobDataManage },
+        { nm: "신규등록/수정", cnm: ComJobDataSingle },
+        //{ nm: "실시간전문등록", cnm: JobDataPacket },
+        { nm: "전문데이터조회", cnm: JobDataSearch },
+      ],
+    },
+    {
+      title: "테스트케이스",
+      items: [
+        { nm: "테스트케이스 등록", cnm: TestCaseReg },
+        { nm: "테스트케이스 조회", cnm: TestCaseSearch },
+      ],
+    },
+    {
+      title: "시나리오",
+      items: [
+        { nm: "시나리오 등록", cnm: TestSinalioReg },
+        { nm: "시나리오 조회", cnm: TestSinalioSearch },
+      ],
+    },
+
 	  { title:"테스트관리",	
 	   items : [
 				{ nm: "테스트등록/전문생성",  cnm: RegTcode },
@@ -106,7 +141,7 @@
 			</button>
 		</div>
 
-		<div spellcheck="false" class="bg-slate-50 shadow-lg mt-1 flex-1 flex flex-col justify-stretch box-border rounded">
+		<div spellcheck="false" class=" shadow-lg mt-1 flex-1 flex flex-col justify-stretch box-border rounded">
 			<!-- <svelte:component this={selected.cnm} class="self-start"/> -->
 			<selected.cnm></selected.cnm>
 		</div>
