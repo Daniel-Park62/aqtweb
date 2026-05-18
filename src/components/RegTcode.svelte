@@ -1,6 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import { gtcode,userid } from "../aqtstore";
   import {
     getLvlnm,
     getLvls,
@@ -132,7 +131,6 @@
   <button class="btn-delete" onclick={delTcode}>선택삭제</button>
   <button
     onclick={() => {
-      gtcode.update((v) => curRow.tcode);
       showModal2 = true;
     }}>전문생성</button
   >
@@ -159,10 +157,10 @@
     </thead>
     <tbody>
       {#await rdata}
-        <p>...waiting</p>
+        <tr><td>...waiting</td></tr>
       {:then rows}
         {#each rows as row (row.tcode)}
-          <tr tablindex="0"
+          <tr tabindex="0"
             onclick={(e) => curRow = row}
             ondblclick={() => {
               // copyRow(row) ;
@@ -189,7 +187,7 @@
           </tr>
         {/each}
       {:catch err}
-        <p style="color: red">{err.message}</p>
+        <tr><td class="text-red-700">{err.message}</td></tr>
       {/await}
     </tbody>
   </table>
@@ -263,7 +261,7 @@
     </div>
   </div>
 </Modal>
-<CopyTr bind:showCopyTr={showModal2} tlist={rdata} />
+<CopyTr bind:showCopyTr={showModal2} selcode={curRow.tcode} tlist={rdata} />
 
 <style>
   .items {

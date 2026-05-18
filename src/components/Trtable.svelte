@@ -221,7 +221,7 @@
             /></th
           >
           <th class="w-[12ch]">ID</th>
-          <th class="w-[22ch]">송신시간</th>
+          <th class="w-[19ch]">송신시간</th>
           <th>소요시간</th>
           <th>Method</th>
           <th class="w-[20ch]">URI</th>
@@ -260,7 +260,7 @@
                 /></td
               >
               <td><strong><em>{row.pkey}</em></strong></td>
-              <td>{row.송신시간}</td>
+              <td title={row.송신시간}>{row.송신시간.slice(0, -5)}</td>
               <td class="text-right">{row.소요시간}</td>
               <td>{row.method === null ? "" : row.method}</td>
               <td class="text-left">{row.uri}</td>

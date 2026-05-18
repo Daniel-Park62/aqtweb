@@ -10,18 +10,22 @@
   const pgkindm = { 1: "JS", 2: "C", 3: "Python", 4: "Java" };
   let rcnt = $state(0);
   const cols = {
-    chk: true,
+    chk: false,
     progno: 0,
     nm: "프로그램명입력",
     pgb: "1",
     pgkind: 1,
     src: "",
   };
-  let rdata = $state([{ ...cols }]);
+  let rdata = $state([]);
 
   async function save() {
+    if (rdata.length == 0) {
+      alert("저장할 데이터가 없습니다.");
+      return;
+    }
     try {
-      const res = await saveExec(rdata);
+      const res = await saveExec(pkey,rdata);
       alert(res.message);
       getdata();
     } catch (err) {
@@ -30,6 +34,7 @@
   }
 
   async function getdata() {
+    rdata=[] ;
     try {
       const rows = await getdataExec(pkey);
       rdata = rows.map((r) => ({ ...r, chk: r.pkey > 0 }));

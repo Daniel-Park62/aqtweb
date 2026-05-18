@@ -107,7 +107,7 @@ button {
   @apply text-red-500 border border-red-500 
 }
 .btn-excel {
-  @apply text-green-500 border border-green-500 
+  @apply text-green-600 border border-green-700 
 }
 .btn-close {
   @apply text-gray-700 hover:bg-gray-200 hover:text-gray-900 
@@ -150,7 +150,7 @@ thead {
 }
 
 tbody tr {
-  @apply focus-within:outline-fuchsia-400 focus-within:outline focus-within:outline-1 focus-within:outline-offset-[-1px]
+  @apply focus-within:outline-fuchsia-400 focus-within:outline focus-within:outline-2 focus-within:outline-offset-[-1px]
 }
 /* 
 thead th:first-child {

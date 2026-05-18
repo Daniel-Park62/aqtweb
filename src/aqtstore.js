@@ -3,7 +3,6 @@ import  { readable, writable } from 'svelte/store'
 let value = "";
 let aqtpass = 'abcd';
 
-export const gtcode = writable(value) ;
 export const isLogged = writable(0);
 export const authApps = writable(".*");
 export const userid = writable("") ;

@@ -73,7 +73,7 @@
 </script>
 
 <main class="h-full">
-  <div class="headpan">
+  <div class="headpan w-[98%]">
     <button onclick={addRow}>추가</button>
     <button class="btn-delete" onclick={erase}>선택삭제</button>
     <button class="btn-update" onclick={save}>선택수정</button>
@@ -167,7 +167,15 @@
     </table>
   </div>
   <Modal bind:showModal wd="80vw">
-    <div class="flex justify-start gap-3 items-baseline"><span class="text-lg border bg-gray-100 border-gray-300 m-1 px-2">{curRow.nm}</span><pre class="ml-auto">인수: xargs &#123; data, stime &#125 [ ex: xargs.data ]</pre></div>
+    <div class="flex justify-start gap-3 items-baseline">
+      <span class="border-l-4 border-indigo-700 text-lg bg-gray-100  m-1 px-3">{curRow.nm}</span>
+      <span class="ml-auto mr-4">
+      {#if curRow.pgb === '1' }
+        ** 요청/응답에 사용될 Object return 
+      {:else if curRow.pgb < '4' }
+        ** 인수: xargs &#123; sdata, stime, ... &#125,fargs [ ex: xargs.sdata ] 
+      {/if}
+      </span></div>
     <textarea class="h-[94%] w-full p-2 overflow-auto " onchange={() => (curRow.chk = true)} bind:value={curRow.src}></textarea>
   </Modal>
 </main>

@@ -1,30 +1,20 @@
 
 <script>
-  import { onMount,onDestroy, } from "svelte";
-  import { gtcode } from "../aqtstore" ;
+  import { onMount } from "svelte";
   
   let tlist_org = $state([]);
   
-  let { showCopyTr = $bindable(false) , tlist } = $props();
+  let { showCopyTr = $bindable(false) , selcode, tlist } = $props();
   let dialog; 
   let conds = $state({
-    srccode: "",
-    dstcode: "",
+    srccode: selcode,
+    dstcode: selcode,
     uri: "",
     cnt: 0,
     cond: ""
   });
   let rdata = Promise.resolve([]);
-  let rmsg=$state("↓ 데이터생성 버튼을 누르면 작업이 시작됩니다.")
-  let ltcode ;
-  const unsubs = gtcode.subscribe((data) => {
-    ltcode = data;
-    conds.srccode = ltcode ;
-    conds.dstcode = ltcode ;
-    // console.log(ltcode);
-  });
-  
-  onDestroy(unsubs) ;
+  let rmsg=$state("↓ 데이터생성 버튼을 누르면 작업이 시작됩니다.");
 
   async function createTr() {
     rmsg = ">>> 작업중..." + JSON.stringify(conds) ;
@@ -49,19 +39,16 @@
   }
 
   onMount(async () => {
-  //   if (tlist.length == 0) {
-  //   const res = await fetch( "/tmaster/tsellist/"+$userid ) ;
-  //   tlist = await res.json(); 
-  //   }
-  //  conds.dstcode =  tlist[0].code ;
+
     const reso = await fetch( "tloaddata/getcodes" ) ;
     tlist_org = await reso.json(); 
     tlist_org.push({tcode:'%',sdate:'ALL'});
-    conds.srccode = tlist_org[0].tcode;
 
   });
   $effect(() => {
     if (dialog && showCopyTr) { 
+      conds.srccode = selcode ;
+      conds.dstcode = selcode ;
       dialog.showModal();
     }
   });
@@ -87,7 +74,7 @@
     </select>
   </span>
   <!-- svelte-ignore a11y_label_has_associated_control -->
-  <label class="item in_label">URI or 서비스:</label><input class="item in_value" bind:value={conds.uri}/>
+  <div class="item in_label">URI or 서비스:</div><input class="item in_value" bind:value={conds.uri}/>
   <div class="item in_label">서비스별 건수:</div><input class="item in_value" type="number" bind:value={conds.cnt}/>
   <div class="item in_label">기타조건:</div><textarea rows="3" class="item in_value" style="grid-column: 2 / span 2;" bind:value={conds.cond}></textarea>
 </div>

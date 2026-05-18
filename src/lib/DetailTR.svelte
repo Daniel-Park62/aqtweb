@@ -326,7 +326,7 @@
               >{"응답데이터 : " + cdata[0].rlen.toLocaleString("ko-KR")}</span
             ><br />
             <div class="rdata">
-              {cdata[0].rdata.toString()}
+              {cdata[0].rdata ?? ''}
             </div>
           </div>
         </div>
@@ -377,7 +377,7 @@
                 >{"응답데이터 : " +
                   odata.row.rlen.toLocaleString("ko-KR")}</span
               ><br />
-              <div class="rdata">{odata.row.rdata}</div>
+              <div class="rdata">{odata.row.rdata ?? ''}</div>
             </div>
           {/if}
         </div>

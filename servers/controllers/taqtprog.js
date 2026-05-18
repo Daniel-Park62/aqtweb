@@ -37,8 +37,8 @@ router.post('/', async function (req, res, next) {
 router.post('/exec', async function (req, res, next) {
   let msg = {message:'수정 되었습니다.'} ;
   try {
-    if (req.body.pkey > 0) {
-      await texecprogDao.delete(req.body.pkey);
+    if (req.body.pkey) {
+      await texecprogDao.delete(req.body.pkey) ;
     }
 
     if (req.body.ins.length > 0) {

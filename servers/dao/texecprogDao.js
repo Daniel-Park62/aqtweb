@@ -8,7 +8,7 @@ const texecprogDao = {
   list: async (jobid) => {
     return await aqtdb.query(`SELECT a.progno,pgb,pgkind,nm, left(a.src,100) as src, ifnull(b.pkey, 0) as pkey
           from taqtprog a left join texecprog b on (a.progno = b.progno and b.pkey = ? )
-          order by progno`,[jobid]);
+          order by pgb,progno`,[jobid]);
   },
   update: async (parms) => {
     const qstr = `replace into texecprog (pkey, progno) values (?,?)` ;

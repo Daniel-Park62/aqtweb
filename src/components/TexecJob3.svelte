@@ -189,7 +189,7 @@
         const [hh,mm,ss] = rw.elapsed ? rw.elapsed.split(':').map(Number) : [0, 0, 0];
         rw.elaps = hh * 3600 + mm * 60 + ss ;
         const elm = document.getElementById(rw.pkey);
-        if (elm) {
+        if (elm && rw.resultstat === 2) {
           elm.setAttribute(
             "title",
             "총: " +
@@ -307,7 +307,7 @@
                     </p>
                   </td>
                 {:else}
-                  <td id={row.pkey} class="msg max-w-[20%]"
+                  <td id={row.pkey} class="text-start max-w-[20%]"
                     >{row.msg ? row.msg.split("\n")[0] : ""}</td
                   >
                 {/if}

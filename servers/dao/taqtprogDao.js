@@ -6,7 +6,7 @@ const taqtprogDao = {
     return await aqtdb.query('SELECT a.* from taqtprog a where progno=?',[progno]);
   },
   list: async () => {
-    return await aqtdb.query('SELECT a.* from taqtprog a');
+    return await aqtdb.query('SELECT a.* from taqtprog a order by pgb,progno');
   },
   update: async (parms) => {
     const qstr = `update taqtprog set pgb=?, pgkind=?,nm=?,src=?

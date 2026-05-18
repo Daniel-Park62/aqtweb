@@ -170,7 +170,7 @@
         const [hh,mm,ss] = rw.elapsed.split(':').map(Number);
         rw.elaps = hh * 3600 + mm * 60 + ss ;
         const elm = document.getElementById(rw.pkey);
-        if (elm) {
+        if (elm && rw.resultstat === 2) {
           elm.setAttribute(
             "title",
             "총: " +
@@ -183,7 +183,7 @@
                     <img class='mx-4 my-0 h-6 animate-bounce' src="/images/horse.gif" />
                     <p class='text-blue-700'>&nbsp;${rw.tcnt ? ((rw.ccnt / rw.tcnt) * 100).toFixed(2) : 0}% 완료</p> `;
           elm.previousElementSibling.innerHTML = rw.elapsed ;
-        }
+        } else elm.previousElementSibling.innerHTML = `${rw.ccnt.toLocaleString("ko-KR")} 건 수행됨` ;
       }
       // if (ring.length === 0)  setTimeout(getdata,0) ;
 
@@ -265,9 +265,7 @@
                 <td class="startDt">{(row.startDt ? row.startDt:"") + " ~ " + (row.endDt ?  row.endDt :"") }</td>
                 <td >{row.elapsed ? row.elapsed : ''}</td>
                 {#if row.resultstat === 2}
-                  <td
-                    id={row.pkey}
-                    class="flex w-90 align-top"
+                  <td class="flex w-90 align-top"
                     title={"총: " + row.tcnt.toLocaleString("ko-KR") + " 건"}
                   >
                     <p>{row.ccnt.toLocaleString("ko-KR")}건 수행됨</p>
@@ -282,7 +280,7 @@
                     </p>
                   </td>
                 {:else}
-                  <td id={row.pkey} class="msg max-w-[20%]"
+                  <td class="text-start max-w-[20%]"
                     >{row.msg ? row.msg.split("\n")[0] : ""}</td
                   >
                 {/if}

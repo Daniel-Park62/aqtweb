@@ -112,6 +112,14 @@
       }
   } */
 </script>
+<svelte:head>
+	{#if $isLogged}
+    <title>AQT3 - {selected.nm}</title>
+	{:else}
+		<title>AQT3 - Login</title>
+	{/if}
+ </svelte:head>
+
 <!-- <svelte:window onclick={closeDropdown} /> -->
 {#if !$isLogged}
 	<LoginComp></LoginComp>

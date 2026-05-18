@@ -20,10 +20,9 @@ async function save(rdata) {
     throw err;
   };
 }
-async function saveExec(rdata) {
+async function saveExec(pkey , rdata) {
   try {
-    const del = rdata.filter((r) => r.chk && r.progno != 0);
-    const ins = rdata.filter((r) => r.chk && r.progno == 0);
+    const ins = rdata.filter((r) => r.chk).map((r) => ({  pkey, progno: r.progno })) ;
 
     // console.log(inss)     ;
     const res = await fetch("/taqtprog/exec", {
@@ -32,7 +31,7 @@ async function saveExec(rdata) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        del: del,
+        pkey: pkey,
         ins: ins,
       }),
     });

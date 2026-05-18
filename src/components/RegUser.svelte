@@ -119,14 +119,14 @@
 </script>
 
 <main class="h-full box-border">
-  <div class="headpan">
+  <div class="headpan ">
     <button onclick={addRow}>추가</button>
     <button class="btn-delete" onclick={delUser}>선택삭제</button>
     <button onclick={updUser}>적용</button>
     <button onclick={getdata}>적용취소</button>
   </div>
-  <div class="w-[95%] ">
-    <table class="w-full">
+  <div class="flex-[1_1_0] h-[calc(100%-50px)] w-full overflow-y-auto">
+    <table class="w-[98%]">
       <thead>
         <tr>
           {#each columns as column}

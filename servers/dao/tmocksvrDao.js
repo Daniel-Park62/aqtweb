@@ -42,7 +42,7 @@ const tmocksvrDao = {
     const cnt = logs.push(ldata.trimEnd()) ;
     if (cnt > 200) logs.splice(0, 1);
     const nlogs = logs.join("\n") ;
-    return await aqtdb.query('insert into tmocksvrlog (pkey,logs) values (?,?) on duplicate key update logs=? ',[pkey,nlogs,nlogs]) ;
+    return await aqtdb.query('insert into tmocksvrlog (pkey,logs) values (?,?) on duplicate key update logs=values(logs) ',[pkey,nlogs]) ;
   }
 }
 

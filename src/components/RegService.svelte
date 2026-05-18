@@ -126,7 +126,7 @@
 </datalist>
 
 <main class="h-full w-full box-border">
-  <div class="headpan">
+  <div class="headpan ">
     <button
       onclick={() => {
         newRow.appid = curRow.appid;
@@ -144,7 +144,7 @@
     <span class="mr-3">{rcnt > 0 ? rcnt.toLocaleString("ko-KR") + " 건" : " "}</span>
   </div>
   <div class="flex-[1_1_0] h-[calc(100%-50px)] w-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] ">
-    <table class="w-[98%] ">
+    <table class="w-[99%] ">
       <thead>
         <tr>
           {#each columns as column}
