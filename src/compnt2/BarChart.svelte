@@ -4,7 +4,7 @@
   import Chart from "chart.js/auto";
   import ChartDataLabels from "chartjs-plugin-datalabels";
   import { onMount, onDestroy } from "svelte";
-  import { rooturl, intlMs, t } from "../aqtstore";
+  import { rooturl } from "../aqtstore";
   // 플러그인 등록
   Chart.register(ChartDataLabels);
 
@@ -17,12 +17,12 @@
     data: {
       datasets: [
         {
-          label: $t.bar.label1, // 첫 번째 데이터셋
+          label: "대상", // 첫 번째 데이터셋 (index 0)
           backgroundColor: ["#4427ee"], // 색상
           borderRadius: 10,
         },
         {
-          label: $t.bar.label2, // 두 번째 데이터셋
+          label: "이행", // 두 번째 데이터셋 (index 1 -> 완료)
           backgroundColor: ["#ff6384"],
           borderRadius: 10,
         },
@@ -56,16 +56,32 @@
       plugins: {
         datalabels: {
           color: ["white"], // 텍스트 색상
-          font: { size: 18 },
-          formatter: function (v, ctx) {
+          font: { size: 14 }, // 퍼센트가 추가되므로 가독성을 위해 사이즈를 살짝 조절(기존 18)
+          formatter: function (v, context) {
             let num = parseFloat(v); // 안전하게 숫자로 변환
 
-            if (!isNaN(num) && num !== 0) {
-              return num.toLocaleString(); // 숫자인 경우, 천 단위 콤마 추가
+            if (isNaN(num) || num === 0) {
+              return "";
             }
 
-            return "";
+            // 현재 그리고 있는 데이터셋이 '완료(이행)' 데이터셋(index: 1)인 경우
+            if (context.datasetIndex === 1) {
+              // 같은 인덱스의 '대상' 데이터셋 값 가져오기
+              const targetDataset = context.chart.data.datasets[0];
+              const targetValue = parseFloat(targetDataset.data[context.dataIndex]);
+
+              if (!isNaN(targetValue) && targetValue > 0) {
+                // 퍼센트 계산 (소수점 첫째 자리까지 표시)
+                const percentage = ((num / targetValue) * 100).toFixed(1);
+                return `${num.toLocaleString()}\n(${percentage}%)`;
+              }
+            }
+
+            // 기본 '대상' 및 '오류' 데이터셋은 숫자만 표시
+            return num.toLocaleString();
           },
+          // 건수와 퍼센트를 줄바꿈(\n) 표시하기 위해 텍스트 정렬 설정
+          textAlign: "center", 
         },
         title: {
           display: true,
@@ -90,9 +106,8 @@
   async function getData() {
     let service = "";
 
-    if (page === "S") service = "/dashboard2/perftest_list";
-    else if (page === "D") service = "/dashboard2/datatr_list";
-    else if (page === "M") service = "/dashboard2/datatr_checkres";
+    if (page === "T") service = "/dashboard2/perftest_list";
+    else if (page === "S") service = "/dashboard2/perftest_list2";
 
     const res = await fetch($rooturl + service);
 
@@ -104,59 +119,46 @@
     if (setConfig) return;
 
     if (page === "S") {
-      if (rdata[0].gb === "3") config.data.datasets[1].label = $t.bar.label3;
-      else config.data.datasets[1].label = $t.bar.label4;
+      config.data.datasets[1].label = "완료";
 
-      if (rdata[0].gb === "3") {
-        if (config.data.datasets.length == 2) {
-          config.data.datasets.push({
-            label: $t.bar.label5, // 두 번째 데이터셋
-            backgroundColor: ["#b604ce"],
-            borderRadius: 10,
-          });
-          config.data.datasets.push({
-            label: $t.bar.label6, // 두 번째 데이터셋
-            backgroundColor: ["#3cba9f"],
-            borderRadius: 10,
-          });
-        }
-      } else {
-        if (config.data.datasets.length == 2) {
-          config.data.datasets.push({
-            label: $t.bar.label7, // 두 번째 데이터셋
-            backgroundColor: ["#b604ce"],
-            borderRadius: 10,
-          });
-          config.data.datasets.push({
-            label: $t.bar.label6, // 두 번째 데이터셋
-            backgroundColor: ["#3cba9f"],
-            borderRadius: 10,
-          });
-        }
+      if (config.data.datasets.length == 2) {
+        config.data.datasets.push({
+          label: "오류", // 두 번째 데이터셋
+          backgroundColor: ["#b604ce"],
+          borderRadius: 10,
+        });
       }
+
       config.options.scales.x.stacked = true;
       config.options.scales.y.stacked = true;
+
       config.data.datasets[0].stack = "group1";
       config.data.datasets[1].stack = "group2";
       config.data.datasets[2].stack = "group2";
-      config.data.datasets[3].stack = "group2";
       config.data.datasets[2].color = "black";
-      config.options.plugins.title.text = $t.bar.title1;
-    } else if (page === "D") {
-      //대시보드 데이터 이행 결과
-      let labels = $t.bar.dataLabels1;
-      config.data.labels = labels;
-      config.options.plugins.title.text = $t.bar.title2;
 
-      // config.options.plugins.title.display = false;
-    } else if (page === "M") {
-      //대시보드 데이터 Value 검증
-      config.data.labels = $t.bar.dataLabels2;
-      config.data.datasets[0].label = $t.bar.label8;
-      config.data.datasets[1].label = $t.bar.label9;
-      config.options.plugins.title.text = "데이터 Value 검증 결과";
-      config.data.datasets[0].barThickness = 50; // 바의 고정 넓이 (픽셀)
-      config.data.datasets[1].barThickness = 50; // 바의 고정 넓이 (픽셀)
+      config.options.plugins.title.text = "업무별 테스트 진행 현황";
+    } else if (page === "T") {
+      config.data.datasets[1].label = "완료";
+
+      if (config.data.datasets.length == 2) {
+        config.data.datasets.push({
+          label: "오류", // 두 번째 데이터셋
+          backgroundColor: ["#b604ce"],
+          borderRadius: 10,
+        });
+      }
+
+      config.options.scales.x.stacked = true;
+      config.options.scales.y.stacked = true;
+
+      config.data.datasets[0].stack = "group1";
+      config.data.datasets[1].stack = "group2";
+      config.data.datasets[2].stack = "group2";
+
+      config.data.datasets[2].color = "black";
+      
+      config.options.plugins.title.text = "업무별 전환 진행 현황";
     }
     setConfig = true;
   }
@@ -164,12 +166,10 @@
   function chartDraw(rdata) {
     setChartConfig(rdata);
 
-    if (page === "S") {
-      //성능
+    if (page === "S" || page === "T") {
       let apnms = [];
       let tcnts = [];
       let scnts = [];
-      let delays = [];
       let nocnts = [];
       let totCnt = 0;
 
@@ -177,7 +177,6 @@
         apnms.push(element.apnm);
         tcnts.push(element.tcnt);
         scnts.push(element.scnt);
-        delays.push(element.delay);
         nocnts.push(element.nocnt);
         totCnt += element.tcnt;
       });
@@ -185,35 +184,7 @@
       config.data.labels = apnms;
       config.data.datasets[0].data = tcnts;
       config.data.datasets[1].data = scnts;
-      config.data.datasets[2].data = delays;
-      config.data.datasets[3].data = nocnts;
-    } else if (page === "D") {
-      //대시보드 데이터 이행 결과
-      let asiss = [
-        rdata[0].tblasis,
-        rdata[0].idxasis,
-        rdata[0].objasis,
-        rdata[0].invalidasis,
-      ];
-
-      let tobes = [
-        rdata[0].tbltobe,
-        rdata[0].idxTobe,
-        rdata[0].objTobe,
-        rdata[0].invalidtobe,
-      ];
-
-      let totCnt =
-        rdata[0].tblasis +
-        rdata[0].idxasis +
-        rdata[0].objasis +
-        rdata[0].invalidasis;
-      config.data.datasets[0].data = asiss;
-      config.data.datasets[1].data = tobes;
-    } else if (page === "M") {
-      //대시보드 데이터 Value 검증
-      config.data.datasets[0].data = [rdata[0].tbltobe, 0];
-      config.data.datasets[1].data = [0, rdata[0].tblasistobesum];
+      config.data.datasets[2].data = nocnts;
     }
 
     chartx.update();

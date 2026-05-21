@@ -45,6 +45,13 @@ export default {
                                   parms.exectype, parms.reqnum, parms.repnum,parms.thost, parms.tport, parms.limits,
                                   parms.ppkey,parms.resultstat, JSON.stringify(jdata)]);
   },
+  updateCount: async (jobid, tcode,cond,limit) => {
+    let condi = cond > ' ' ? "and (" + param.cond + ")" : "";
+    let vlimit = limit > ' ' ? ' LIMIT ' + param.limit : "";
+    const rows = await aqtdb.query(`SELECT count(*) cnt FROM vpacket t where tcode = ? ${condi} ${vlimit}`, [tcode]);
+    const tcnt = rows[0].cnt ;
+    await aqtdb.query(`UPDATE texecjob SET tcnt = ? where pkey = ?`, [tcnt, jobid]) ;
+  },
   async reqStop(jobid){
     // console.log("texecjobDao.reqStop:",jobid);
     return await aqtdb.query("UPDATE texecing SET reqkill='1' where pkey = ?",[jobid]) ;

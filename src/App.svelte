@@ -31,7 +31,8 @@
 	import TestCaseSearch from "./compnt2/TestCaseSearch.svelte";
 	import TestSinalioReg from "./compnt2/TestSinalioReg.svelte";
 	import TestSinalioSearch from "./compnt2/TestSinalioSearch.svelte";
-
+  import DashBoard2 from "./compnt2/DashBoard2.svelte";
+	
 	const mdata = [
 	  { title:"기준정보관리",	
 	   items : [
@@ -90,7 +91,7 @@
 		]},
 	];
 	let boxChecked = $state(false);
-	const aqthome = { nm: "총괄 현황",  cnm: DashBoard };
+	const aqthome = { nm: "대쉬보드",  cnm: DashBoard2 };
 	let selected = $state( aqthome);
 	function select_item(item) {
 		selected = item;

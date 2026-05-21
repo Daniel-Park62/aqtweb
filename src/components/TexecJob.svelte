@@ -99,7 +99,7 @@
       .then(async (res) => {
         let rmsg = await res.json();
         alert(rmsg.message);
-        if (res.status < 300) {
+        if (res.ok) {
           setTimeout(getdata, 2000);
         }
       })
@@ -265,7 +265,7 @@
                 <td class="startDt">{(row.startDt ? row.startDt:"") + " ~ " + (row.endDt ?  row.endDt :"") }</td>
                 <td >{row.elapsed ? row.elapsed : ''}</td>
                 {#if row.resultstat === 2}
-                  <td class="flex w-90 align-top"
+                  <td id={row.pkey} class="flex w-90 align-top"
                     title={"총: " + row.tcnt.toLocaleString("ko-KR") + " 건"}
                   >
                     <p>{row.ccnt.toLocaleString("ko-KR")}건 수행됨</p>

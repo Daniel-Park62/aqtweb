@@ -4,7 +4,7 @@
   import Chart, { Legend } from "chart.js/auto";
   import { onMount } from "svelte";
   import ChartDataLabels from "chartjs-plugin-datalabels";
-  import { rooturl, intlMs, t } from "../aqtstore";
+  import { rooturl } from "../aqtstore";
 
   // 플러그인 등록
   Chart.register(ChartDataLabels);
@@ -36,8 +36,8 @@
         {
           backgroundColor: [
             "#ff6384",
-            "#3cba9f",
             "#b604ce",
+            "#3cba9f",
             "#e8c3b9",
             "#c45850",
           ],
@@ -72,12 +72,31 @@
         },
         datalabels: {
           color: "white", // 텍스트 색상
-          font: { size: 25 },
-          formatter: function (v, ctx) {
+          font: { size: 22 }, // % 문자가 들어가므로 크기를 살짝 조절(기존 25)
+          textAlign: "center", // 줄바꿈 처리를 위해 중앙 정렬 추가
+          formatter: function (v, context) {
             let num = parseFloat(v); // 안전하게 숫자로 변환
 
             if (!isNaN(num) && num !== 0) {
-              return num.toLocaleString(); // 숫자인 경우, 천 단위 콤마 추가
+              // 1. 현재 데이터의 인덱스 확인 및 라벨 가져오기
+              const index = context.dataIndex;
+              const label = context.chart.data.labels[index];
+
+              // 2. '완료' 항목일 경우 건수와 퍼센트 같이 표시
+              if (label === "완료") {
+                // 전체 데이터 배열
+                const dataArr = context.chart.data.datasets[0].data;
+                // 전체 합계 계산
+                const total = dataArr.reduce((a, b) => a + parseFloat(b || 0), 0);
+                // 퍼센트 계산 (소수점 첫째 자리까지 표기 예시)
+                const percentage = total > 0 ? ((num / total) * 100).toFixed(1) : 0;
+                
+                // 건수와 퍼센트를 줄바꿈(\n)으로 리턴 (차트 안에 이쁘게 배치됨)
+                return `${num.toLocaleString()}건\n(${percentage}%)`;
+              }
+
+              // 3. '완료'가 아닌 나머지 항목은 기존처럼 건수만 표시
+              return num.toLocaleString(); 
             }
 
             return "";
@@ -101,11 +120,8 @@
   async function getData() {
     let service = "";
 
-    if (page === "S") service = "/dashboard2/perftest_checkres";
-    if (page === "P")
-      service = "/performcomposit/perfcomp_checkres?tid=" + selData.tid;
-    if (page === "T")
-      service = "/testcomposit/testcomp_checkres?tid=" + selData.tid;
+    if (page === "T") service = "/dashboard2/perftest_checkres";
+    if (page === "S") service = "/dashboard2/perftest_checkres2";
 
     const res = await fetch($rooturl + service);
 
@@ -119,44 +135,31 @@
     let labels = [];
 
     if (page === "S") {
-      //dashboard
-      if (rdata[0].gb === "3") {
-        labels = $t.pie.pLabels;
-      } else {
-        labels = $t.pie.tLabels;
-      }
-    } else if (page === "P") {
-      labels = $t.pie.pLabels;
-    } else if (page === "T") {
-      labels = $t.pie.tLabels;
+      labels = ["완료", "오류", "미테스트"];
+    } else {
+      labels = ["완료", "오류", "미전환"];
     }
+
     config.data.labels = labels;
     setConfig = true;
   }
 
   function chartDraw(rdata) {
     setChartConfig(rdata);
+
     let labels = [];
     let datas = [];
 
     if (page === "S") {
       datas = [rdata[0].scnt, rdata[0].nocnt, rdata[0].delay];
-    } else if (page === "P") {
-      //성능
-      datas = [rdata[0].scnt, rdata[0].nocnt, rdata[0].delay];
     } else {
-      //테스트
-      datas = [rdata[0].scnt, rdata[0].nocnt, rdata[0].fcnt];
+      datas = [rdata[0].scnt, rdata[0].nocnt, rdata[0].delay];
     }
-    let totCnt = rdata[0].tcnt;
+    
+    let totCnt = rdata[0].tcnt.toLocaleString();
 
     config.data.datasets[0].data = datas;
-    config.options.plugins.title.text =
-      (title === undefined ? "" : title) +
-      " " +
-      $t.pie.target +
-      totCnt +
-      $t.pie.cnt;
+    config.options.plugins.title.text = (title === undefined ? "" : title) + " 대상 " + totCnt + "건";
     chartx.update();
   }
 

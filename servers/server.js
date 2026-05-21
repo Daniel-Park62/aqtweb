@@ -41,6 +41,9 @@ import testSinalio from './cntr/testSinalio.js'
 import unitTest from './cntr/unitTest.js'
 import integrationTest from './cntr/integrationTest.js'
 import useruploadmanagement from './cntr/userUploadManagement.js';
+import dashboard2 from './cntr/dashboard2.js' ;
+
+// end bang
 
 global.aqtlog = (...a) => { process.env.AQTDEBUG && console.log((new Date()).toLocaleString('lt'),...a )} ;
 aqtlog( "Starting AQT-WEB Server...",import.meta.dirname) ;
@@ -70,6 +73,7 @@ app.use('/tresult', tresult) ;
 app.use('/aqtSetup', basicSetup) ;
 app.use('/tloaddata', tloadData) ;
 // bang
+app.use('/dashboard2', dashboard2) ;
 app.use('/logonchk', logonchk);
 app.use('/project', project);
 app.use('/jobService', jobService);

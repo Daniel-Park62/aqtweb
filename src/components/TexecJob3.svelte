@@ -118,7 +118,7 @@
       .then(async (res) => {
         let rmsg = await res.json();
         alert(rmsg.message);
-        if (res.status < 300) {
+        if (res.ok) {
           setTimeout(getdata, 2000);
         }
       })

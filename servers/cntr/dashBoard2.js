@@ -20,13 +20,13 @@ router.get('/perftest_checkres', async function (req, res, next) {
     res.json(rdata) ;
 });
 
-router.get('/datatr_list', async function (req, res, next) {
-    const rdata = await tdatatr.tdatatr_find() ;
+router.get('/perftest_list2', async function (req, res, next) {
+    const rdata = await tperftest.tperftest_find2() ;
     res.json(rdata) ;
 });
 
-router.get('/datatr_checkres', async function (req, res, next) {
-    const rdata = await tdatatr.tdatatr_verify() ;
+router.get('/perftest_checkres2', async function (req, res, next) {
+    const rdata = await tperftest.tperftest_result2() ;
     res.json(rdata) ;
 });
   

@@ -32,8 +32,6 @@ const jobs = {
                     , a.type			as type
                     , a.endDate			as endDate
                     , a.tdir			as tdir
-                    , a.thost			as thost
-                    , a.tport			as tport
                     , a.encval			as encval
                     , a.pro				as pro
                     , a.svc_cnt			as svc_cnt
@@ -179,7 +177,7 @@ const jobs = {
 
             const params = [];
             let query = `
-                SELECT TC_ID as tcode, TC_NAME as name, enddate, '1' as lvl, thost, tport  
+                SELECT TC_ID as tcode, TC_NAME as name, enddate, '1' as lvl  
                 from aqt_testcase_tb
                 where 1=1
             `;

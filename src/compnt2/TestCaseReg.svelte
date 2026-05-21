@@ -304,8 +304,6 @@
             type: "",
             endDate: "",
             tdir: "",
-            thost: "",
-            tport: 0,
             encval: "",
             pro: "",
             svc_cnt: 0,
@@ -440,8 +438,6 @@
                 type: row["type"] || "",
                 endDate: row["테스트종료일"] || "",
                 tdir: row["tdir"] || "",
-                thost: row["thost"] || "",
-                tport: row["tport"] || 0,
                 encval: row["encval"] || "",
                 pro: row["pro"] || "",
                 svc_cnt: row["svc_cnt"] || 0,
@@ -483,8 +479,6 @@
                 type: msg.type,
                 테스트종료일: msg.endDate,
                 tdir: msg.tdir,
-                thost: msg.thost,
-                tport: msg.tport || 0,
                 encval: msg.encval,
                 pro: msg.pro,
                 svc_cnt: msg.svc_cnt || 0,
@@ -1284,14 +1278,6 @@
                         >
                         <th
                             class="text-center"
-                            style="width: 100px; min-width: 100px;">thost</th
-                        >
-                        <th
-                            class="text-center"
-                            style="width: 80px; min-width: 80px;">tport</th
-                        >
-                        <th
-                            class="text-center"
                             style="width: 80px; min-width: 80px;">encval</th
                         >
                         <th
@@ -1499,26 +1485,6 @@
                                 class="text-center"
                                 contenteditable="true"
                                 bind:textContent={msg.tdir}
-                                on:input={() => {
-                                    handleMessageChange(msg);
-                                    msg.isChecked = true;
-                                }}
-                            >
-                            </td>
-                            <td
-                                class="text-center"
-                                contenteditable="true"
-                                bind:textContent={msg.thost}
-                                on:input={() => {
-                                    handleMessageChange(msg);
-                                    msg.isChecked = true;
-                                }}
-                            >
-                            </td>
-                            <td
-                                class="text-center"
-                                contenteditable="true"
-                                bind:textContent={msg.tport}
                                 on:input={() => {
                                     handleMessageChange(msg);
                                     msg.isChecked = true;

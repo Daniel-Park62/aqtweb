@@ -7,8 +7,8 @@
   let { showCopyTr = $bindable(false) , selcode, tlist } = $props();
   let dialog; 
   let conds = $state({
-    srccode: selcode,
-    dstcode: selcode,
+    srccode: '',
+    dstcode: '',
     uri: "",
     cnt: 0,
     cond: ""

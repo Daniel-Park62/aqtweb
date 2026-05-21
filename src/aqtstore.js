@@ -8,7 +8,6 @@ export const authApps = writable(".*");
 export const userid = writable("") ;
 export const appids = writable([]) ;
 export const rooturl = readable('') ;
-
 export const pjtName = writable("중장기 IT인프라 최적화") ;
 
 export const getCheckPass = async ( password ) => {

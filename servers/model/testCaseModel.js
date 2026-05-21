@@ -1,8 +1,5 @@
 import mondb from '../db/dbconn.js';
 
-let fields = [];
-let jobDataInstances = [];
-
 const jobs = {
     ///////////////////////////////////////////////////////////////////////////////////////
     /**
@@ -35,8 +32,6 @@ const jobs = {
                     , a.type			as type
                     , a.endDate			as endDate
                     , a.tdir			as tdir
-                    , a.thost			as thost
-                    , a.tport			as tport
                     , a.encval			as encval
                     , a.pro				as pro
                     , a.svc_cnt			as svc_cnt
@@ -65,7 +60,7 @@ const jobs = {
             if (req.search_keyword) {
                 query += ` AND (a.TC_NAME LIKE ? OR a.TC_WRITER LIKE ? OR a.TC_BUSMGR LIKE ? OR a.TC_ITMGR LIKE ? OR a.TC_SERVER LIKE ? OR a.TC_PORT LIKE ?)`;
                 const keyword = `%${req.search_keyword}%`;
-                params.push(keyword, keyword, keyword,keyword, keyword, keyword);
+                params.push(keyword, keyword, keyword, keyword, keyword, keyword);
             }
             // 순서 정렬
             query += ` ORDER BY a.APP_ID, a.TC_ID`;
@@ -131,13 +126,13 @@ const jobs = {
                     INSERT INTO aqt_testcase_tb (
                         TC_ID, APP_ID, TC_NAME, TC_GUBUN
                       , TC_WRITER, TC_WRTDT, TC_BUSMGR, TC_ITMGR, TC_SERVER, TC_PORT
-                      , type, endDate, tdir, thost, tport
+                      , type, endDate, tdir
                       , encval, pro, svc_cnt, fsvc_cnt, data_cnt
                       , scnt, fcnt, cmpCode, tenv
                     ) VALUES (
                           ?, ?, ?, ?
                         , ?, ?, ?, ?, ?, ?
-                        , ?, ?, ?, ?, ?
+                        , ?, ?, ?
                         , ?, ?, ?, ?, ?
                         , ?, ?, ?, ?
                     ) ON DUPLICATE KEY UPDATE
@@ -155,8 +150,6 @@ const jobs = {
                         type = VALUES(type),
                         endDate = VALUES(endDate),
                         tdir = VALUES(tdir),
-                        thost = VALUES(thost),
-                        tport = VALUES(tport),
                         encval = VALUES(encval),
                         pro = VALUES(pro),
                         svc_cnt = VALUES(svc_cnt),
@@ -170,30 +163,28 @@ const jobs = {
                 `;
 
                 const params = [
-                item.TC_ID || null,
-                item.APP_ID,
-                item.TC_NAME,
-                item.TC_GUBUN,
-                item.TC_WRITER,
-                item.TC_WRTDT || new Date(),
-                item.TC_BUSMGR,
-                item.TC_ITMGR,
-                item.TC_SERVER,
-                item.TC_PORT,
-                item.type,
-                item.endDate || new Date(),,
-                item.tdir,
-                item.thost,
-                item.tport || 0,
-                item.encval,
-                item.pro,
-                item.svc_cnt || 0,
-                item.fsvc_cnt || 0,
-                item.data_cnt || 0,
-                item.scnt || 0,
-                item.fcnt || 0,
-                item.cmpCode,
-                item.tenv,
+                    item.TC_ID || null,
+                    item.APP_ID,
+                    item.TC_NAME,
+                    item.TC_GUBUN,
+                    item.TC_WRITER,
+                    item.TC_WRTDT || new Date(),
+                    item.TC_BUSMGR,
+                    item.TC_ITMGR,
+                    item.TC_SERVER,
+                    item.TC_PORT,
+                    item.type,
+                    item.endDate || new Date(), ,
+                    item.tdir,
+                    item.encval,
+                    item.pro,
+                    item.svc_cnt || 0,
+                    item.fsvc_cnt || 0,
+                    item.data_cnt || 0,
+                    item.scnt || 0,
+                    item.fcnt || 0,
+                    item.cmpCode,
+                    item.tenv,
                 ];
 
                 //console.log("--------------------------------------------------------");
@@ -331,7 +322,7 @@ const jobs = {
         } finally {
             if (conn) conn.release();
         }
-    },    
+    },
     /**
      * 공통필드 데이터 목록 조회
      * @param {Object} req - 요청 파라미터
@@ -368,7 +359,7 @@ const jobs = {
                 JOIN AQT_BUSINESS_TB B 
                     ON B.APP_ID = A.APP_ID
             `
-        query += ` LEFT OUTER JOIN (SELECT APP_ID, MSG_ID, MSGDT_ID, nvl(cast(FIXEDLEN_VAL as char character set utf8),'') as FIXEDLEN_VAL
+            query += ` LEFT OUTER JOIN (SELECT APP_ID, MSG_ID, MSGDT_ID, nvl(cast(FIXEDLEN_VAL as char character set utf8),'') as FIXEDLEN_VAL
 					FROM AQT_MESSAGEDATA_TB 
 					WHERE 1=1
                 `
@@ -390,11 +381,11 @@ const jobs = {
                 }
             }
 
-        query += `  				) X
+            query += `  				) X
                         ON A.APP_ID = X.APP_ID
                     WHERE 1=1
                 `
-            ;
+                ;
 
             if (req) {
                 if (req.app_id) {
@@ -430,7 +421,7 @@ const jobs = {
         } finally {
             if (conn) conn.release();
         }
-    },    
+    },
     /**
      * 업무 양식+데이터 목록 조회
      * @param {Object} req - 요청 파라미터
@@ -644,12 +635,12 @@ const jobs = {
                 WHERE 1=1
             `;
 
-                // Field Search Keyword
-                if (req.search_keyword) {
-                    query += ` AND (a.FLD_KR_NM LIKE ? OR a.FLD_EN_NM LIKE ? OR a.FLD_TYPE LIKE ? OR a.FLD_LEN LIKE ? OR a.ESSEN_YN LIKE ?)`;
-                    const keyword = `%${req.search_keyword}%`;
-                    params.push(keyword, keyword, keyword, keyword, keyword);
-                }
+            // Field Search Keyword
+            if (req.search_keyword) {
+                query += ` AND (a.FLD_KR_NM LIKE ? OR a.FLD_EN_NM LIKE ? OR a.FLD_TYPE LIKE ? OR a.FLD_LEN LIKE ? OR a.ESSEN_YN LIKE ?)`;
+                const keyword = `%${req.search_keyword}%`;
+                params.push(keyword, keyword, keyword, keyword, keyword);
+            }
 
             // 순서 정렬
             query += ` ORDER BY a.ST_POS ASC`;
@@ -827,13 +818,13 @@ const jobs = {
 
             for (const item of inputList) {
 
-                itmsgfldid  = item.MSGFLD_ID || null;
-                itstatus    = item.status;
-                itappid     = item.APP_ID;
-                itmsgid     = item.MSG_ID;
-                itmsgdtid   = item.MSGDT_ID;
+                itmsgfldid = item.MSGFLD_ID || null;
+                itstatus = item.status;
+                itappid = item.APP_ID;
+                itmsgid = item.MSG_ID;
+                itmsgdtid = item.MSGDT_ID;
                 fixedLenVal = fixedLenVal + item.FIXED_VAL;
-                itcomment   = item.COMMENT;
+                itcomment = item.COMMENT;
 
                 savedCount++;
             }
@@ -890,9 +881,9 @@ const jobs = {
             //console.log("query       : " + query);
             //console.log("--------------------------------------------");
 
-            await conn.query(query, params);            
+            await conn.query(query, params);
             await conn.commit();
-            
+
             return { count: savedCount, message: "saveFieldData successfully" };
 
         } catch (err) {
@@ -902,7 +893,7 @@ const jobs = {
         } finally {
             if (conn) conn.release();
         }
-    },    
+    },
     /**
      * 필드 목록 조회
      * @param {Object} req - 요청 파라미터
@@ -970,7 +961,7 @@ const jobs = {
                         where 1=1
             `;
             if (req) {
-               if (req.app_id) {
+                if (req.app_id) {
                     query += ` AND A.APP_ID = ?`;
                     params.push(req.app_id);
                 }
@@ -1017,12 +1008,12 @@ const jobs = {
                 WHERE 1=1
             `;
 
-                // Field Search Keyword
-                if (req.search_keyword) {
-                    query += ` AND (a.FLD_KR_NM LIKE ? OR a.FLD_EN_NM LIKE ? OR a.FLD_TYPE LIKE ? OR a.FLD_LEN LIKE ? OR a.ESSEN_YN LIKE ?)`;
-                    const keyword = `%${req.search_keyword}%`;
-                    params.push(keyword, keyword, keyword, keyword, keyword);
-                }
+            // Field Search Keyword
+            if (req.search_keyword) {
+                query += ` AND (a.FLD_KR_NM LIKE ? OR a.FLD_EN_NM LIKE ? OR a.FLD_TYPE LIKE ? OR a.FLD_LEN LIKE ? OR a.ESSEN_YN LIKE ?)`;
+                const keyword = `%${req.search_keyword}%`;
+                params.push(keyword, keyword, keyword, keyword, keyword);
+            }
 
             // 순서 정렬
             query += ` ORDER BY a.ST_POS ASC`;
@@ -1056,10 +1047,10 @@ const jobs = {
 
             for (const item of inputList) {
 
-            //console.log("##############################################################");
-            //console.log("item.MSGFLD_ID 1 : " + item.MSGFLD_ID);
-            //console.log("item.status 1 : " + item.status);
-            //console.log("##############################################################");
+                //console.log("##############################################################");
+                //console.log("item.MSGFLD_ID 1 : " + item.MSGFLD_ID);
+                //console.log("item.status 1 : " + item.status);
+                //console.log("##############################################################");
 
                 // MSGFLD_ID 채번 (없거나 New인 경우) - Format: FLD + 11 digits
                 if (!item.MSGFLD_ID || item.status === 'N') {
@@ -1075,9 +1066,9 @@ const jobs = {
                     item.MSGFLD_ID = 'FLD' + (rows[0].NEXT_SEQ || '00000000001');
                 }
 
-            //console.log("##############################################################");
-            //console.log("item.MSGFLD_ID 2 : " + item.MSGFLD_ID);
-            //console.log("##############################################################");
+                //console.log("##############################################################");
+                //console.log("item.MSGFLD_ID 2 : " + item.MSGFLD_ID);
+                //console.log("##############################################################");
 
                 // MERGE Query
                 const query = `
@@ -1134,28 +1125,28 @@ const jobs = {
                     item.META_CONV_RULE
                 ];
 
-            //console.log("##############################################################");
-            //console.log("item.MSGFLD_ID : " + item.MSGFLD_ID);
-            //console.log("item.APP_ID : " + item.APP_ID);
-            //console.log("item.MSG_ID : " + item.MSG_ID);
-            //console.log("item.FLD_KR_NM : " + item.FLD_KR_NM);
-            //console.log("item.FLD_EN_NM : " + item.FLD_EN_NM);
-            //console.log("item.FLD_TYPE : " + item.FLD_TYPE);
-            //console.log("item.FLD_LEN : " + item.FLD_LEN);
-            //console.log("item.FLD_CMT : " + item.FLD_CMT);
-            //console.log("item.FLD_SGMT : " + item.FLD_SGMT);
-            //console.log("item.ST_POS : " + item.ST_POS);
-            //console.log("item.FLD_DEPTH : " + item.FLD_DEPTH);
-            //console.log("item.REPET_NUM : " + item.REPET_NUM);
-            //console.log("item.FLD_ORDER : " + item.FLD_ORDER);
-            //console.log("item.ESSEN_YN : " + item.ESSEN_YN);
-            //console.log("item.DEFAULT_VAL : " + item.DEFAULT_VAL);
-            //console.log("item.FLD_FORMAT : " + item.FLD_FORMAT);
-            //console.log("item.FLD_CDSET : " + item.FLD_CDSET);
-            //console.log("item.MASK_YN  : " + item.MASK_YN);
-            //console.log("item.META_CONV_RULE : " + item.META_CONV_RULE);
-            //console.log("saveField query : " + query);
-            //console.log("##############################################################");
+                //console.log("##############################################################");
+                //console.log("item.MSGFLD_ID : " + item.MSGFLD_ID);
+                //console.log("item.APP_ID : " + item.APP_ID);
+                //console.log("item.MSG_ID : " + item.MSG_ID);
+                //console.log("item.FLD_KR_NM : " + item.FLD_KR_NM);
+                //console.log("item.FLD_EN_NM : " + item.FLD_EN_NM);
+                //console.log("item.FLD_TYPE : " + item.FLD_TYPE);
+                //console.log("item.FLD_LEN : " + item.FLD_LEN);
+                //console.log("item.FLD_CMT : " + item.FLD_CMT);
+                //console.log("item.FLD_SGMT : " + item.FLD_SGMT);
+                //console.log("item.ST_POS : " + item.ST_POS);
+                //console.log("item.FLD_DEPTH : " + item.FLD_DEPTH);
+                //console.log("item.REPET_NUM : " + item.REPET_NUM);
+                //console.log("item.FLD_ORDER : " + item.FLD_ORDER);
+                //console.log("item.ESSEN_YN : " + item.ESSEN_YN);
+                //console.log("item.DEFAULT_VAL : " + item.DEFAULT_VAL);
+                //console.log("item.FLD_FORMAT : " + item.FLD_FORMAT);
+                //console.log("item.FLD_CDSET : " + item.FLD_CDSET);
+                //console.log("item.MASK_YN  : " + item.MASK_YN);
+                //console.log("item.META_CONV_RULE : " + item.META_CONV_RULE);
+                //console.log("saveField query : " + query);
+                //console.log("##############################################################");
 
                 await conn.query(query, params);
                 savedCount++;
@@ -1199,7 +1190,7 @@ const jobs = {
                         DELETE FROM aqt_messagefield_tb 
                         WHERE APP_ID = ? AND MSG_ID = ? AND MSGFLD_ID = ?
                     `;
-                    
+
                     await conn.query(query, [item.APP_ID, item.MSG_ID, item.MSGFLD_ID]);
                     deletedCount++;
                 }
@@ -1293,19 +1284,19 @@ const jobs = {
                     `;
 
                     const params_search = [
-                    item.SEARCH_ID,
-                    item.APP_ID,
-                    item.TC_ID,
-                    item.MSG_ID,
-                    item.search_selectedField01 || 0,
-                    item.search_Field01Keyword,
-                    item.search_selectedField02 || 0,
-                    item.search_Field02Keyword,
-                    item.search_selectedField03 || 0,
-                    item.search_Field03Keyword,
-                    item.search_selectedField04 || 0,
-                    item.search_Field04Keyword,
-                    countKey
+                        item.SEARCH_ID,
+                        item.APP_ID,
+                        item.TC_ID,
+                        item.MSG_ID,
+                        item.search_selectedField01 || 0,
+                        item.search_Field01Keyword,
+                        item.search_selectedField02 || 0,
+                        item.search_Field02Keyword,
+                        item.search_selectedField03 || 0,
+                        item.search_Field03Keyword,
+                        item.search_selectedField04 || 0,
+                        item.search_Field04Keyword,
+                        countKey
                     ];
 
                     //console.log("--------------------------------------------------------");
@@ -1342,17 +1333,17 @@ const jobs = {
                 `;
 
                 const params = [
-                  item.APP_ID, item.TC_ID, searchId, item.MSG_ID || 0, item.SVC_URI
-                , item.PROTOCOL_GB, item.METHOD, item.HEADER_VAL, item.PARAM_VAL
-                , item.srcip, item.srcport, item.o_dstip, item.o_dstport, item.dstip, item.dstport, item.origin
-                , item.FIXEDLEN_VAL
+                    item.APP_ID, item.TC_ID, searchId, item.MSG_ID || 0, item.SVC_URI
+                    , item.PROTOCOL_GB, item.METHOD, item.HEADER_VAL, item.PARAM_VAL
+                    , item.srcip, item.srcport, item.o_dstip, item.o_dstport, item.dstip, item.dstport, item.origin
+                    , item.FIXEDLEN_VAL
                 ];
 
                 //console.log("--------------------------------------------------------");
                 //console.log("saveMsgDatas aqt_testcasedata_tb query : " + query);
                 //console.log("--------------------------------------------------------");
 
-                await conn.query(query, params);                
+                await conn.query(query, params);
                 savedCount++;
             }
 
@@ -1414,7 +1405,7 @@ const jobs = {
         }
     },
 
-//////////////////// --- 데이터 검색조건(JobData) --- ////////////////////
+    //////////////////// --- 데이터 검색조건(JobData) --- ////////////////////
     /**
      * 데이터 검색조건 조회 (JobData)
      * @param {Object} req - 요청 파라미터 (msg_id 등)
@@ -1460,7 +1451,7 @@ const jobs = {
                 left outer join (select APP_ID, MSG_ID, MSG_KR_NM
                                     from aqt_message_tb
                                     where 1=1 
-            `                                    
+            `
 
             if (req.app_id) {
                 query += ` AND APP_ID = ?`;
@@ -1474,7 +1465,7 @@ const jobs = {
                 left outer join (select APP_ID, MSG_ID, MSGFLD_ID, FLD_KR_NM
                                     from aqt_messagefield_tb
                                     where 1=1 
-            `                        
+            `
 
             if (req.app_id) {
                 query += ` AND APP_ID = ?`;
@@ -1489,7 +1480,7 @@ const jobs = {
                 left outer join (select APP_ID, MSG_ID, MSGFLD_ID, FLD_KR_NM
                                     from aqt_messagefield_tb
                                     where 1=1 
-            `                        
+            `
 
             if (req.app_id) {
                 query += ` AND APP_ID = ?`;
@@ -1504,7 +1495,7 @@ const jobs = {
                 left outer join (select APP_ID, MSG_ID, MSGFLD_ID, FLD_KR_NM
                                     from aqt_messagefield_tb
                                     where 1=1 
-            `                        
+            `
 
             if (req.app_id) {
                 query += ` AND APP_ID = ?`;
@@ -1519,7 +1510,7 @@ const jobs = {
                 left outer join (select APP_ID, MSG_ID, MSGFLD_ID, FLD_KR_NM
                                     from aqt_messagefield_tb
                                     where 1=1 
-            `                        
+            `
 
             if (req.app_id) {
                 query += ` AND APP_ID = ?`;
@@ -1556,7 +1547,7 @@ const jobs = {
                                 OR a.SEARCH03_NM LIKE ? 
                                 OR a.SEARCH04_NM LIKE ?)`;
                 const keyword = `%${req.search_keyword}%`;
-                params.push(keyword, keyword, keyword, keyword,keyword, keyword, keyword, keyword, keyword);
+                params.push(keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword);
             }
             // 순서 정렬
             query += ` ORDER BY a.TC_ID DESC`;
@@ -1566,7 +1557,7 @@ const jobs = {
             //console.log("---------------------------------------------------------------");
 
             const rows = await conn.query(query, params);
-            
+
             return rows;
         } catch (error) {
             console.error('getTestCaseSearchList error:', error);
@@ -1638,26 +1629,26 @@ const jobs = {
             `;
 
             const params_search = [
-            searchId,
-            req.app_id,
-            req.tc_id,
-            req.search_selectedMessage,
-            req.search_selectedField01,
-            req.search_Field01Keyword,
-            req.search_selectedField02,
-            req.search_Field02Keyword,
-            req.search_selectedField03,
-            req.search_Field03Keyword,
-            req.search_selectedField04,
-            req.search_Field04Keyword,
-            countKey
+                searchId,
+                req.app_id,
+                req.tc_id,
+                req.search_selectedMessage,
+                req.search_selectedField01,
+                req.search_Field01Keyword,
+                req.search_selectedField02,
+                req.search_Field02Keyword,
+                req.search_selectedField03,
+                req.search_Field03Keyword,
+                req.search_selectedField04,
+                req.search_Field04Keyword,
+                countKey
             ];
 
             //console.log("--------------------------------------------------------");
             //console.log("getTestCaseNoChedkedSave aqt_testcasesearch_tb query : " + query_search);
             //console.log("--------------------------------------------------------");
 
-            await conn.query(query_search, params_search);            
+            await conn.query(query_search, params_search);
 
             let query = `
                 INSERT INTO aqt_testcasedata_tb (APP_ID,TC_ID,SEARCH_ID,MSG_ID, SVC_URI
@@ -1700,8 +1691,8 @@ const jobs = {
                                 WHERE 1=1
                                 AND APP_ID = a.APP_ID
             `
-                    query += ` AND TC_ID = ?`;
-                    params.push(req.tc_id);
+            query += ` AND TC_ID = ?`;
+            params.push(req.tc_id);
 
             query += `
                                 ) as SEQ
@@ -1761,43 +1752,43 @@ const jobs = {
                                             , ROW_NUMBER() OVER (PARTITION BY SVC_URI ORDER BY APP_ID, MSG_ID, MSGDT_ID DESC) AS rn
                                         FROM aqt_messagedata_tb
                                         WHERE 1=1
-            `                        
+            `
 
-                    if (req.app_id) {
-                        query += ` AND APP_ID = ?`;
-                        params.push(req.app_id);
-                    }
+            if (req.app_id) {
+                query += ` AND APP_ID = ?`;
+                params.push(req.app_id);
+            }
 
-                    if (req.search_selectedMessage) {
-                        query += ` AND MSG_ID = ?`;
-                        params.push(req.search_selectedMessage);
-                    }
+            if (req.search_selectedMessage) {
+                query += ` AND MSG_ID = ?`;
+                params.push(req.search_selectedMessage);
+            }
 
             query += `
                                 ) AS ranked_data
-            `                        
+            `
 
-                        if (req.search_CountKeyword) {
-                            query += ` WHERE case ? when 0 then rn >= 0 `;
-                            params.push(Number(req.search_CountKeyword));
-                        }
+            if (req.search_CountKeyword) {
+                query += ` WHERE case ? when 0 then rn >= 0 `;
+                params.push(Number(req.search_CountKeyword));
+            }
 
-                        if (req.search_CountKeyword) {
-                            query += ` else rn <= ? end `;
-                            params.push(Number(req.search_CountKeyword));
-                        }
+            if (req.search_CountKeyword) {
+                query += ` else rn <= ? end `;
+                params.push(Number(req.search_CountKeyword));
+            }
 
             query += `
                             ) a
                         left outer join (select APP_ID, MSG_ID, MSG_KR_NM
                                 from aqt_message_tb 
                                 where 1=1
-            `     
-                    query += ` AND APP_ID = ?`;
-                    params.push(req.app_id);
+            `
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                    query += ` AND MSG_ID = ?`;
-                    params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
             query += `
                             ) b
@@ -1806,15 +1797,15 @@ const jobs = {
                         left outer join (select APP_ID, MSG_ID, MSGFLD_ID, ST_POS, FLD_LEN 
                                             from aqt_messagefield_tb
                                             where 1=1
-            `                                    
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            `
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField01);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField01);
 
             query += `
                                         ) c
@@ -1825,14 +1816,14 @@ const jobs = {
                                             where 1=1
             `;
 
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField02);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField02);
 
             query += `
                                         ) d
@@ -1843,14 +1834,14 @@ const jobs = {
                                             where 1=1
             `;
 
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField03);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField03);
 
             query += `
                                         ) e
@@ -1861,14 +1852,14 @@ const jobs = {
                                             where 1=1
             `;
 
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField04);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField04);
 
             query += `
                                         ) f
@@ -1922,7 +1913,7 @@ const jobs = {
             //console.log("---------------------------------------------------------------");
 
             const rows = await conn.query(query, params);
-            
+
             // return rows;
 
             savedCount++;
@@ -2117,48 +2108,48 @@ const jobs = {
                                         , ROW_NUMBER() OVER (PARTITION BY SVC_URI ORDER BY APP_ID, MSG_ID, MSGDT_ID DESC) AS rn
                                     FROM aqt_messagedata_tb
                                     WHERE 1=1
-            `                        
+            `
 
-                    if (req.app_id) {
-                        query += ` AND APP_ID = ?`;
-                        params.push(req.app_id);
-                    }
+            if (req.app_id) {
+                query += ` AND APP_ID = ?`;
+                params.push(req.app_id);
+            }
 
-                    if (req.search_selectedMessage) {
-                        query += ` AND MSG_ID = ?`;
-                        params.push(req.search_selectedMessage);
-                    }
+            if (req.search_selectedMessage) {
+                query += ` AND MSG_ID = ?`;
+                params.push(req.search_selectedMessage);
+            }
 
             query += `
                                 ) AS ranked_data
-            `                        
+            `
 
-                        if (req.search_CountKeyword) {
-                            query += ` WHERE case ? when 0 then rn >= 0 `;
-                            params.push(Number(req.search_CountKeyword));
-                        }
+            if (req.search_CountKeyword) {
+                query += ` WHERE case ? when 0 then rn >= 0 `;
+                params.push(Number(req.search_CountKeyword));
+            }
 
-                        if (req.search_CountKeyword) {
-                            query += ` else rn <= ? end `;
-                            params.push(Number(req.search_CountKeyword));
-                        }
+            if (req.search_CountKeyword) {
+                query += ` else rn <= ? end `;
+                params.push(Number(req.search_CountKeyword));
+            }
 
             query += `
                             ) a
                         left outer join (select APP_ID, MSG_ID, MSG_KR_NM
                                 from aqt_message_tb 
                                 where 1=1
-            `                        
+            `
 
-                    if (req.app_id) {
-                        query += ` AND APP_ID = ?`;
-                        params.push(req.app_id);
-                    }
+            if (req.app_id) {
+                query += ` AND APP_ID = ?`;
+                params.push(req.app_id);
+            }
 
-                    if (req.search_selectedMessage) {
-                        query += ` AND MSG_ID = ?`;
-                        params.push(req.search_selectedMessage);
-                    }
+            if (req.search_selectedMessage) {
+                query += ` AND MSG_ID = ?`;
+                params.push(req.search_selectedMessage);
+            }
 
             query += `
                             ) b
@@ -2167,15 +2158,15 @@ const jobs = {
                         left outer join (select APP_ID, MSG_ID, MSGFLD_ID, ST_POS, FLD_LEN 
                                             from aqt_messagefield_tb
                                             where 1=1
-            `                                    
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            `
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField01);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField01);
 
             query += `
                                         ) c
@@ -2186,14 +2177,14 @@ const jobs = {
                                             where 1=1
             `;
 
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField02);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField02);
 
             query += `
                                         ) d
@@ -2204,14 +2195,14 @@ const jobs = {
                                             where 1=1
             `;
 
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField03);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField03);
 
             query += `
                                         ) e
@@ -2222,23 +2213,23 @@ const jobs = {
                                             where 1=1
             `;
 
-                                query += ` AND APP_ID = ?`;
-                                params.push(req.app_id);
+            query += ` AND APP_ID = ?`;
+            params.push(req.app_id);
 
-                                query += ` AND MSG_ID = ?`;
-                                params.push(req.search_selectedMessage);
+            query += ` AND MSG_ID = ?`;
+            params.push(req.search_selectedMessage);
 
-                                query += ` AND MSGFLD_ID = ?`;
-                                params.push(req.search_selectedField04);
+            query += ` AND MSGFLD_ID = ?`;
+            params.push(req.search_selectedField04);
 
-                
+
             query += `
                                         ) f
                             on a.APP_ID  = f.APP_ID
                             and a.MSG_ID = f.MSG_ID 
                         where 1=1
             `;
-                        
+
             if (req.app_id) {
                 query += ` AND a.APP_ID = ?`;
                 params.push(req.app_id);
@@ -2285,7 +2276,7 @@ const jobs = {
             //console.log("---------------------------------------------------------------");
 
             const rows = await conn.query(query, params);
-            
+
             return rows;
         } catch (error) {
             console.error('getTestCaseMsgDataList error:', error);

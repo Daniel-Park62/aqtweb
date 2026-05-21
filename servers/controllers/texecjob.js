@@ -22,15 +22,16 @@ router.post('/',async function(req, res, next) {
   const insfunc = req.body.jobkind === 8 ? texecjobDao.insertReal : texecjobDao.insert ;
   insfunc(req.body)
   .then( res.json({message: `${req.body.tdesc} 등록되었습니다.`}) )
-  .catch(e => next(e) ) ;           
+  .catch(e => next(e) ) ;       
+  texecjobDao.updateCount(req.body.pkey, req.body.tcode, req.body.cond, req.body.limit).catch(e => console.log(e)) ;   
 });
 
 router.put('/',function(req, res, next) {
   const runfunc = req.body.jobkind === 8 ? texecjobDao.reRunReal : texecjobDao.reRun ;
   runfunc(req.body)
-  .then(r => res.json({message: `${req.body.tdesc}` + " 수정되었습니다."}) )
+  .then(r => res.json({message: `${req.body.tdesc}  ${req.body.resultstat === 1 ? '요청' : '수정'} 되었습니다.` }) )
   .catch(e => next(e) ) ;           
-
+  texecjobDao.updateCount(req.body.pkey, req.body.tcode, req.body.cond, req.body.limit).catch(e => console.log(e)) ;   
 });
 
 router.delete('/',function(req, res, next) {
